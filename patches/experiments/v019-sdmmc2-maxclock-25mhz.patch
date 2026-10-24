@@ -1,0 +1,11 @@
+--- a/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-usbdiag.dts
++++ b/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-usbdiag.dts
+@@ -1332,7 +1332,7 @@
+ 		 * For some reason it won't run at 48MHz like downstream does
+          * For now, this messy number will do (600mHz / 15)
+ 		 */
+-        max-frequency = <46153846>;
++        max-frequency = <25000000>;
+ 		keep-power-in-suspend;
+         bus-width = <4>;
+ 		non-removable;

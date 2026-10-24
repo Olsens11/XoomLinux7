@@ -10,7 +10,7 @@ This is the **session handoff**, not a historical narrative. Begin with [AGENTS.
 6. On each machine, run `scripts/resume-state.sh` then `python3 tools/check_repository.py` and inspect `git status --short`, `git branch -vv`, `git worktree list`.
 7. Resolve current DUT identity, USB status, and user approval **before** any hardware command.
 
-**Current next action:** v015 raw USB/upload/hot-reload infrastructure is physically verified on the replacement MZ600. Investigate BCM4329 F2 readiness via scoped uploaded modules and OEM reference. No wlan0, no permanent writes.
+**Current next action:** review [v018](docs/checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md) and [v019](docs/checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md) measured failures, then investigate BCM4329 firmware CPU/SDPCM startup and same-device OEM NVRAM provenance. v015 remains diagnostic baseline. No temporary OEM patch is an accepted Wi-Fi fix.
 
 **Do not assume:** a kernel build is a boot test; an SDIO card is a functional wlan0; an embedded firmware file is legally redistributable; a branch has write access because a public clone succeeded.
 

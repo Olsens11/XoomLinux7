@@ -6,3 +6,7 @@
 - [v017 physical CCCR inventory](../checkpoints/V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md): parsed flags and host timing, comparison to OEM.
 
 Do not call an experimental patch a fix until the claimed function works repeatedly on actual hardware. Diagnostic success is not Wi-Fi success.
+
+- [v018 full Motorola counterfactual](../checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md): all six fields effective; F2 still timed out twice.
+
+- [v019 measured 25 MHz control](../checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md): lower clock effective but F2 still fails.

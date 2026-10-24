@@ -1,0 +1,43 @@
+--- a/drivers/mmc/core/sdio.c
++++ b/drivers/mmc/core/sdio.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/err.h>
++#include <linux/of.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/sysfs.h>
+ 
+@@ -843,6 +844,32 @@
+ 
+ 	mmc_fixup_device(card, sdio_fixup_methods);
+ 
++    /*
++     * XOOM_OEM_CAPS_V018: diagnostic-only reproduction of the six
++     * capabilities supplied by Motorola's embedded_sdio_data.
++     * Apply AFTER sdio_read_cccr() and common CIS parsing/fixups,
++     * BEFORE high-speed negotiation and host timing selection.
++     * Scoped to our Stingray BCM4329. Do NOT copy into unrelated boards.
++     */
++    if (of_machine_is_compatible("motorola,stingray") &&
++        card->cis.vendor == SDIO_VENDOR_ID_BROADCOM &&
++        card->cis.device == SDIO_DEVICE_ID_BROADCOM_4329) {
++        pr_info("XOOM_OEM_CAPS_V018 before vsn=%u multi=%u low=%u wide=%u hp=%u hs=%u\n",
++                card->cccr.sdio_vsn, card->cccr.multi_block,
++                card->cccr.low_speed, card->cccr.wide_bus,
++                card->cccr.high_power, card->cccr.high_speed);
++        card->cccr.sdio_vsn = SDIO_SDIO_REV_1_20;
++        card->cccr.multi_block = 1;
++        card->cccr.low_speed = 0;
++        card->cccr.wide_bus = 0;
++        card->cccr.high_power = 1;
++        card->cccr.high_speed = 1;
++        pr_info("XOOM_OEM_CAPS_V018 after vsn=%u multi=%u low=%u wide=%u hp=%u hs=%u\n",
++                card->cccr.sdio_vsn, card->cccr.multi_block,
++                card->cccr.low_speed, card->cccr.wide_bus,
++                card->cccr.high_power, card->cccr.high_speed);
++    }
++
+ 	if (mmc_card_sd_combo(card)) {
+ 		err = mmc_sd_setup_card(host, card, oldcard != NULL);
+ 		/* handle as SDIO-only card if memory init failed */

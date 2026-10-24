@@ -38,3 +38,5 @@ Test kernels through **`fastboot boot` on the replacement test MZ600 only**. Nev
 ## Provenance
 
 Upstream kernel: https://github.com/xoom-linux/linux ; Linux GPL-2.0-family licensing applies as appropriate to kernel-derived source. This integration repo retains authorship and licenses and does not claim upstream author's work as ours.
+
+**Latest focused negative evidence (2026-10-24):** [v018 Motorola OEM capability override](docs/checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md) was effective but Wi-Fi Function 2 still timed out. [v019 lower SDIO clock](docs/checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md) physically reduced the host rate to 25MHz, but F2 still timed out twice. v015 remains our trusted RAM-only diagnostic environment. Next: firmware CPU startup, board calibration and power/reference-clock comparisons.

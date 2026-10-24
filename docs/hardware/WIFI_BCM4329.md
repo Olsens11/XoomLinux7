@@ -30,3 +30,9 @@ Motorola embedded SDIO supplied SIX capability values. v010 changed only version
 
 ## v017 measured capability discrepancy (2026-10-24)
 Raw CCCR=0x11; CAPS=0x02; POWER=0x01; SPEED=0x01 (all CMD52 reads rc 0). Linux effective \`sdio_vsn=1,multi=1,low=0,wide=0,highpower=1,highspeed=0\` versus Motorola embedded override \`2,1,0,0,1,1\`. Host IOS \`clock=46153846,timing=0 (legacy),bus_width=2 (4-bit),signal_voltage=0,vdd=21\`. F2 IOEx=06 and IORx=02 after timeout; no wlan0. This demonstrates a configuration mismatch, **not** its causal relationship to F2. See [v017 physical checkpoint](../checkpoints/V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md).
+
+## v018 full Motorola override tested, no network
+Board/chip-scoped complete six-field OEM override was physically effective: SDIO version 2, high-speed 1, raw SPEED 03, timing=2; unchanged 46.15MHz clock. F2 IORx still 02, err -62 on two trials. The six-field workaround alone is not sufficient. See [v018](../checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md).
+
+## v019 host clock A/B fails to resolve F2
+With complete Motorola six-field override active, reducing actual host SDIO clock from 46,153,846 to 25,000,000Hz (single compiled DTB max-frequency property) left IORx at 02 and F2 timeout -62 on two trials. Neither the full capability correction nor lower host clock alone resolves F2 under tested OEM firmware/generic NVRAM. [v019](../checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md).

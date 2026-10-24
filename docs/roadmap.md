@@ -39,3 +39,10 @@
 - [x] Read-only v017 raw CCCR, effective mmc_cccr fields and host ios captured on real replacement MZ600.
 - [ ] Produce complete Motorola six-capability equivalent in appropriately scoped modern SDIO initialization, with actual post-override field+timing measurements and no unrelated clock or calibration changes.
 - [ ] Separate legacy clock-only control to test 46.15MHz versus conservative rate, if OEM-equivalent test alone cannot isolate failure.
+
+- [x] Full Motorola six-field OEM-equivalent modern MMC override physically tested (v018): parsed fields and SD-HS mode actually corrected, F2 failed twice.
+- [x] v019 controlled clock-only comparison: same OEM six-field patch, cap SDMMC2 at 25MHz, measure effective speed and F2 state.
+- [ ] If still failing, prioritize firmware CPU/startup, 32k reference, and private same-device NVRAM/firmware provenance before more arbitrary quirk changes.
+
+- [x] v019 controlled clock-only comparison physically tested; effective host clock 25,000,000Hz, F2 still timed out on two trials.
+- [ ] Prioritize read-only BCM4329 firmware CPU/SDPCM startup checks and exact same-device OEM firmware + NVRAM provenance; no further MMC tweaks without specific evidence.

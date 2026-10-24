@@ -43,3 +43,9 @@ A read-only hotloaded v016 Broadcom module physically recorded IOEx \`0x02→0x0
 
 ## v017 diagnostic evidence, no Wi-Fi promotion
 v017 RAM-hotloaded read-only module verified actual raw CCCR and final card/host flags: raw CCCR 0x11, Linux version 1, high-speed 0 versus Motorola OEM version 2, high-speed 1. Host clock 46,153,846 Hz at legacy timing. F2 still -62, no wlan0. See [v017](checkpoints/V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md). This is **not a fixed Wi-Fi checkpoint**; v015 remains the proven diagnostic loader.
+
+## v018 completed OEM capability counterfactual, 2026-10-24
+The **complete board/chip-scoped Motorola six-field override** was applied after CCCR/CIS parsing and physically confirmed by the v017 read-only module. Final version=2 and highspeed=1, SDIO SPEED=03, host timing=2 (SD HS), clock remains 46,153,846Hz. With the same OEM firmware and generic NVRAM, two trials still had IOEx=06/IORx=02 and F2 timeout -62; no wlan0. **The full OEM card capability override alone does not solve Wi-Fi.** [Exact evidence](checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md). v015 remains the stable diagnostic infrastructure.
+
+## v019 25MHz physical A/B, 2026-10-24
+A full Motorola six-field-override v018 kernel with the actual USB diagnostic DTS SDMMC2 max-frequency capped to 25MHz was rebuilt and temporary-booted as v019. DTB decompilation confirmed only one property difference; the first draft altering an unused source file was caught and NOT booted. Actual host clock **25,000,000Hz**, SDIO version 2/high-speed 1 and host timing 2. Same OEM firmware, generic NVRAM and v017 diagnostic module. Two attempts: IOEx=06/IORx=02, **F2 -62 and no wlan0**, unchanged. [v019 checkpoint](checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md). v015 remains accepted as diagnostic infrastructure; no Wi-Fi repair promoted.

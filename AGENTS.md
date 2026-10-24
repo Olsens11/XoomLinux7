@@ -40,3 +40,6 @@
 
 ## Hardware acceptance refinement, 2026-10-24
 Motorola supplied a **complete six-capability embedded SDIO override**. Previous v010–v013 fixes do not establish equivalent behavior; v017 measured actual mismatch. Never call Wi-Fi fixed until F2 ready + \`wlan0\` + correct MAC/regulatory identity + network stability are physically demonstrated, repeatedly. Compilation and kernel module init rc=0 do not establish Wi-Fi success.
+
+## Current BCM4329 truth: 2026-10-24
+v018 reproduced Motorola complete six-capability SDIO configuration and SD-HS timing on physical hardware but F2 stayed -62 twice. v019 changed ONLY the compiled diagnostic DTS SDMMC2 max-frequency cap and physically measured 25MHz, F2 still -62 twice. Both variants are unsuccessful Wi-Fi experiments; v015 remains accepted as RAM-only diagnostic infrastructure. Do not infer firmware CPU startup from a successful RAM download. See v018/v019 checkpoint links in docs/checkpoints/README.md.

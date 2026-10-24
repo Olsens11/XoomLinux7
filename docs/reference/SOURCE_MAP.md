@@ -37,3 +37,15 @@ Project Git is authoritative for *new changes*. Imported historical files are tr
 
 ## v017 capability audit
 - scripts/experiments/v017-build-capability-inventory.py; patches/experiments/v017-brcmfmac-f2-cccr-readback.patch; docs/checkpoints/V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md.
+
+## v018 Motorola capability counterfactual
+- \`scripts/experiments/v018-build-oem-caps.py\`: temporary source overlay/build and guaranteed restoration.
+- \`patches/experiments/v018-motorola-six-field-sdio-capabilities.patch\`: exact board/chip-scoped modern equivalent.
+- \`releases/v018-manifest.txt\`: image hash/physical negative test; image remains private.
+- \`docs/checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md\`: measured effective bus state and -62 timeout.
+
+## v019 25MHz A/B
+- scripts/experiments/v019-build-lowclock.py — source-scoped repeatable kernel rebuild with full source restoration.
+- scripts/experiments/v019-package-tempboot.sh — v019 boot-image verifier; no flash.
+- patches/experiments/v019-sdmmc2-maxclock-25mhz.patch — actual compiled -usbdiag.dts node, not ordinary unconsumed DTS.
+- releases/v019-manifest.txt and docs/checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md — physical negative evidence.
