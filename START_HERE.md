@@ -18,3 +18,5 @@ Historical original source: `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf
 
 ## Current 2026-10-24 diagnostic baseline
 v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT and MMC2_BIND recovery control. Physical AUTO/MOTOROLA/AUTO card re-enumeration and loaded-module safety guard PASS; native Wi-Fi F2 -62 persists. Start with docs/checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md before further experiments. Keep v015 as USB fallback, and never touch mmc0 or mmc1.
+
+- [Offline virtual forensic lab](tools/forensics/README.md): single-command v025 provenance audit without connecting to the physical Xoom.

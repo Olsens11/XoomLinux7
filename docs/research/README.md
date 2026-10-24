@@ -22,3 +22,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [Physical outcome of the Section 11 legacy 25 MHz control](../checkpoints/V022_AUTO_LEGACY_25MHZ_PHYSICAL_2026-10-24.md): three attempts, still -62.
 
 - [Audit of inherited pwrseq property placement and v025 hardware results](../checkpoints/V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md): 100ms effective before reset, still -62.
+
+- [Virtual forensic lab v1 test record](VIRTUAL_FORENSIC_LAB_V1_2026-10-24.md): host artifact checks, independent ARM/QEMU device-tree and NVRAM decoding, seven intentional faults detected.

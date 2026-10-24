@@ -94,3 +94,12 @@
 - [ ] Audit differences between original OEM 100/100/200ms power/reset sequence and mainline regulator/pwrseq ownership, especially initial boot order and real supply settling.
 - [ ] Audit \`brcmf_chip_cm3_set_active\` and firmware startup/mailbox before F2 ready, refusing to treat release-from-reset as firmware-execution confirmation.
 - [ ] Correct incorrect USB SDIO debug path (\`mmc-pwrseq-simple\` vs actual \`pwrseq_simple\`) in future diagnostic code only after documenting source/fix and tests.
+
+## Virtual provenance lab
+- [x] Independently inspect real compiled v025 DTB using Cortex-A9 QEMU ARM user-mode program.
+- [x] Verify exact boot/CPIO image firmware, NVRAM and module entries and SHA256.
+- [x] Compare Python and ARM model NVRAM transformations byte-for-byte: 672 bytes identical.
+- [x] Pass seven deliberate fault-injection controls: wrong node, incorrect values, altered boot/NVRAM.
+- [ ] Trace actual physical firmware request path, returned digest, NVRAM payload and platform MAC provenance without exposing identifiers.
+- [ ] Timestamp actual MMC power sequencing, U4/U2 controls and clock voting to compare against source.
+- [ ] Consider full Tegra20 and BCM4329 device modeling only where needed to answer questions userspace emulation cannot.
