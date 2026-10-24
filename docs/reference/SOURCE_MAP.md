@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | `https://github.com/xoom-linux/linux` | Contributors' original kernel/DTS, pinned to `2404d273...` | Upstream historical baseline |
 | `src/board/` | Our Stingray derived and USB-diagnostic DTS | Board-specific experiment source |
-| `src/diag-init/` | Freestanding PID1 source snapshots v03-v14 | Diagnostic experiments, v013 physically proven |
+| src/diag-init/ | Freestanding PID1 source snapshots v03-v15 | v015 USB diagnostic verified; no native wireless functionality yet |
 | `scripts/history/` | Build/packaging/setup/one-shot transfer recipes imported by version | Historical reproducibility, not all scripts current |
 | `configs/` | Kernel config snapshot and MAC-free NVRAM text | Reproducibility inputs, never real calibration |
 | `docs/checkpoints/` | Verifiable experiment chronology/status | Interpreted public summary |
@@ -19,7 +19,14 @@
 Project Git is authoritative for *new changes*. Imported historical files are traceable but may not be byte-identical if line endings were normalized during migration; hashes of final published source establish fresh authority. Never treat an unversioned local `linux-src` extract as immutable upstream.
 
 ## Surface host command source
-- `scripts/host/surface/Xoom-v14-LiveLab.ps1` — current v014 serial command/upload host-side client (source only; hardware v014 untested).
+- Current host client: scripts/host/surface/Xoom-v15-LiveLab.ps1. The v014 client is retained as historical evidence of canonical TTY upload failure.
 - `scripts/host/surface/Probe-MZ600-LinuxUSB.ps1` — USB gadget probing.
 - `scripts/host/surface/history/Reboot-Verified-MZ600-Linux-V05.ps1` — historical v05 procedure, not an approved current action.
 - The Surface's calibration scripts and Android Wi-Fi cycle helper include actual test-device serial identifiers, so they remain private and were **not** published.
+
+## v015 diagnostic source
+- src/diag-init/phase1-v15/init.c: raw TTY, bounded binary transfer, module lifecycle.
+- scripts/build/v15-*: build and verification.
+- scripts/host/surface/Xoom-v15-LiveLab.ps1: physically verified host client.
+- releases/v015-manifest.txt: image identity and qualification.
+- docs/checkpoints/V015_RAW_USB_LAB_2026-10-24.md: physical evidence.

@@ -9,7 +9,7 @@
 
 ## G1 — validate v014 LIVE-LAB, no flash
 - [x] v014 temporary boot, USB protocol, and Broadcom start/stop passed; binary transfer failed and v015 corrective candidate built.
-- [ ] Prove F2 timeout observability with recoverable Wi-Fi start/stop/retry.
+- [x] v015 RAM-only USB and module start/stop/retry transport qualified; F2 timeout persists and has an actionable live-lab reproduction path.
 - [ ] Export dated, scrubbed evidence; keep exact raw serial/device information privately.
 
 ## G2 — solve BCM4329 SDIO F2

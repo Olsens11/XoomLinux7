@@ -28,3 +28,5 @@
 When a new record is added, link it here and from its local index; update status ONLY when verified evidence changes.
 
 - [v014 USB module hardware test and binary transfer fault](checkpoints/V014_USB_LAB_2026-10-24.md)
+
+- [v015 physical raw USB and module hot-reload qualification](checkpoints/V015_RAW_USB_LAB_2026-10-24.md)

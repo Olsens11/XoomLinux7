@@ -7,4 +7,6 @@
 
 Do **not** execute a historical recipe merely because it is present. Inspect its effect on the host, input versions, firmware dependencies and output image first. Firmware and private device data are not stored in the public repository.
 
-- `host/surface/` — reviewed host-side USB commands and v014 live-lab client; `history/` there denotes obsolete host workflows.
+- host/surface/: physically tested v015 raw USB live-lab client, historical v014 client, and other Surface probes.
+
+- build/v15-* — v015 source compile, initramfs, kernel rebuild and image packaging; temporary boot only.

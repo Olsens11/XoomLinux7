@@ -18,7 +18,7 @@
 | v012 | SDIO F2 IOEx/IORx instrumentation built | BUILT; independent physical log NOT FOUND |
 | v013 | Tegra `.init_card` high-speed hook; last confirmed `PONG ... V13`; F2 unchanged | PHYSICAL / WIFI FAILED |
 | v014 | Physical USB boot and Broadcom load/unload PASS; F2 -62; canonical TTY binary upload FAIL | PHYSICAL PARTIAL PASS |
-| v015 | Raw USB tty mode, upload timeout/recovery, bounded writes; candidate 6,656,000 bytes | OFFLINE BUILT/HASH PASS; NOT PHYSICAL |
+| v015 | Raw tty + CRC binary upload verified (4 KiB, 264 KiB firmware, 17 KiB and 460 KiB .ko), uploaded module lifecycle and retry PASS; wlan0 absent | PHYSICAL USB/DIAGNOSTIC PASS; WIFI NOT WORKING |
 
 v014 image SHA256: `65846a0928feed535e81a0898bc186d48d12a96c40f36719d6b56a8a3589f670`. Its image and raw private test captures stay on controlled machines. Public repository records source, manifest and scrubbed summaries.
 
@@ -28,3 +28,5 @@ Versions are not automatically an acceptance order: last proven-on-device v013 r
 - [2026-10-24 — three-device write-key and Git worktree qualification](GIT_ACCESS_2026-10-24.md). This is **repository infrastructure** acceptance, not native Linux hardware qualification.
 
 See [v014 USB and module evidence](V014_USB_LAB_2026-10-24.md).
+
+See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).

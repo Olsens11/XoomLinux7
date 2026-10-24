@@ -10,7 +10,7 @@ This is the **session handoff**, not a historical narrative. Begin with [AGENTS.
 6. On each machine, run `scripts/resume-state.sh` then `python3 tools/check_repository.py` and inspect `git status --short`, `git branch -vv`, `git worktree list`.
 7. Resolve current DUT identity, USB status, and user approval **before** any hardware command.
 
-**Current next action:** validate the already built v014 LIVE-LAB image with nonpersistent boot on the replacement MZ600, confirm USB command protocol and module unload/reload, and isolate BCM4329 Function 2 readiness. Do not claim v014 hardware success in advance.
+**Current next action:** v015 raw USB/upload/hot-reload infrastructure is physically verified on the replacement MZ600. Investigate BCM4329 F2 readiness via scoped uploaded modules and OEM reference. No wlan0, no permanent writes.
 
 **Do not assume:** a kernel build is a boot test; an SDIO card is a functional wlan0; an embedded firmware file is legally redistributable; a branch has write access because a public clone succeeded.
 

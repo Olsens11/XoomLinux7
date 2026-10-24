@@ -17,15 +17,14 @@
 ## Latest build
 - v014 RAM-only LIVE-LAB image staged and independently hashed on Surface: `MZ600-stingray-diagnostic-v14-LIVE-LAB-TEMPBOOT-ONLY.img`, 6,656,000 bytes; SHA256 `65846a0928feed535e81a0898bc186d48d12a96c40f36719d6b56a8a3589f670`.
 - **v014 was physically temporary-booted 2026-10-24**: USB PING and STATUS PASS; Broadcom WIFI_START and WIFI_STOP PASS; BCM4329 F2 still times out -62; no wlan0. Binary firmware upload FAIL due to canonical TTY echo/buffering; session recovered without a reboot.
-- **v015 was compiled and image-verified offline**, with raw tty and transfer timeout corrections. Not yet physical.
+- **v015 was physically temporary-booted on 2026-10-24 and accepted for USB/live-lab use**. STATUS included USB RAW READY. Raw firmware uploads of 4,096 and 264,140 bytes returned matching CRC32; RAM module uploads of 17,828 and 460,140 bytes matched CRC32. Uploaded modules loaded, debug-level change was confirmed, WIFI_RETRY performed unload/load, and WIFI_STOP unloaded both. **WLAN0 remains absent; Wi-Fi F2 problem is not fixed.** See V015_RAW_USB_LAB_2026-10-24.md.
 - Built image, private binaries and exact device logs remain on development machines, not in public Git.
 
 ## Next gate
-1. Confirm replacement DUT, USB/fastboot and adequate power.
-2. Hash-check actual v014 candidate; temporary `fastboot boot` only.
-3. Validate USB `PING` identifies V14, `WIFI_STATUS`, `WIFI_START`, `WIFI_STOP`, `WIFI_RETRY` and known rollback.
-4. Verify module and firmware upload/checksum paths, then F2 instrumentation and hardware behavior.
-5. Keep MAC identity and regulatory provenance gates before scanning/association.
+1. Treat v015 as qualified RAM-only USB diagnostic baseline; no permanent flash.
+2. Reproduce the BCM4329 F2 ready timeout using uploaded driver modules and controlled changes, comparing register/firmware/clock traces to OEM reference.
+3. Before RF scans or associations, validate per-device MAC/calibration and regulatory provenance.
+4. Do not confuse usable live-lab infrastructure with actual wlan0 or association success.
 
 See [Wi-Fi report](hardware/WIFI_BCM4329.md), [checkpoint log](checkpoints/README.md), [roadmap](roadmap.md).
 

@@ -5,7 +5,7 @@
 ## Authority and integrity
 - Repository source, state ledger, immutable experiment records, and measured device results outrank recollections or a conversation summary.
 - Separate **built**, **checksum verified**, **temporary-booted**, **diagnosed**, **network-connected**, **permanently installed**, and **fully qualified**. Do not conflate states or infer success from version numbers.
-- v013 is the last confirmed physically booted version at project import; v014 was built/hashed but not yet physically qualified.
+- At initial repository import, v013 was the hardware baseline. v014 then physically booted (USB and module lifecycle PASS, binary upload FAIL). v015 now physically qualifies raw USB transfer and module hot-reload; BCM4329 wlan0/F2 remains unresolved.
 - A failed successor does **not** supersede the last successful test. Keep negative evidence and rejected hypotheses.
 - Update docs/status.md and runtime/PROJECT_STATE.env **in the same change** as any new accepted state. Preserve dated checkpoint records.
 - Cross-link documentation from docs/README.md and each applicable directory README; no undocumented orphan experiments.
