@@ -14,3 +14,10 @@ Each machine gets an **independently generated ed25519 key pair** named `xoomlin
 Branch ownership: Desktop builds on wifi/usb; Pi documents OEM reference; Surface collects hardware evidence. All may read main. Each machine should use its own branch and regularly merge/rebase, but never push simultaneous competing writers to the same branch without coordination.
 
 Do not commit the keys or copy them into GitHub documentation. After credentials are registered, record validated `git ls-remote` + `git push` result in a dated device-access checkpoint, *not* the private key.
+
+## 2026-10-24 measured installation state
+- Desktop WSL `/home/xoomdev/projects/XoomLinux7` (main), `XoomLinux7-wifi` (wifi/bcm4329-f2), `XoomLinux7-usb` (usb/live-lab): **created**; checker PASS.
+- Pi `/home/ps2/projects/XoomLinux7` (main) and `XoomLinux7-research` (research/oem-comparison): **created**; checker PASS.
+- Surface `C:\\Users\\olsen\\XoomLinux7` (main) and `XoomLinux7-hardware` (hardware/qualification): **created**; both clean after normalizing fresh-checkout line endings.
+- `origin` **fetch URL is public HTTPS**, so read/pull works before key registration. The **push URL** is `git@github.com-xoomlinux7:Olsens11/XoomLinux7.git` to force a dedicated per-device SSH identity for writes.
+- New keys are generated on all 3 machines but **not registered on GitHub**. SSH currently correctly reports `Permission denied (publickey)`. Add each key as a separate **write-enabled deploy key** at the repository settings; only then can a push qualify access.

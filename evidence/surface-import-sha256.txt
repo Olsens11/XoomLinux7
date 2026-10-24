@@ -1,0 +1,4 @@
+# Original Surface diagnostic script hashes before publication; source only.
+b2b24efa486e30bcabb5c5497aed8df4b9f2e18ccade6a686154b6e112297676  scripts/host/surface/Xoom-v14-LiveLab.ps1
+e9431747a7d212efd3504dff0aa658961ffafbeb3fd982f5cd160f0eeccc222c  scripts/host/surface/Probe-MZ600-LinuxUSB.ps1
+5790d69aaefc324bc06dee94b2979cd8b778607ca5aaef3a60e6e4f811f01545  scripts/host/surface/history/Reboot-Verified-MZ600-Linux-V05.ps1

@@ -17,3 +17,9 @@
 | `https://github.com/Olsens11/PS-to-VNC` | Development continuity and documentation patterns | Reference only |
 
 Project Git is authoritative for *new changes*. Imported historical files are traceable but may not be byte-identical if line endings were normalized during migration; hashes of final published source establish fresh authority. Never treat an unversioned local `linux-src` extract as immutable upstream.
+
+## Surface host command source
+- `scripts/host/surface/Xoom-v14-LiveLab.ps1` — current v014 serial command/upload host-side client (source only; hardware v014 untested).
+- `scripts/host/surface/Probe-MZ600-LinuxUSB.ps1` — USB gadget probing.
+- `scripts/host/surface/history/Reboot-Verified-MZ600-Linux-V05.ps1` — historical v05 procedure, not an approved current action.
+- The Surface's calibration scripts and Android Wi-Fi cycle helper include actual test-device serial identifiers, so they remain private and were **not** published.

@@ -27,3 +27,10 @@
 5. Keep MAC identity and regulatory provenance gates before scanning/association.
 
 See [Wi-Fi report](hardware/WIFI_BCM4329.md), [checkpoint log](checkpoints/README.md), [roadmap](roadmap.md).
+
+## Repository workspace and import verification (2026-10-24)
+- GitHub main commit `ea38127` imported 133 reviewed original source files. Desktop verification compared all 133 against `evidence/import-source-sha256.txt`: **133/133 SHA-256 match, 0 mismatches**.
+- One historical note containing MAC-like material was excluded from public source pending review; private copy retained at source.
+- Three development machines have cloned repositories and dedicated tracked Git worktrees. Desktop and Pi continuity checker: **0 errors**. Surface fresh checkout line-ending differences were resolved and both trees left clean.
+- Separate SSH ed25519 keys and per-device host aliases were created. **GitHub write access is NOT yet enabled**: all new keys still need registration under repository Deploy Keys with Allow write access. No successful SSH auth or Git push is claimed.
+- Surface v014 diagnostics client and safe USB probe scripts imported separately, without firmware or raw device-specific scripts.
