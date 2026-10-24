@@ -71,3 +71,9 @@
 - [ ] Test v021 observer through authorized RAM-only workflow (current remote upload blocked; not yet physically executed).
 - [ ] Compare actual Tegra PMC 32.768kHz clock gating/clock-rate and OEM 100/100/200ms U4/U2 GPIO reset sequence using controlled MMC2 on-demand trials.
 - [ ] Confirm firmware chip-CPU execution and true F2 readiness (not just firmware byte readback); restore original MAC provenance before RF activity.
+
+## New datasheet-controlled F2 gate (Section 11, 2026-10-24)
+- [x] Review entire BCM4329 Rev *F 149-page datasheet, SDIO Section 11 and reset/power/clock cross-references.
+- [ ] Verify **AUTO/default timing=0 with actual SDIO data clock <=25MHz**, leaving firmware/NVRAM and reset profile unchanged. v019 at 25MHz high-speed does not satisfy this control.
+- [ ] Check 110ms SDIO access delay measured from settled 1.25V VDDC and VDDIO, not only from software post-power-on delay; inspect 10-100k SDIO CMD/DAT pulls.
+- [ ] Read Tegra PMC LPO clock enable/rate and check power regulator/reset sequence, preserving distinct software/physical observations.

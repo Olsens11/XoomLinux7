@@ -16,3 +16,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v020 physical on-demand MMC2 card re-enumeration](../checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).
 
 - [v021 calibration/firmware A-B result and clock/reset research](../checkpoints/V021_OEM_FW_AND_LPO_HYPOTHESIS_2026-10-24.md).
+
+- [BCM4329 full datasheet, Section 11 timing and reset requirements](BCM4329_DATASHEET_SECTION11_REVIEW_2026-10-24.md): first untested control is <=25MHz **legacy** mode.

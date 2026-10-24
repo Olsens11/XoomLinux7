@@ -39,3 +39,6 @@ With complete Motorola six-field override active, reducing actual host SDIO cloc
 
 ## v020 dynamic testing environment
 MZ600 v020 physically supports MMC2-only card reinit and runtime full OEM six-field capability mode without reboot. Actual Motorola capability fields and host HS mode were verified; the v017 driver still showed IOEx 06 / IORx 02 and -62. Bundled v020 test firmware is 253,748 bytes with generic NVRAM: compare only with matched payloads. This **does not fix native wireless**. [v020 hardware acceptance](../checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).
+
+## Datasheet-derived mandatory timing control (2026-10-24)
+The Broadcom BCM4329 preliminary datasheet Section 11 Table 3 (p51) limits **default/legacy SDIO data clock to 25MHz**; several Xoom AUTO traces read **46,153,846Hz with ios.timing=0**, outside this rating. v019 tested 25MHz **high-speed** (ios.timing=2), which is not the legacy <=25MHz control. Section 11 p49 additionally requires host SDIO access >=110ms after 1.25V VDDC has settled, and CMD/DAT pull-ups 10-100kOhm. Section 23 p132 corroborates core/I/O POR minimum 110ms. These conditions are new test gates, **not a diagnosed cause or fix**. See [full datasheet review](../research/BCM4329_DATASHEET_SECTION11_REVIEW_2026-10-24.md).
