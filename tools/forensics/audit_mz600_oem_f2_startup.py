@@ -30,8 +30,13 @@ def context(text, marker, size=7500, last=False):
     return text[pos:pos + size]
 
 def in_order(text, *markers):
-    indices = [text.find(m) for m in markers]
-    return all(i >= 0 for i in indices) and indices == sorted(indices) and len(set(indices)) == len(indices)
+    cursor = 0
+    for marker in markers:
+        pos = text.find(marker, cursor)
+        if pos < 0:
+            return False
+        cursor = pos + len(marker)
+    return True
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
@@ -74,7 +79,7 @@ def main():
     cases = [
         ("OEM platform power before card detection", context(oemdhd, "static int wifi_probe(", 850),
          ("wifi_set_power(1, 0)", "wifi_set_carddetect(1)")),
-        ("OEM staged shared U4 + WLAN U2 release", context(board, "static int stingray_wifi_power(", 450),
+        ("OEM staged shared U4 + WLAN U2 release", context(board, "stingray_wifi_power(int on)", 450),
          ("mdelay(100)", "change_power_brcm_4329(on)", "mdelay(100);\n\tgpio_set_value", "mdelay(200)")),
         ("OEM enter firmware download disables ARM and resets SOCRAM", context(oemsdio, "dhdsdio_download_state(dhd_bus_t *bus, bool enter)", 3000, True),
          ("si_core_disable(bus->sih, 0)", "si_core_reset(bus->sih, 0, 0)", "/* Clear the top bit of memory */")),
