@@ -49,3 +49,6 @@ The observer obtains the Wi-Fi power sequencer's first clock from its DT node an
 3. If clock provider is enabled at 32768, investigate GPIO power/reset timing and actual voltage/oscillator with read-only kernel instrumentation; physical waveform requires measurement to confirm.
 4. Only use on-demand MMC2 re-enumeration to compare reset/power profiles after proving it really toggles the appropriate lines. Keep eMMC and original recovery untouched.
 5. Promote Wi-Fi only after F2 ready and persistent wlan0, then per-device MAC/regulatory provenance and repeat connection qualification.
+
+## Superseding physical test (later 2026-10-24)
+The earlier blocked upload was later completed through the regular verified RAM uploader. The v021 module physically ran and reported Linux pwrseq clock 32768Hz, enabled=1; F2 still timed out. See [physical result](V021_LPO_CLOCK_PHYSICAL_2026-10-24.md).

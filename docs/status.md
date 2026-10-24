@@ -72,3 +72,6 @@ Section 11 p51: maximum 25MHz for default SDIO; Xoom measured 46.15MHz @ ios.tim
 
 ## v022 datasheet Section 11 A/B qualification, 2026-10-24
 Temporary-boot v022 differs from known v020 boot image only in compiled SDMMC2 max-frequency limit (46153846→25000000, four DTB bytes) and Android boot checksum (20 bytes). Surface SHA256 verified \`2be2f5094149f242a5a9e5d290f7505d9b312ae4bfba8dbc74e1f7362995c6b3\`. Physical AUTO, legacy \`ios.timing=0\`, actual \`ios.clock=25000000\`, same 253748-byte standard firmware and 672-byte NVRAM; **three** fresh MMC2/card/driver trials all returned F2 -62, IOEx 06, IORx 02; wlan0 absent. Final MMC2 valid/bound, AUTO profile 0, modules unloaded, USB alive. [Full evidence](checkpoints/V022_AUTO_LEGACY_25MHZ_PHYSICAL_2026-10-24.md). LPO/true reset/supply-settling still unverified.
+
+## Completed v021 LPO test — 2026-10-24
+The previous offline-only v021 observer physically ran on v022: host/device USB CRC verified 462492-byte module; Linux reports wifi pwrseq clock rate=32768 enabled=1 while the F2 probe still gives IOEx 06 / IORx 02 / -62, no wlan0. This is software clock-provider state, not pin-level waveform proof. Modules unloaded, MMC2 bound, AUTO profile. See [physical checkpoint](checkpoints/V021_LPO_CLOCK_PHYSICAL_2026-10-24.md).

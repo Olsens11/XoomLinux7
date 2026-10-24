@@ -81,3 +81,7 @@
 - [x] Physically test SDIO Section 11 Table 3 AUTO/legacy at **measured 25 MHz**, unchanged firmware/NVRAM, three on-demand MMC2 trials: still F2 -62. Do not repeat this as an untested hypothesis.
 - [ ] Diagnose WLAN Cortex-M3 firmware startup and measured LPO clock provider, chip core reset/power, GPIO U4/U2 control and settled VDDC min 110ms requirement. v021 LPO observer needs authorized hardware test.
 - [ ] Verify performance and true cold boot after any verified functional fix; avoid declaring driver-loader success equal to Wi-Fi success.
+
+- [x] Physically verify pwrseq clock software state using v021 RAM-loaded observer: rate=32768, enabled=1; F2 still -62.
+- [ ] Confirm actual WLAN LPO electrical delivery, U4/U2 power/reset timing relative to settled VDDC/VDDIO and 110ms datasheet minimum.
+- [ ] Instrument BCM4329 Cortex-M3 startup/SDPCM mailbox to isolate absent F2 readiness.

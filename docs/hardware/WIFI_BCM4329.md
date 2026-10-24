@@ -45,3 +45,6 @@ The Broadcom BCM4329 preliminary datasheet Section 11 Table 3 (p51) limits **def
 
 ## v022 physical legacy timing control (2026-10-24)
 The exact Section 11 default-mode test was physically run: \`AUTO\`, \`ios.timing=0\`, \`ios.clock=25000000\` Hz with unchanged standard firmware (253748 bytes), NVRAM (672 bytes), and RAM diagnostic kernel. All three MMC2 re-enumeration/driver trials still gave IOEx \`02→06\`, IORx \`02→02\`, F2 error \`-62\` and no wlan0. Thus the prior 46.15MHz overspeed was an out-of-spec condition worth correcting but **not sufficient to explain the remaining F2 problem**. [v022 hardware checkpoint](../checkpoints/V022_AUTO_LEGACY_25MHZ_PHYSICAL_2026-10-24.md).
+
+## v021 LPO clock result — 2026-10-24
+Linux clock-provider observer on v022 reports 32768Hz enabled=1 during failed F2 initialization. brcmfmac device still has no directly assigned LPO clock; this is distinct from the MMC power-sequencer clock. **Physical waveform unmeasured.** F2 stays -62. See [v021 physical checkpoint](../checkpoints/V021_LPO_CLOCK_PHYSICAL_2026-10-24.md).
