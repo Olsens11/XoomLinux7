@@ -28,3 +28,5 @@ v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT 
 - v028/v029 milestone: [GPIO controller proof](docs/checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [compile-only shared-chip coordinator](docs/checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md). The coordinator is NOT deployed or linked to MMC/BT consumers.
 
 - **v030 Motorola Bluetooth shared-U4 experiment:** compile-only, not deployed. See [checkpoint](docs/checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md); 21 static contracts and isolated ARM compilation pass. No chip regulator or Bluetooth pin changed.
+
+- **v031/v032:** [Physical BT serdev and clock reference test](docs/checkpoints/V031_BLUETOOTH_BINDING_CLOCK_PHYSICAL_2026-10-24.md) proved Bluetooth child registered but unbound, and the nominal BT txco is actually the same 32k clock as WLAN LPO. [v032 disabled LPO-correct preview](docs/checkpoints/V032_BLUETOOTH_LPO_ROLE_COMPILE_ONLY_2026-10-24.md) passes 12 checks; no new hardware driver loaded.

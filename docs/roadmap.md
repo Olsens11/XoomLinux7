@@ -155,3 +155,12 @@
 - [ ] Review devicetree binding/schema for new Motorola opt-in + shared-supply properties and prepare explicit 25 MHz legacy SDIO qualified boot variant/rollback.
 - [ ] Test actual shared U4 regulator vote timestamps and chip PMU state via safe temporary boot only after independent source/DTB validation; do not infer full POR from software votes.
 - [ ] Continue independent WLAN Cortex-M3 execution and SDIO Function 2 readiness diagnosis; a dormant BT consumer cannot alone fix F2 -62.
+
+## Next gates from v031/v032 hardware evidence
+- [x] Confirm live serdev child registration AND actual Bluetooth binding: child exists but \`DRIVER=NONE\` on v025.
+- [x] Confirm actual live Bluetooth \`txco\` and Wi-Fi \`ext_clock\` use the same 32768Hz clock handle; mark old BT clock role misleading.
+- [x] Build independent, disabled v032 preview with \`clock-names="lpo"\`, retaining shared U4 regulator ref and existing vbat/vddio; 12 checks pass.
+- [ ] Inspect board-specific GPIO/pinmux wiring and reset startup behavior for I7 (GMI_WAIT) and U0/U1/U6 (GPIO-only) BEFORE enabling BT HCI driver.
+- [ ] Verify actual normal 38.4MHz crystal/reference frequency from same Xoom OEM/PMU and ensure chip-side clock and VDDC POR timing.
+- [ ] Implement controlled BT activation over existing USB in a **separate temporary RAM boot image**, with checked source/compiled DTB, qualified 25MHz MMC2, fail-closed regulator/reset state, and v025 rollback.
+- [ ] Do not assume BT power coordination will resolve F2 while BT remains unbound; independently test Cortex-M3 firmware execution/PMU/F2 readiness.

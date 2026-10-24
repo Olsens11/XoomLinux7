@@ -70,3 +70,5 @@ When a new record is added, link it here and from its local index; update status
 - [v028 read-only Bluetooth/WLAN controller register test](checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [v029 disabled whole-chip coordinator compiled prototype](checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md).
 
 - [v030 Motorola Bluetooth shared-regulator and passive-reset compile-only work](checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md), with source patch and private DT test.
+
+- [v031 live UART/BT binding and clock provenance](checkpoints/V031_BLUETOOTH_BINDING_CLOCK_PHYSICAL_2026-10-24.md) and [v032 corrected Bluetooth LPO description](checkpoints/V032_BLUETOOTH_LPO_ROLE_COMPILE_ONLY_2026-10-24.md).

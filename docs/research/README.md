@@ -34,3 +34,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [BCM4329 shared-chip resource owner architecture](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) — now supported by v028 GPIO register tests and v029 isolated kernel object compilation.
 
 - [Whole BCM4329 ownership design](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) updated by [v030 BT U4 regulator opt-in](../checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md).
+
+- [v031 runtime BT serdev/clock evidence](../checkpoints/V031_BLUETOOTH_BINDING_CLOCK_PHYSICAL_2026-10-24.md) and [v032 clock-role correction](../checkpoints/V032_BLUETOOTH_LPO_ROLE_COMPILE_ONLY_2026-10-24.md), supplementing the BCM4329 datasheet and OEM audit.
