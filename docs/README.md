@@ -46,3 +46,5 @@ When a new record is added, link it here and from its local index; update status
 - [Supplementary v018 recheck and actual host-clock discrepancy](checkpoints/V018_RECHECK_2026-10-24.md).
 
 - [v020 physical no-reboot MMC2 capability profile acceptance](checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).
+
+- [v020 additional 6,662,144-byte hardware image and repeat MMC2 on-demand test](checkpoints/V020_ADDITIONAL_BUILD_AND_REINIT_2026-10-24.md).
