@@ -95,10 +95,10 @@ def make_chip(s):
                      "#include <linux/kernel.h>\n#include <linux/ktime.h>\n",
                      "chip ktime include")
     s = replace_once(s,
-                     "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
+                     "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n\n\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
                      '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_BEGIN\n",\n' +
                      '\t        (unsigned long long)ktime_get_ns());\n' +
-                     "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n" +
+                     "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n\n" +
                      "\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
                      "CM3 after SOCRAM up")
     s = replace_once(s,
