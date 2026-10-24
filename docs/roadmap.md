@@ -130,3 +130,10 @@
 - [ ] Build and compile a proper board-specific shared pwrseq provider and two consumer hooks *without duplicate GPIO ownership*; keep standard WLAN/BT protocol drivers.
 - [ ] Validate temporary-boot callbacks, timing, on-chip PMU behavior and F2 after a controlled one-variable A/B against v025.
 - [ ] Do not claim cold POR or a Wi-Fi fix until physical state and actual F2 readiness demonstrate it.
+
+## Shared BCM4329 Linux provider implementation
+- [x] Compile board-specific source prototype into 32-bit ARM object without direct GPIO ownership.
+- [ ] Build a separate kernel configuration with CONFIG_POWER_SEQUENCING and link/test provider registration.
+- [ ] Integrate both MMC and Bluetooth target consumers and board binding; reconcile existing GPIO and regulator votes without overlap.
+- [ ] Validate I7/U0 pinmux ownership and a passive OEM-equivalent Bluetooth state, then time-stamp power sequencing.
+- [ ] Keep temporary v025 boot and no partition flashing until full source/integration and physical testing qualifies a change.

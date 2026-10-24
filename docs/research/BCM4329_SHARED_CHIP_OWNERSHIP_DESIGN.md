@@ -79,3 +79,6 @@ Tests deliberately cover an active BT vote preventing full power-off, shared OEM
 - [BCM4329 datasheet](https://media.digikey.com/pdf/Data%20Sheets/Cypress%20PDFs/BCM4329_RevF_Sep19%2C2016.pdf)
 - [Linux power sequencing API](https://origin.kernel.org/doc/html/latest/driver-api/pwrseq.html)
 - [Broadcom Bluetooth DT binding](https://linux.googlesource.com/linux/kernel/git/torvalds/linux/+/2a4d91142e538ff5580c6bf48b5e668d8131fd9a/Documentation/devicetree/bindings/net/bluetooth/brcm%2Cbluetooth.yaml)
+
+## Compile-only kernel-level milestone
+src/chip/stingray-bcm4329-pwrseq.c implements an initial two-target shared resource provider using the actual Linux 7 power-sequencing provider API and normal regulator/clock consumers. It compiled on Desktop to a 32-bit ARM object; it is **not linked, integrated with MMC or HCI UART, or deployed**. The first GPIO follow-up finding is also source-grounded: drivers/gpio/gpio-tegra.c returns -EINVAL from get_direction if the GPIO_CNF bit is not enabled. Thus the v027 Bluetooth I7/U0/U1/U6 -22 readings indicate GPIO mode is not enabled in their sampled controller state, not that external pin voltage is necessarily zero. These are prerequisites for a future controlled whole-chip boot test.
