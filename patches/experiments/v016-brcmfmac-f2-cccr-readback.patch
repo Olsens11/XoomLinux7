@@ -1,0 +1,30 @@
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -4265,7 +4265,27 @@
+ 	brcmf_sdiod_writel(sdiod, core->base + SD_REG(tosbmailboxdata),
+ 			   SDPCM_PROT_VERSION << SMB_DATA_VERSION_SHIFT, NULL);
+ 
++	/* XOOM V016: read-only SDIO CCCR/clock snapshot before the F2-ready wait. */
++	{
++		int exerr = 0, rdyerr = 0, clkerr = 0;
++		u8 ex = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IOEx, &exerr);
++		u8 ready = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IORx, &rdyerr);
++		u8 clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR,
++					   &clkerr);
++		pr_info("XOOM_F2V016 before ioex=%02x/%d iorx=%02x/%d clkcsr=%02x/%d clkstate=%d\n",
++			ex, exerr, ready, rdyerr, clk, clkerr, bus->clkstate);
++	}
+ 	err = sdio_enable_func(sdiod->func2);
++	/* XOOM V016: same registers immediately after sdio_enable_func returns. */
++	{
++		int exerr = 0, rdyerr = 0, clkerr = 0;
++		u8 ex = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IOEx, &exerr);
++		u8 ready = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IORx, &rdyerr);
++		u8 clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR,
++					   &clkerr);
++		pr_info("XOOM_F2V016 after ioex=%02x/%d iorx=%02x/%d clkcsr=%02x/%d result=%d\n",
++			ex, exerr, ready, rdyerr, clk, clkerr, err);
++	}
+ 
+ 	brcmf_dbg(INFO, "enable F2: err=%d\n", err);
+ 

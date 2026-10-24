@@ -27,3 +27,15 @@
 - [ ] Debian armhf root filesystem and network services.
 - [ ] QEMU/alternative x86 Windows 95 emulation feasibility and preservation.
 - [ ] NEON Lite instruction pretranslation/caching research kept as separate experiment.
+
+## F2 disciplined path (new 2026-10-24)
+- [x] v016 live read-only F2 register instrumentation and physical evidence; F2 still fails.
+- [x] Research Motorola complete six-field embedded SDIO setup and Broadcom firmware handshake; identify why v010-v013 do not fully reproduce OEM.
+- [ ] Capture raw CCCR and final parsed card capabilities and host timing before any new SDIO capability patch.
+- [ ] Compare valid same-device OEM firmware and NVRAM privately.
+- [ ] Perform cold/warm baseline and one-change-at-a-time Motorola equivalent with observed effective fields.
+- [ ] Qualify IORx bit 2, stable wlan0, regulatory/MAC identity, repeated network operation before declaring fixed.
+
+- [x] Read-only v017 raw CCCR, effective mmc_cccr fields and host ios captured on real replacement MZ600.
+- [ ] Produce complete Motorola six-capability equivalent in appropriately scoped modern SDIO initialization, with actual post-override field+timing measurements and no unrelated clock or calibration changes.
+- [ ] Separate legacy clock-only control to test 46.15MHz versus conservative rate, if OEM-equivalent test alone cannot isolate failure.

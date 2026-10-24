@@ -37,3 +37,6 @@
 - Every machine has its own SSH identity and host alias. GitHub write access is only confirmed after the key has been added as a **write-enabled** repository deploy key and a non-destructive push test succeeds.
 - Use `scripts/resume-state.sh` and `python3 tools/check_repository.py` when starting work.
 - Do not rewrite the upstream contributor's history. Provenance: [upstream source](https://github.com/xoom-linux/linux) at `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`.
+
+## Hardware acceptance refinement, 2026-10-24
+Motorola supplied a **complete six-capability embedded SDIO override**. Previous v010–v013 fixes do not establish equivalent behavior; v017 measured actual mismatch. Never call Wi-Fi fixed until F2 ready + \`wlan0\` + correct MAC/regulatory identity + network stability are physically demonstrated, repeatedly. Compilation and kernel module init rc=0 do not establish Wi-Fi success.

@@ -37,3 +37,9 @@ See [Wi-Fi report](hardware/WIFI_BCM4329.md), [checkpoint log](checkpoints/READM
 
 ## 2026-10-24 validated update
 See [v014 physical testing](checkpoints/V014_USB_LAB_2026-10-24.md), and [v015 candidate manifest](../releases/v015-manifest.txt). v014 remains safely running, v015 pending physical qualification.
+
+## Pending BCM4329 qualification (2026-10-24, v016 on v015 environment)
+A read-only hotloaded v016 Broadcom module physically recorded IOEx \`0x02→0x06\`, IORx \`0x02→0x02\`, clock CSR \`0xD2\`, \`-62\` timeout, still no wlan0. Source restored byte-identically. Previous v010/v011/v013 capability interventions are now considered **partial exploratory tests**, not OEM-equivalent accepted fixes. Next: read the RAW CCCR and EFFECTIVE parsed six card capabilities and host timing, then test a board-scoped complete Motorola equivalent with a valid control. [Evidence](checkpoints/V016_F2_IOEX_IORX_PHYSICAL_2026-10-24.md).
+
+## v017 diagnostic evidence, no Wi-Fi promotion
+v017 RAM-hotloaded read-only module verified actual raw CCCR and final card/host flags: raw CCCR 0x11, Linux version 1, high-speed 0 versus Motorola OEM version 2, high-speed 1. Host clock 46,153,846 Hz at legacy timing. F2 still -62, no wlan0. See [v017](checkpoints/V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md). This is **not a fixed Wi-Fi checkpoint**; v015 remains the proven diagnostic loader.

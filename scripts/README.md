@@ -10,3 +10,5 @@ Do **not** execute a historical recipe merely because it is present. Inspect its
 - host/surface/: physically tested v015 raw USB live-lab client, historical v014 client, and other Surface probes.
 
 - build/v15-* — v015 source compile, initramfs, kernel rebuild and image packaging; temporary boot only.
+
+- \`experiments/v016-build-f2probe.py\` — diagnostic-only source overlay, uses ARM toolchain and temporary local Linux tree, verifies restoration; no device-flash instructions.

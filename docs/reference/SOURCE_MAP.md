@@ -30,3 +30,10 @@ Project Git is authoritative for *new changes*. Imported historical files are tr
 - scripts/host/surface/Xoom-v15-LiveLab.ps1: physically verified host client.
 - releases/v015-manifest.txt: image identity and qualification.
 - docs/checkpoints/V015_RAW_USB_LAB_2026-10-24.md: physical evidence.
+
+## F2 v016 source
+- \`scripts/experiments/v016-build-f2probe.py\` and \`patches/experiments/v016-brcmfmac-f2-cccr-readback.patch\` — RAM module build, read-only instrumentation, restored source verification.
+- \`docs/research/\` and \`docs/checkpoints/V016_F2_IOEX_IORX_PHYSICAL_2026-10-24.md\` — comparison, plan and physical evidence. Binary v016 module stays private.
+
+## v017 capability audit
+- scripts/experiments/v017-build-capability-inventory.py; patches/experiments/v017-brcmfmac-f2-cccr-readback.patch; docs/checkpoints/V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md.

@@ -30,3 +30,8 @@ Versions are not automatically an acceptance order: last proven-on-device v013 r
 See [v014 USB and module evidence](V014_USB_LAB_2026-10-24.md).
 
 See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
+
+## v016 diagnostic
+- [v016 physical F2 IOEx/IORx and clock readback](V016_F2_IOEX_IORX_PHYSICAL_2026-10-24.md): diagnostic PASS, native Wi-Fi FAIL.
+
+- [v017 read-only CCCR inventory](V017_CCCR_CAPABILITIES_PHYSICAL_2026-10-24.md): original reported version/high-speed mismatch reproduced; F2 timeout unchanged.
