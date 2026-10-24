@@ -46,7 +46,7 @@ static void xoom_v035_sdio_snapshot(struct brcmf_sdio *bus, const char *phase)
     clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR, &ec);
     ioex = brcmf_sdiod_func0_rb(sdiod, SDIO_CCCR_IOEx, &ee);
     iorx = brcmf_sdiod_func0_rb(sdiod, SDIO_CCCR_IORx, &er);
-    pr_info("XOOM_V035 t_ns=%llu phase=%s pmuctl=%08x/%d clkcsr=%02x/%d ioex=%02x/%d iorx=%02x/%d\\n",
+    pr_info("XOOM_V035 t_ns=%llu phase=%s pmuctl=%08x/%d clkcsr=%02x/%d ioex=%02x/%d iorx=%02x/%d\n",
             (unsigned long long)ktime_get_ns(), phase, ctl, ep,
             clk, ec, ioex, ee, iorx, er);
 }
@@ -91,12 +91,12 @@ def make_sdio(s):
     return s
 
 def make_chip(s):
-    s = replace_once(s, "#include <linux/module.h>\n",
-                     "#include <linux/module.h>\n#include <linux/ktime.h>\n",
+    s = replace_once(s, "#include <linux/kernel.h>\n",
+                     "#include <linux/kernel.h>\n#include <linux/ktime.h>\n",
                      "chip ktime include")
     s = replace_once(s,
                      "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
-                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_BEGIN\\n",\n' +
+                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_BEGIN\n",\n' +
                      '\t        (unsigned long long)ktime_get_ns());\n' +
                      "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n" +
                      "\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
@@ -104,7 +104,7 @@ def make_chip(s):
     s = replace_once(s,
                      "\tbrcmf_chip_resetcore(core, 0, 0, 0);\n\n\treturn true;\n}\n\nstatic inline void",
                      '\tbrcmf_chip_resetcore(core, 0, 0, 0);\n' +
-                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_DONE\\n",\n' +
+                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_DONE\n",\n' +
                      '\t        (unsigned long long)ktime_get_ns());\n\n\treturn true;\n}\n\nstatic inline void',
                      "CM3 reset release")
     return s
