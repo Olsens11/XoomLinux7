@@ -76,3 +76,5 @@ When a new record is added, link it here and from its local index; update status
 - v033 Bluetooth USB-controlled temporary boot candidate: see checkpoints/V033_BLUETOOTH_USB_LAB_2026-10-24.md.
 
 - v034 physical HCI device-down correction: checkpoints/V034_HCI_IOCTL_PHYSICAL_2026-10-24.md; v033 kernel, DTB, BT/Wi-Fi modules frozen.
+
+- [Original MZ600 HRI39/HRI66 Wi-Fi driver and OEM-to-Linux 7 F2 audit](research/MZ600_BCM4329_OEM_VS_LINUX7_F2_STARTUP_AUDIT_V4.md) — matching-generation 2.6.36 OEM source compared against pinned Linux 7 CM3/PMU/clock/F2 startup; 27/27 offline source and ELF checks, no hardware modification.
