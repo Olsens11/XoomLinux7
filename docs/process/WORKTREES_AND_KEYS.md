@@ -20,4 +20,4 @@ Do not commit the keys or copy them into GitHub documentation. After credentials
 - Pi `/home/ps2/projects/XoomLinux7` (main) and `XoomLinux7-research` (research/oem-comparison): **created**; checker PASS.
 - Surface `C:\\Users\\olsen\\XoomLinux7` (main) and `XoomLinux7-hardware` (hardware/qualification): **created**; both clean after normalizing fresh-checkout line endings.
 - `origin` **fetch URL is public HTTPS**, so read/pull works before key registration. The **push URL** is `git@github.com-xoomlinux7:Olsens11/XoomLinux7.git` to force a dedicated per-device SSH identity for writes.
-- New keys are generated on all 3 machines but **not registered on GitHub**. SSH currently correctly reports `Permission denied (publickey)`. Add each key as a separate **write-enabled deploy key** at the repository settings; only then can a push qualify access.
+- All three public keys were registered as independent **write-enabled deploy keys**, and each machine passed SSH auth, a real remote push of its own temporary branch, and remote deletion. See [actual access verification](../checkpoints/GIT_ACCESS_2026-10-24.md). No private key material was shared.

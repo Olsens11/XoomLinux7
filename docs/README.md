@@ -19,6 +19,7 @@
 
 ## Evidence and continuity
 - [Chronological v01–v14 checkpoint index](checkpoints/README.md)
+- [Verified device GitHub write access (2026-10-24)](checkpoints/GIT_ACCESS_2026-10-24.md)
 - [Documentation authority and supersession rules](process/DOCUMENTATION_AUTHORITY.md)
 - [Evidence and publishing rules](process/EVIDENCE_AND_PRIVACY.md)
 - [Current state](status.md)

@@ -3,8 +3,8 @@
 ## G0 — canonical reproducible source and continuity
 - [x] Establish XoomLinux7 GitHub repo, strict state/evidence docs, upstream reference.
 - [ ] Complete final source/builder parity and source license review.
-- [ ] Register each machine's distinct SSH public **deploy key** with Write access and test push. Key creation alone does not grant access.
-- [ ] Verify device worktrees and cross-machine pull/push after GitHub permissions are configured.
+- [x] Register each machine's distinct SSH public **deploy key** with Write access; real create/delete test branch push passed on Desktop, Pi and Surface.
+- [x] Verify local worktrees, GitHub fetch, independent push/delete permissions, and sync all machine worktrees with main.
 - [ ] Add deterministic checks and release manifests for every accepted kernel image.
 
 ## G1 — validate v014 LIVE-LAB, no flash
