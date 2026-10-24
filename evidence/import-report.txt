@@ -1,0 +1,4 @@
+IMPORTED=133
+REJECTED=1
+REVIEW_ALERTS=0
+REJECTED docs/history/MZ600-BCM4329-OEM-source-discovery-2026-10-23.md: MAC-like string needs manual review
