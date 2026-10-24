@@ -1,8 +1,10 @@
 # BCM4329 datasheet — full page-level navigation index
 
-**Reference:** *BCM4329 Preliminary Data Sheet*, Broadcom 4329-DS105-R, December 3, 2010, included in Cypress document 002-14927 Rev. *F (September 19, 2016). **149 PDF pages.** Printed page numbers match PDF page numbers in this edition.
+**Reference:** *BCM4329 Preliminary Data Sheet*, Broadcom 4329-DS105-R, December 3, 2010, included in Cypress document 002-14927 Rev. *F (September 19, 2016). **149 PDF pages.** Uploaded reference SHA256: `7c8ae70f36b1ce7e08d064d4965884eb9eb30e31d5df7e5434029fd3ad3bab24` (2,539,698 bytes). Printed page numbers match PDF page numbers in this edition.
 
 This index covers **every page**, including front matter, non-WLAN subsystems and RF electrical tables, to help avoid blind spots. An **H** flag means high relevance to current F2 failure, **M** means a useful direct/cross-subsystem constraint or hardware reference, and **L** means indirect or post-start. A page rated L is **not** proof it is irrelevant to every future fault. The wording is a navigation summary, not a reproduction of the datasheet.
+
+Original online reference: https://www.rxelectronics.jp/datasheet/ff/CYW4329HKUBGT.pdf (the uploaded 149-page copy was used for this index).
 
 The exact uploaded datasheet remains the specification authority. Refer to figures/tables in the original PDF before interpreting timing, voltage, or pin polarity. Physical Xoom implementation is audited separately in [requirements and evidence](BCM4329_DATASHEET_REQUIREMENT_AUDIT.md).
 

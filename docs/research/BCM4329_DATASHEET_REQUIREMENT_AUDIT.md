@@ -73,3 +73,6 @@ Prioritize a scoped **read-only four-GPIO trace** (I7/U4/U0/U2), regulator votes
 - Software: `src/board/tegra20-motorola-stingray-usbdiag.dts`, `drivers/mmc/core/{core.c,pwrseq_simple.c,sdio.c,host.c}`, `drivers/bluetooth/hci_bcm.c`, `brcmfmac/{sdio.c,chip.c,firmware.c}`.
 - Physical checkpoints: `docs/checkpoints/V021_LPO_CLOCK_PHYSICAL_2026-10-24.md`, `V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md`, `V026_RUNTIME_PROVENANCE_PHYSICAL_2026-10-24.md`.
 - Datasheet itself is not copied into the public repo; only index, paraphrased requirements, test sources and evidence are committed.
+
+## Added physical evidence: v027 dual-subsystem probe
+A new read-only snapshot of Wi-Fi and Bluetooth Tegra pins observed U4/U2 as high outputs, while Bluetooth I7/U0/U1/U6 `gpiod_get_direction` returned `-22` (the accompanying raw-zero reads cannot be trusted as Bluetooth logic levels). The compiled v025 DTB **confirms both BT `txco` and WLAN `ext_clock` share the same clock specifier `<0x26 0x03>`**, not merely the same source expression. The BT pin-level hypothesis remains OPEN. See [v027 physical record](../checkpoints/V027_BT_WLAN_GPIO_READONLY_PHYSICAL_2026-10-24.md).

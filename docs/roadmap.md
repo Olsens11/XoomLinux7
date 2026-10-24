@@ -111,3 +111,13 @@
 - [ ] Prove whether Tegra U4 WL power is actually cycled on MMC2 rebind and whether boot-on regulator or shared rail prevents it. Observe U2 reset command sequence with timestamped core traces, not just steady states.
 - [ ] Trace internal Broadcom Cortex-M3/PMU execution, mailbox and real F2 response; do not conflate firmware RAM readback with execution.
 - [ ] Find device-specific MAC provenance from correct replacement hardware without copying another Xoom MAC.
+
+## BCM4329 full-datasheet compliance and power/clock audit
+- [x] Make full 149-page linked datasheet index and 36-row source/hardware requirement audit with cross-subsystem fault tree.
+- [x] Validate 31 static source + actual v025 DTB assertions: sole direct failure = source clock above 25MHz legacy limit; physical v025 unchanged/pass clock but F2 fails.
+- [x] Run v027 RAM-loaded read-only dual WLAN/BT GPIO snapshot: U2/U4 high outputs; BT I7/U0/U1/U6 GPIO direction -22 (no trustworthy BT level), F2 still -62.
+- [ ] Resolve U4/I7 physical logic using read-only Tegra pinmux and regulator owner APIs; inspect Bluetooth serdev binding and normal-ref vs LPO clock association.
+- [ ] Verify complete internal PMU/resource/CLK_CSR/Cortex-M3 startup before F2, under genuine understood power-state transitions.
+- [ ] Reconcile canonical DTS max-frequency and assigned-clock-rates with tested 25MHz legacy control, preserving rollback and no unqualified changes.
+- [ ] Audit all-state SDIO CMD/DAT pullups, identification <=400kHz, reference oscillator, true VDDC settling, and full Motorola six-field SDIO override.
+- [ ] Confirm electrical delivery and timing only if controller, pinmux, PMU, source and emulator checks cannot disambiguate.

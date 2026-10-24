@@ -53,3 +53,6 @@
 - Motorola OEM audit: `docs/research/MOTOROLA_BCM4329_F2_SOURCE_AUDIT.md` includes documented full six-field capability override and historical OEM reset sequence.
 - Actual test checkpoint files: `V021_LPO_CLOCK_PHYSICAL_2026-10-24.md`, `V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md`, and `V026_RUNTIME_PROVENANCE_PHYSICAL_2026-10-24.md`.
 - Runtime audit script: `tools/forensics/bcm4329_contract_audit.py` outputs JSON under private build workspace.
+
+## Physical v027 qualification result
+A RAM-only read-only module checked U4/U2 and I7/U0/U1/U6 together during F2 failure. WLAN U4 and U2 were valid output-high states, but BT pin direction reads gave `-EINVAL/-22`; **do not infer BT_REG_ON was low**. Verify pinmux and driver owner next. Actual compiled v025 DTB gives the same clock specifier `<0x26 0x03>` for Bluetooth `txco` and WLAN pwrseq `ext_clock`; a shared handle is confirmed, but wrong runtime clock usage is *not*. [Physical record](../checkpoints/V027_BT_WLAN_GPIO_READONLY_PHYSICAL_2026-10-24.md).

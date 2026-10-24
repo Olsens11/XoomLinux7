@@ -24,3 +24,7 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [Audit of inherited pwrseq property placement and v025 hardware results](../checkpoints/V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md): 100ms effective before reset, still -62.
 
 - [Virtual forensic lab v1 test record](VIRTUAL_FORENSIC_LAB_V1_2026-10-24.md): host artifact checks, independent ARM/QEMU device-tree and NVRAM decoding, seven intentional faults detected.
+
+- [BCM4329 datasheet, full 149-page reference index](BCM4329_DATASHEET_PAGE_INDEX.md) — every page, relevance and topic.
+- [BCM4329 requirement audit](BCM4329_DATASHEET_REQUIREMENT_AUDIT.md) — 36 direct and cross-system constraints, evidence levels and gaps.
+- [BCM4329 cross-subsystem fault tree](BCM4329_CROSS_SUBSYSTEM_FAULT_TREE.md) — shared WLAN/BT regulators, clocks, reset, straps, PMU and CPU handoff.
