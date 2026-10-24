@@ -16,7 +16,8 @@
 
 ## Latest build
 - v014 RAM-only LIVE-LAB image staged and independently hashed on Surface: `MZ600-stingray-diagnostic-v14-LIVE-LAB-TEMPBOOT-ONLY.img`, 6,656,000 bytes; SHA256 `65846a0928feed535e81a0898bc186d48d12a96c40f36719d6b56a8a3589f670`.
-- **v014 has not been established as physically booted or hardware-qualified.** Its hot-reload commands and module support must be verified experimentally before use.
+- **v014 was physically temporary-booted 2026-10-24**: USB PING and STATUS PASS; Broadcom WIFI_START and WIFI_STOP PASS; BCM4329 F2 still times out -62; no wlan0. Binary firmware upload FAIL due to canonical TTY echo/buffering; session recovered without a reboot.
+- **v015 was compiled and image-verified offline**, with raw tty and transfer timeout corrections. Not yet physical.
 - Built image, private binaries and exact device logs remain on development machines, not in public Git.
 
 ## Next gate
@@ -34,3 +35,6 @@ See [Wi-Fi report](hardware/WIFI_BCM4329.md), [checkpoint log](checkpoints/READM
 - Three development machines have cloned repositories and dedicated tracked Git worktrees. Desktop and Pi continuity checker: **0 errors**. Surface fresh checkout line-ending differences were resolved and both trees left clean.
 - Separate SSH ed25519 deploy keys are registered with write permissions. **Actual SSH auth, remote branch creation, and remote branch deletion passed from Desktop WSL, Raspberry Pi, and Surface**, with one independent branch per machine. Temporary access-test branches were removed afterward; see [dated access verification](checkpoints/GIT_ACCESS_2026-10-24.md).
 - Surface v014 diagnostics client and safe USB probe scripts imported separately, without firmware or raw device-specific scripts.
+
+## 2026-10-24 validated update
+See [v014 physical testing](checkpoints/V014_USB_LAB_2026-10-24.md), and [v015 candidate manifest](../releases/v015-manifest.txt). v014 remains safely running, v015 pending physical qualification.

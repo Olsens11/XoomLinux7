@@ -33,8 +33,9 @@ def main():
             errors.append("Private key material: "+str(p.relative_to(ROOT)))
     status=(ROOT/"docs/status.md").read_text(encoding="utf-8") if (ROOT/"docs/status.md").exists() else ""
     state=(ROOT/"runtime/PROJECT_STATE.env").read_text(encoding="utf-8") if (ROOT/"runtime/PROJECT_STATE.env").exists() else ""
-    if "v013" not in status or "CURRENT_HARDWARE_VERIFIED=v013" not in state:
-        errors.append("Expected imported v013 verified baseline absent; review promotion procedure")
+    m = re.search(r"(?m)^CURRENT_HARDWARE_VERIFIED=(v[0-9]+)(?:_partial)?$", state)
+    if not m or m.group(1) not in status:
+        errors.append("Physical baseline version missing or inconsistent")
     for err in errors: print("ERROR",err)
     print(f"Checked {len(files)} filesystem entries; errors={len(errors)}")
     return int(bool(errors))

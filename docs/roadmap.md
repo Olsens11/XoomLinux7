@@ -8,7 +8,7 @@
 - [ ] Add deterministic checks and release manifests for every accepted kernel image.
 
 ## G1 — validate v014 LIVE-LAB, no flash
-- [ ] Temporary boot, verify USB protocol and RAM-only module workflows on replacement MZ600.
+- [x] v014 temporary boot, USB protocol, and Broadcom start/stop passed; binary transfer failed and v015 corrective candidate built.
 - [ ] Prove F2 timeout observability with recoverable Wi-Fi start/stop/retry.
 - [ ] Export dated, scrubbed evidence; keep exact raw serial/device information privately.
 

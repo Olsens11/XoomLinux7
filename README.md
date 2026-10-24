@@ -4,7 +4,7 @@
 
 This repository is the **canonical integration and engineering record** for our Linux 7.0 development. It builds on [xoom-linux/linux](https://github.com/xoom-linux/linux), not a replacement or an unattributed copy of that kernel. The original working kernel snapshot was commit `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3` (2026-06-12).
 
-> **Current hardware authority (2026-10-24):** v013 temporary-boot Linux hardware diagnostics verified on replacement Stingray MZ600; v014 live Wi-Fi lab **built and checksum verified offline, not yet hardware-qualified**. BCM4329 Wi-Fi enumerates and loads firmware but its SDIO Function 2 fails readiness (`-62` timeout). **No confirmed working native Linux Wi-Fi connection yet.**
+> **Current hardware authority (2026-10-24):** v014 USB temporary boot and Broadcom module load/unload **physically verified**; F2 timeout and binary USB upload remain unresolved. v015 raw-serial repair **built offline, not yet physical**. BCM4329 Wi-Fi enumerates and loads firmware but its SDIO Function 2 fails readiness (`-62` timeout). **No confirmed working native Linux Wi-Fi connection yet.**
 
 ## Start here
 
