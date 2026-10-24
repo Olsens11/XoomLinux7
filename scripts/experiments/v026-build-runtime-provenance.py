@@ -132,7 +132,7 @@ def make_fw(src: str) -> str:
     require_once(s, anchor, "sync board variant")
     s = s.replace(anchor, """\t\tret = firmware_request_nowarn(fw, alt_path, fwctx->dev);
         if (!ret && *fw) {
-            pr_info("XOOM_PROV026 t_ns=%llu sync_path=%s slot=%u\n",
+            pr_info("XOOM_PROV026 t_ns=%llu sync_path=%s slot=%u\\n",
                     (unsigned long long)ktime_get_ns(),
                     alt_path, fwctx->curpos);
             xoom_v026_blob("SYNC_BOARD", (*fw)->data, (*fw)->size);
@@ -153,7 +153,7 @@ def make_fw(src: str) -> str:
             xoom_rc = firmware_request_nowarn(fw, cur->path, fwctx->dev);
         else
             xoom_rc = request_firmware(fw, cur->path, fwctx->dev);
-        pr_info("XOOM_PROV026 t_ns=%llu sync_fallback_path=%s slot=%u rc=%d\n",
+        pr_info("XOOM_PROV026 t_ns=%llu sync_fallback_path=%s slot=%u rc=%d\\n",
                 (unsigned long long)ktime_get_ns(), cur->path,
                 fwctx->curpos, xoom_rc);
         if (!xoom_rc && *fw)
@@ -177,7 +177,7 @@ def make_fw(src: str) -> str:
     require_once(s, anchor, "platform MAC source")
     s = s.replace(anchor, """\tif (eth_platform_get_mac_address(dev, mac) == 0)
         nvp.strip_mac = true;
-    pr_info("XOOM_PROV026 t_ns=%llu platform_mac_available=%d\n",
+    pr_info("XOOM_PROV026 t_ns=%llu platform_mac_available=%d\\n",
             (unsigned long long)ktime_get_ns(), nvp.strip_mac);
 """, 1)
     return s
