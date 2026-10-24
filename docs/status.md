@@ -58,3 +58,5 @@ Another physical v018 run (identical image SHA) confirmed six Motorola capabilit
 
 ## v020 post-test stability caveat
 After completing and documenting successful runtime MMC2 AUTO/MOTOROLA/AUTO tests, the Surface later observed a temporary loss of Linux USB CDC, followed by the replacement MZ600 appearing in Android ADB mode, then Linux v020 CDC again. Read-only Linux uptime at final recovery was only 83.96 seconds, whereas the prior session had passed 250 seconds. This confirms a **later session restart** but does not establish its cause. No deliberate reboot was issued by this workflow after initial v020 boot. v020 on-demand functionality physically passed; **long-running session stability is NOT yet qualified**. See v020 physical checkpoint.
+
+A second v020 image (SHA256 e23e3dea2a0996bb7d63c8e7158715ad6799b57f45e4dcc3fcab454b528bc6bb) was independently staged, temporarily booted and tested; it passed AUTO/MOTOROLA/AUTO re-enumeration with F2 still failing. The earlier v020 manifest SHA is different; [see distinct-image test provenance](checkpoints/V020_SECOND_IMAGE_VERIFICATION_2026-10-24.md). Long-duration stability remains unresolved.
