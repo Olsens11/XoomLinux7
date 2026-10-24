@@ -32,3 +32,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [BCM4329 whole-chip resource ownership and OEM reconstruction](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md): Motorola shared U4 count, deliberately low BT I7 on rfkill, differences from Linux 7, staged safe power sequencer design and offline verification.
 
 - [BCM4329 shared-chip resource owner architecture](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) — now supported by v028 GPIO register tests and v029 isolated kernel object compilation.
+
+- [Whole BCM4329 ownership design](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) updated by [v030 BT U4 regulator opt-in](../checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md).

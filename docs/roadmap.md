@@ -146,3 +146,12 @@
 - [ ] Design and compile a consumer integration that propagates power sequencing errors; migrate source ownership of U4/I7/U0/U2 without duplicate GPIO requests.
 - [ ] Avoid experimental boot until a verified 25MHz legacy MMC profile, source/DTB match, known v025 rollback, and no conflicting clock/reset control.
 - [ ] Establish actual internal PMU resource progress, Cortex-M3 execution, chip-derived ready response, and only then conclude root cause.
+
+## v030 next gates after the compile-only Bluetooth shared U4 candidate
+- [x] Board-gate a dedicated Bluetooth shared-U4 regulator vote; do not hijack the actual vbat/vddio supplies or request GPIO U4 twice.
+- [x] Preserve OEM I7 passive LOW policy and assert active-low U0 from initial GPIO acquisition (avoid generic reset-release glitch).
+- [x] Include monotonic command breadcrumbs; patch applies and ARM object compiles from exact SHA256-pinned Linux 7 source; disabled BT DT fixture and 21 static checks pass.
+- [ ] Determine BT serdev driver binding, pinmux ownership and normal reference-clock versus LPO roles before allowing a powered Bluetooth test.
+- [ ] Review devicetree binding/schema for new Motorola opt-in + shared-supply properties and prepare explicit 25 MHz legacy SDIO qualified boot variant/rollback.
+- [ ] Test actual shared U4 regulator vote timestamps and chip PMU state via safe temporary boot only after independent source/DTB validation; do not infer full POR from software votes.
+- [ ] Continue independent WLAN Cortex-M3 execution and SDIO Function 2 readiness diagnosis; a dormant BT consumer cannot alone fix F2 -62.

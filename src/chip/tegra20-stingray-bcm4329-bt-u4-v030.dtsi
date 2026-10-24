@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * v030 BOARD EXPERIMENT. Do not include in a deployable image until the
+ * GPIO/pinmux handoff and regulator wiring have been qualified.
+ * The Bluetooth serial child is DISABLED by design for static DT checks.
+ * Existing WLAN regulator owner, MMC pwrseq and kernel boot are unchanged.
+ */
+&uartc {
+    bluetooth {
+        compatible = "motorola,stingray-bcm4329-bt",
+                     "brcm,bcm4329-bt";
+        motorola,shared-u4-power;
+        shared-supply = <&reg_wifi_vdd>;
+        status = "disabled";
+    };
+};

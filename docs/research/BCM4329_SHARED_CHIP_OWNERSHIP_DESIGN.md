@@ -82,3 +82,6 @@ Tests deliberately cover an active BT vote preventing full power-off, shared OEM
 
 ## Compile-only kernel-level milestone
 src/chip/stingray-bcm4329-pwrseq.c implements an initial two-target shared resource provider using the actual Linux 7 power-sequencing provider API and normal regulator/clock consumers. It compiled on Desktop to a 32-bit ARM object; it is **not linked, integrated with MMC or HCI UART, or deployed**. The first GPIO follow-up finding is also source-grounded: drivers/gpio/gpio-tegra.c returns -EINVAL from get_direction if the GPIO_CNF bit is not enabled. Thus the v027 Bluetooth I7/U0/U1/U6 -22 readings indicate GPIO mode is not enabled in their sampled controller state, not that external pin voltage is necessarily zero. These are prerequisites for a future controlled whole-chip boot test.
+
+## Source implementation checkpoint: v030 (not deployed)
+The first proposed common-resource consumer is a Motorola-gated hci_bcm dedicated shared-U4 regulator, with generic vbat/vddio left unchanged and I7 LOW/U0-reset-asserted at acquisition per OEM. It compiled as an ARM object and passed 21 static/disabled-DTB checks. This is not yet complete shared-chip pwrseq wiring and does not change the currently unbound Bluetooth side during the physical F2 failure. [Evidence](../checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md).

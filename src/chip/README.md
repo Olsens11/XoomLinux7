@@ -14,3 +14,6 @@ See [whole-chip design](../../docs/research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN
 
 ## v028/v029 continuation
 See [v028 physical GPIO register checkpoint](../../docs/checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [v029 isolated Linux 7 compile-only checkpoint](../../docs/checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md). The new disabled DTS preview does not bind consumers or change the Xoom. Build-only: `bash scripts/experiments/v029-compile-shared-owner.sh`.
+
+## v030 Bluetooth-side shared U4 vote experiment
+The original v029 generic power-sequencer provider remains **unbound**; [v030](../../docs/checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md) separately prototypes a Motorola-only hci_bcm dedicated U4 regulator vote using native Linux regulator reference counting. Its DTS child is **disabled** and is not included in any verified boot image. No duplicate U4 GPIO ownership or active chip operation is introduced.

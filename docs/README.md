@@ -68,3 +68,5 @@ When a new record is added, link it here and from its local index; update status
 - [BCM4329 whole-chip power coordinator design](research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md): OEM shared power reference counts, two Linux consumers, resource ownership and rollback.
 
 - [v028 read-only Bluetooth/WLAN controller register test](checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [v029 disabled whole-chip coordinator compiled prototype](checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md).
+
+- [v030 Motorola Bluetooth shared-regulator and passive-reset compile-only work](checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md), with source patch and private DT test.
