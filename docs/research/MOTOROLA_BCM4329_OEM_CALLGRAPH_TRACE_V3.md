@@ -187,3 +187,26 @@ First improve source completeness; then trace events in **one monotonic timebase
 ## K. Latest repository reconciliation: v034 (independent of this research)
 
 During the source audit GitHub advanced to commit `f16fe64872bcd81b75646e9afe18bcd354f9e56d`, **v034 physically verified**. Its USB `HCIDEVDOWN` now passes device index by value (returns rc 0), the host message correctly warns that `BT_START` automatically initializes/powers Bluetooth, and `BT_STOP` verified all six module unloads and U4 release. The corrected v034 image was temporary booted, not flashed. **No new WLAN F2 experiment was performed in v034.** This means the earlier v033 ioctl bug is no longer an outstanding corrective task; the OEM whole-chip research remains open. Source: https://github.com/Olsens11/XoomLinux7/blob/main/docs/checkpoints/V034_HCI_IOCTL_PHYSICAL_2026-10-24.md .
+
+## L. Newly resolved OEM build-configuration clue — primary driver identity (critical correction)
+
+**Source verified, not yet a shipped-image binary verification.** Motorola's `arch/arm/configs/stingray_defconfig` in the **same kernel/tegra revision** used for our Motorola board analysis (`eb4e253d7d76f6093ef50597e909157c21803842`) explicitly specifies:
+
+```config
+CONFIG_WIFI_CONTROL_FUNC=y
+CONFIG_BCMDHD=y
+CONFIG_BCMDHD_FW_PATH="/system/vendor/firmware/fw_bcmdhd.bin"
+CONFIG_BCMDHD_NVRAM_PATH="/system/etc/wifi/bcm4329.cal"
+CONFIG_MMC_EMBEDDED_SDIO=y
+CONFIG_BT_HCIUART=y
+```
+
+Authoritative file: https://android.googlesource.com/kernel/tegra/+/eb4e253d7d76f6093ef50597e909157c21803842/arch/arm/configs/stingray_defconfig .
+
+**Consequence:** For this Motorola source/config pairing, the **BCMDHD** path is the primary driver candidate, and it is configured built-in (`=y`), not necessarily a runtime-inserted `bcm4329.ko`. The earlier 2010 `drivers/net/wireless/bcm4329/dhd_linux.c` and AOSP Froyo `dhd_sdio.c` traces in sections B–D are *historical Broadcom-family reference traces*, **not yet proven to be the exact driver code or call order in this defconfig's actual boot**. Their platform-probe ordering and F2 poll semantics cannot be promoted to the definitive Stingray OEM runtime graph until checked against the contemporaneous **Motorola `bcmdhd` build and its Makefile macros and initcall handling**.
+
+This finding also changes how to interpret the older Android `init.stingray.rc` disabled `insmod bcm4329.ko` services: those entries could be manufacturing paths or a different vendor software revision and cannot override the kernel defconfig. The configured `.cal` firmware/NVRAM paths are concrete and should be compared against same-revision `bcmdhd` file-open and country/MAC callbacks. `CONFIG_WIFI_CONTROL_FUNC=y` and `CONFIG_MMC_EMBEDDED_SDIO=y` support the presence of board platform and embedded-card interfaces, but don't by themselves establish who triggers platform-power first at runtime.
+
+**New priority gate:** obtain the actual `drivers/net/wireless/bcmdhd/` source (or the vendor-referenced external source submodule) and `Makefile` at that **same exact revision**, then enumerate, line by line: module/built-in init order, `CUSTOMER_HW2`, `BCMPLATFORM_BUS`, `dhd_customer_gpio_wlan_ctrl` handling, platform callbacks, first power vote relative to `stingray_wlan_init` and MMC/carddetect, `dhd_sdio` reset/firmware/PMU/F2 path, and teardown/suspend/resume. If the exact driver source isn't present in the checked public tree, mark that as a provenance gap and locate Motorola's matching published source package. Keep device logs and hashes separate from vendor source assumptions.
+
+**What this corrects:** section J's statement that the *actual* OEM platform-probe power-before-carddetect call graph is “closed” is too broad. That ordering is **verified in one historical DHD family source**, but remains **open as an exact Motorola/BCMDHD lifetime trace** for the MZ600. All direct Motorola board-source findings (shared U4 implementation, U2 callbacks, BT rfkill) remain source verified.
