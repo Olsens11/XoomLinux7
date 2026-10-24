@@ -36,3 +36,6 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [Whole BCM4329 ownership design](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) updated by [v030 BT U4 regulator opt-in](../checkpoints/V030_BT_SHARED_U4_COMPILE_ONLY_2026-10-24.md).
 
 - [v031 runtime BT serdev/clock evidence](../checkpoints/V031_BLUETOOTH_BINDING_CLOCK_PHYSICAL_2026-10-24.md) and [v032 clock-role correction](../checkpoints/V032_BLUETOOTH_LPO_ROLE_COMPILE_ONLY_2026-10-24.md), supplementing the BCM4329 datasheet and OEM audit.
+
+- [Original MZ600 HRI39/HRI66 driver recovery](MZ600_HRI39_HRI66_OEM_DRIVER_RECOVERY_2026-10-24.md) — verified 2.6.36.3 BCM4329 loadable module and matching-generation historical source, kept separate from later 2.6.39 BCMDHD.
+- [MZ600 OEM versus Linux 7 Cortex-M3/PMU/SDIO F2 startup audit v4](MZ600_BCM4329_OEM_VS_LINUX7_F2_STARTUP_AUDIT_V4.md) — detailed source-equivalence matrix, two nonproven chip-setup differences, untested 261,317-byte early OEM firmware, and 27/27 independent read-only assertions. [Verifier](../../tools/forensics/audit_mz600_oem_f2_startup.py).
