@@ -164,3 +164,11 @@
 - [ ] Verify actual normal 38.4MHz crystal/reference frequency from same Xoom OEM/PMU and ensure chip-side clock and VDDC POR timing.
 - [ ] Implement controlled BT activation over existing USB in a **separate temporary RAM boot image**, with checked source/compiled DTB, qualified 25MHz MMC2, fail-closed regulator/reset state, and v025 rollback.
 - [ ] Do not assume BT power coordination will resolve F2 while BT remains unbound; independently test Cortex-M3 firmware execution/PMU/F2 readiness.
+
+## v033 controlled Bluetooth power experiment
+- [x] Build and link patched Linux 7 Bluetooth HCI UART and ECC/ECDH/CMAC dependencies.
+- [x] Preserve v025 kernel, 25MHz MMC2 and Wi-Fi binaries; add explicit USB BT status/load/power/down/unload commands with fail-closed guards.
+- [x] Independent candidate and rollback image SHA checks on Surface and ARM no-NEON init selftest.
+- [ ] Boot candidate with fastboot boot only, never flash.
+- [ ] Verify UART binding and I7/U0 state on BT_START, then controlled BT_ON, BT_OFF, BT_STOP if safe.
+- [ ] Separately diagnose Wi-Fi F2 -62 and chip-side PMU/Cortex-M3 startup.
