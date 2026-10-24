@@ -74,3 +74,5 @@ When a new record is added, link it here and from its local index; update status
 - [v031 live UART/BT binding and clock provenance](checkpoints/V031_BLUETOOTH_BINDING_CLOCK_PHYSICAL_2026-10-24.md) and [v032 corrected Bluetooth LPO description](checkpoints/V032_BLUETOOTH_LPO_ROLE_COMPILE_ONLY_2026-10-24.md).
 
 - v033 Bluetooth USB-controlled temporary boot candidate: see checkpoints/V033_BLUETOOTH_USB_LAB_2026-10-24.md.
+
+- v034 physical HCI device-down correction: checkpoints/V034_HCI_IOCTL_PHYSICAL_2026-10-24.md; v033 kernel, DTB, BT/Wi-Fi modules frozen.

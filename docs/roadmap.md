@@ -182,3 +182,12 @@
 - [ ] Correct freestanding HCI ioctl argument semantics and BT_START startup messaging, package as v034 separate rollbackable candidate before relying on BT_OFF.
 - [ ] Find correct Bluetooth BCM4329B1 .hcd firmware in private OEM reference if needed; never commit proprietary binaries or per-device secrets.
 - [ ] Continue WLAN Cortex-M3 and chip PMU startup diagnosis; shared U4 vote is not proven internal POR.
+
+## v034 physical result and next chip-side issues
+- [x] Correct HCI up/down argument: Linux expects HCI device index by value, not a pointer to int.
+- [x] Build and independently verify one-variable v034 temporary boot image, preserving v033 kernel and all modules/firmware/DTB.
+- [x] Physically fastboot boot replacement Xoom, no flash. BT_START automatically initializes chip and reads BCM4329B1; corrected BT_OFF returns 0, vs v033 -19.
+- [x] BT_STOP unloads six modules, logs reset assert and U4 vote off; MMC2 bound AUTO and USB responsive.
+- [ ] Distinguish HCI device-down completion from regulator vote release on module unload: current timestamps do not prove U4 toggles at BT_OFF.
+- [ ] Assess missing OEM Bluetooth HCD patch, preserve private proprietary binaries.
+- [ ] Investigate WLAN Cortex-M3 execution, PMU clocks and F2 ready -62 independently.
