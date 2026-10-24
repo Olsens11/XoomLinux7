@@ -67,3 +67,8 @@ After third test, `WIFI_STOP` unloaded `brcmfmac` and `brcmutil` successfully. F
 ## Next evidence-driven investigation
 
 Audit the entire Tegra/BCM4329 initialization chain from reset GPIO and regulator boot-on state to MMC host power-up, pwrseq `pre_power_on/post_power_on`, SDIO CCCR/card initialization, brcmfmac firmware/NVRAM loading and Cortex-M3 core release, with a timeline of observed events and source lines. Distinguish the original Motorola code from inherited downstream fixes and new mainline behavior. Use read-only kernel telemetry to verify actual transitions and reference counts, not just final steady state. Before another change, evaluate whether `regulator-boot-on` masks power toggling across MMC2 rebinds, and whether the bootloader owns/initializes the Wi-Fi power/reset lines before Linux takes over. The hardware remains unopened.
+
+## Supplemental confirmation after interrupted continuation
+
+The v025 USB console was verified still responsive, and its full `BOOTLOG` independently confirmed host `power_delay_ms=100` and `F2=-62`. A further `MMC2_REINIT` returned `PASS BCM4329 REENUMERATED`; the subsequent RAM-driver test again measured `power_delay_ms=100`, `ios.clock=25000000`, `ios.timing=0`, `IOEx=02→06`, `IORx=02→02`, `F2=-62`. Finally `WIFI_STOP` returned both module unload codes 0, and `MMC2_STATUS` reported target VALID, BOUND YES, BCM4329 verified, AUTO profile 0, and modules unloaded. This extra observation agrees with the three earlier trials. It does not demonstrate a physical WLAN power cycle or fix.
+

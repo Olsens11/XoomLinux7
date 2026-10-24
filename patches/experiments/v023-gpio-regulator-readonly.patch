@@ -1,0 +1,150 @@
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -16,6 +16,16 @@
+ #include <linux/mmc/sdio_ids.h>
+ #include <linux/mmc/sdio_func.h>
+ #include <linux/mmc/card.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++
++#include <linux/gpio/consumer.h>
++#include <linux/regulator/consumer.h>
++#include <linux/err.h>
++#include <dt-bindings/gpio/tegra-gpio.h>
++#include <linux/of.h>
++#include <linux/of_clk.h>
++#include <linux/mmc/host.h>
+ #include <linux/mmc/core.h>
+ #include <linux/semaphore.h>
+ #include <linux/firmware.h>
+@@ -4205,6 +4215,45 @@
+ #define BRCMF_SDIO_FW_NVRAM	1
+ #define BRCMF_SDIO_FW_CLM	2
+ 
++
++/* XOOM_V023_FORENSIC: read-only Tegra GPIO output latch and
++ * regulator framework state. No requests, pinmux mutations,
++ * regulator enable/disable, sleeps or peripheral register writes.
++ * Tegra20 gpiochip base is statically 0 in this kernel, but stop
++ * interpreting values if gpiochip provenance differs on device.
++ */
++static void xoom_v023_gpio(const char *name, int gpio)
++{
++    struct gpio_desc *d = gpio_to_desc(gpio);
++    int direct, raw, logic, active_low;
++    if (!d) {
++        pr_info("XOOM_V023 GPIO %s pin=%d NO_DESC\n", name, gpio);
++        return;
++    }
++    direct = gpiod_get_direction(d);
++    raw = gpiod_get_raw_value_cansleep(d);
++    logic = gpiod_get_value_cansleep(d);
++    active_low = gpiod_is_active_low(d);
++    pr_info("XOOM_V023 GPIO %s pin=%d direction=%d raw=%d logical=%d active_low=%d\n",
++            name, gpio, direct, raw, logic, active_low);
++}
++static void xoom_v023_regulator(struct mmc_host *host, const char *name)
++{
++    struct regulator *reg;
++    int enabled, voltage;
++    /* Optional avoids selecting a dummy if a supply is absent. */
++    reg = regulator_get_optional(mmc_dev(host), name);
++    if (IS_ERR(reg)) {
++        pr_info("XOOM_V023 REG %s lookup_errno=%ld\n",
++                name, PTR_ERR(reg));
++        return;
++    }
++    enabled = regulator_is_enabled(reg);
++    voltage = regulator_get_voltage(reg);
++    pr_info("XOOM_V023 REG %s enabled=%d reported_uV=%d\n",
++            name, enabled, voltage);
++    regulator_put(reg);
++}
+ static void brcmf_sdio_firmware_callback(struct device *dev, int err,
+ 					 struct brcmf_fw_request *fwreq)
+ {
+@@ -4240,8 +4289,38 @@
+ 	bus->sdcnt.tickcnt = 0;
+ 	brcmf_sdio_wd_timer(bus, true);
+ 
++
++    {
++        struct device_node *pnode;
++        struct clk *lpo;
++        pnode = of_find_node_by_name(NULL, "wifi-pwrseq");
++        if (!pnode) {
++            pr_info("XOOM_LPOV021 wifi-pwrseq node MISSING\n");
++        } else {
++            lpo = of_clk_get(pnode, 0);
++            if (IS_ERR(lpo)) {
++                pr_info("XOOM_LPOV021 pwrseq clk lookup errno=%ld\n",
++                        PTR_ERR(lpo));
++            } else {
++                pr_info("XOOM_LPOV021 pwrseq rate=%lu enabled=%d\n",
++                        clk_get_rate(lpo), __clk_is_enabled(lpo));
++                clk_put(lpo);
++            }
++            of_node_put(pnode);
++        }
++    }
+ 	sdio_claim_host(sdiod->func1);
+ 
++
++    /* Sample states immediately after device FW RAM download/CPU release,
++     * BEFORE waiting on SDIO F2 ready. Note Tegra GPIO get for outputs
++     * reflects the programmed output latch, not measured pin voltage.
++     */
++    xoom_v023_gpio("U2_WIFI_RESET", TEGRA_GPIO(U, 2));
++    xoom_v023_gpio("U4_WIFI_POWER", TEGRA_GPIO(U, 4));
++    xoom_v023_gpio("U5_WIFI_HOST_WAKE", TEGRA_GPIO(U, 5));
++    xoom_v023_regulator(sdiod->func1->card->host, "vmmc");
++    xoom_v023_regulator(sdiod->func1->card->host, "vqmmc");
+ 	/* Make sure backplane clock is on, needed to generate F2 interrupt */
+ 	brcmf_sdio_clkctl(bus, CLK_AVAIL, false);
+ 	if (bus->clkstate != CLK_AVAIL)
+@@ -4265,7 +4344,45 @@
+ 	brcmf_sdiod_writel(sdiod, core->base + SD_REG(tosbmailboxdata),
+ 			   SDPCM_PROT_VERSION << SMB_DATA_VERSION_SHIFT, NULL);
+ 
++	
++    {
++        struct mmc_card *xc = sdiod->func1->card;
++        struct mmc_host *xh = xc->host;
++        int errev=0, ercaps=0, erpow=0, erspeed=0;
++        u8 rawrev=sdio_f0_readb(sdiod->func1,SDIO_CCCR_CCCR,&errev);
++        u8 rawcaps=sdio_f0_readb(sdiod->func1,SDIO_CCCR_CAPS,&ercaps);
++        u8 rawpow=sdio_f0_readb(sdiod->func1,SDIO_CCCR_POWER,&erpow);
++        u8 rawspeed=sdio_f0_readb(sdiod->func1,SDIO_CCCR_SPEED,&erspeed);
++        pr_info("XOOM_F2V021 RAW cccr=%02x/%d caps=%02x/%d power=%02x/%d speed=%02x/%d\n",
++                rawrev,errev,rawcaps,ercaps,rawpow,erpow,rawspeed,erspeed);
++        pr_info("XOOM_F2V021 CARD sdio_vsn=%u multi=%u low=%u wide=%u highpower=%u highspeed=%u\n",
++                xc->cccr.sdio_vsn,xc->cccr.multi_block,xc->cccr.low_speed,
++                xc->cccr.wide_bus,xc->cccr.high_power,xc->cccr.high_speed);
++        pr_info("XOOM_F2V021 HOST clock=%u timing=%u buswidth=%u signalvoltage=%u vdd=%u\n",
++                xh->ios.clock,xh->ios.timing,xh->ios.bus_width,
++                xh->ios.signal_voltage,xh->ios.vdd);
++    }
++    /* XOOM V021: read-only SDIO CCCR/clock snapshot before the F2-ready wait. */
++	{
++		int exerr = 0, rdyerr = 0, clkerr = 0;
++		u8 ex = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IOEx, &exerr);
++		u8 ready = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IORx, &rdyerr);
++		u8 clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR,
++					   &clkerr);
++		pr_info("XOOM_F2V021 before ioex=%02x/%d iorx=%02x/%d clkcsr=%02x/%d clkstate=%d\n",
++			ex, exerr, ready, rdyerr, clk, clkerr, bus->clkstate);
++	}
+ 	err = sdio_enable_func(sdiod->func2);
++	/* XOOM V021: same registers immediately after sdio_enable_func returns. */
++	{
++		int exerr = 0, rdyerr = 0, clkerr = 0;
++		u8 ex = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IOEx, &exerr);
++		u8 ready = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IORx, &rdyerr);
++		u8 clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR,
++					   &clkerr);
++		pr_info("XOOM_F2V021 after ioex=%02x/%d iorx=%02x/%d clkcsr=%02x/%d result=%d\n",
++			ex, exerr, ready, rdyerr, clk, clkerr, err);
++	}
+ 
+ 	brcmf_dbg(INFO, "enable F2: err=%d\n", err);
+ 
