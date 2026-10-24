@@ -56,3 +56,5 @@ When a new record is added, link it here and from its local index; update status
 - [v022 actual 25 MHz legacy SDIO three-trial physical result](checkpoints/V022_AUTO_LEGACY_25MHZ_PHYSICAL_2026-10-24.md): specification met, F2 still -62.
 
 - [v021 actual LPO clock-provider measurement](checkpoints/V021_LPO_CLOCK_PHYSICAL_2026-10-24.md): software enabled 32768Hz; F2 -62 persists.
+
+- [v025 verified 100 ms host pre-reset delay — 3 physical F2 trials](checkpoints/V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md).

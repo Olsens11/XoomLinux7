@@ -85,3 +85,12 @@
 - [x] Physically verify pwrseq clock software state using v021 RAM-loaded observer: rate=32768, enabled=1; F2 still -62.
 - [ ] Confirm actual WLAN LPO electrical delivery, U4/U2 power/reset timing relative to settled VDDC/VDDIO and 110ms datasheet minimum.
 - [ ] Instrument BCM4329 Cortex-M3 startup/SDPCM mailbox to isolate absent F2 readiness.
+
+## Audit inherited Linux / Motorola assumptions
+- [x] Physically prove MMC host default \`ios.power_delay_ms=10\`; separate \`wifi-pwrseq\` 300ms runs after reset release.
+- [x] Build v025 by adding only MMC2 host pre-reset \`post-power-on-delay-ms=100\`; physical effective 100ms, three tests still F2 timeout -62.
+- [x] Verify read-only U2/U4/U5 GPIO, MMC2 vmmc/vqmmc, pwrseq clock and host delay via dynamic v023/v024 modules. Checkpoint their software-not-electrical scope.
+- [ ] Establish whether \`regulator-boot-on\` holds U4 on throughout host rebind; instrument driver sequencing/enable counts and GPIO latch transitions, staying read-only.
+- [ ] Audit differences between original OEM 100/100/200ms power/reset sequence and mainline regulator/pwrseq ownership, especially initial boot order and real supply settling.
+- [ ] Audit \`brcmf_chip_cm3_set_active\` and firmware startup/mailbox before F2 ready, refusing to treat release-from-reset as firmware-execution confirmation.
+- [ ] Correct incorrect USB SDIO debug path (\`mmc-pwrseq-simple\` vs actual \`pwrseq_simple\`) in future diagnostic code only after documenting source/fix and tests.

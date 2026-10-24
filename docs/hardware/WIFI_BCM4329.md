@@ -48,3 +48,6 @@ The exact Section 11 default-mode test was physically run: \`AUTO\`, \`ios.timin
 
 ## v021 LPO clock result — 2026-10-24
 Linux clock-provider observer on v022 reports 32768Hz enabled=1 during failed F2 initialization. brcmfmac device still has no directly assigned LPO clock; this is distinct from the MMC power-sequencer clock. **Physical waveform unmeasured.** F2 stays -62. See [v021 physical checkpoint](../checkpoints/V021_LPO_CLOCK_PHYSICAL_2026-10-24.md).
+
+## v025 host power stabilization timing (2026-10-24)
+The MMC host reads \`post-power-on-delay-ms\` from **MMC2**, while \`pwrseq_simple\` reads the same property name from **wifi-pwrseq**. Existing pwrseq 300ms occurs after reset release. v024 live observer measured host default 10ms; v025 added MMC2 host 100ms while holding pwrseq at 300ms, and live observer confirmed 100ms, 25MHz legacy, OEM-matched NVRAM. **Three runs still give F2 IORx 02 / -62**. The regulator is \`regulator-boot-on\`, so don't claim a verified power rail rising edge/reassertion. [Checkpoint](../checkpoints/V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md).
