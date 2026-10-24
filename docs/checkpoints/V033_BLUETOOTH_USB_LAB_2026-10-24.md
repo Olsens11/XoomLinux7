@@ -33,3 +33,6 @@ Preserve the original v025 image on Surface. Confirm the replacement Xoom identi
 - `scripts/host/surface/Xoom-v33-BluetoothLiveLab.ps1` (v033-specific USB preflight/client)
 
 **No root-cause claim:** prior physical v031 found BT serdev child registered but unbound, and the WLAN SDIO F2 ready bit remains missing with timeout `-62`. Adding a Bluetooth power driver does not automatically fix that independent WLAN failure.
+
+## Physical test completed
+v033 successfully temporary-booted the replacement Xoom; USB new PID1 and dormant BT status validated. Six BT modules load, but hci_uart module registration itself automatically powers the chip: kernel logs show U4 regulator vote ON, U0 reset released and the BCM4329B1 responding. The BT firmware .hcd patch file is missing. A userspace HCIDEVDOWN argument-by-pointer bug caused -19; subsequent BT_STOP correctly unloaded all modules, logged reset assert and U4 regulator vote OFF. Wi-Fi F2 still times out -62 after the BT cycle. See [exact physical record](V033_BLUETOOTH_PHYSICAL_2026-10-24.md). No flash.

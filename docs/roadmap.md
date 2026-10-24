@@ -172,3 +172,13 @@
 - [ ] Boot candidate with fastboot boot only, never flash.
 - [ ] Verify UART binding and I7/U0 state on BT_START, then controlled BT_ON, BT_OFF, BT_STOP if safe.
 - [ ] Separately diagnose Wi-Fi F2 -62 and chip-side PMU/Cortex-M3 startup.
+
+## Physical v033 result and v034 corrective gate
+- [x] Boot v033 on replacement Xoom with temporary fastboot boot and verified v025 fallback, no flash.
+- [x] Demonstrate Bluetooth BCM4329B1 UART communication and Linux shared U4 regulator ON/OFF vote and reset sequence under module load/unload.
+- [x] Discover that BT_START automatically initializes and powers Bluetooth; USB label claiming passive bind was incorrect.
+- [x] Prove USB BT_OFF -19 is caused by HCI ioctl argument passed by pointer rather than device index value (Linux hci_sock_ioctl directly forwards arg to hci_dev_close).
+- [x] Check after BT cleanup: Wi-Fi F2 still -62, no wlan0; final modules unloaded and MMC2 bound.
+- [ ] Correct freestanding HCI ioctl argument semantics and BT_START startup messaging, package as v034 separate rollbackable candidate before relying on BT_OFF.
+- [ ] Find correct Bluetooth BCM4329B1 .hcd firmware in private OEM reference if needed; never commit proprietary binaries or per-device secrets.
+- [ ] Continue WLAN Cortex-M3 and chip PMU startup diagnosis; shared U4 vote is not proven internal POR.

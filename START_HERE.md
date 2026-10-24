@@ -32,3 +32,5 @@ v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT 
 - **v031/v032:** [Physical BT serdev and clock reference test](docs/checkpoints/V031_BLUETOOTH_BINDING_CLOCK_PHYSICAL_2026-10-24.md) proved Bluetooth child registered but unbound, and the nominal BT txco is actually the same 32k clock as WLAN LPO. [v032 disabled LPO-correct preview](docs/checkpoints/V032_BLUETOOTH_LPO_ROLE_COMPILE_ONLY_2026-10-24.md) passes 12 checks; no new hardware driver loaded.
 
 - v033 RAM-only Bluetooth USB lab: read docs/checkpoints/V033_BLUETOOTH_USB_LAB_2026-10-24.md. Six linked Bluetooth dependencies, USB BT commands only on demand, exact v025 kernel preserved and 25 MHz MMC2.
+
+- v033 physically proven BT shared-U4 ON/OFF vote and BCM4329B1 identification, but F2 still -62 and the USB HCIDEVDOWN path passes the wrong ioctl argument type. Read docs/checkpoints/V033_BLUETOOTH_PHYSICAL_2026-10-24.md before another BT power experiment.
