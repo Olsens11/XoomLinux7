@@ -33,3 +33,9 @@
 - CARD_REINIT via driver rebind does not prove Wi-Fi chip rail power-off, 32k clock restart, reset GPIO toggling or a true cold boot. Failure/timeout and MMC2_BIND recovery paths have not been deliberately fault-injected on hardware.
 - USB control functionality is accepted, **not native Wi-Fi**. Continue firmware CPU boot/SDPCM tracing, private same-device OEM NVRAM provenance and power/clock sequencing. No RF scan or association was attempted.
 - v015 remains separately preserved as reliable RAM-only USB diagnostic fallback.
+
+## Later post-qualification observation: unexpected session restart, cause unknown
+After the on-demand test sequence, all worktrees were synchronized and a final Surface check found Xoom USB CDC absent. Windows transiently enumerated the expected replacement MZ600 serial as Motorola USB Composite / ADB, and later detected the Linux CDC COM9 interface again. The v020 USB console responded, but read-only STATUS reported Linux uptime **83.96 seconds**, whereas this same test session had previously logged events beyond **250 seconds**. This is direct evidence that a Linux session restarted in the interim. This workflow issued **no further deliberate reboot/fastboot boot commands after its first v020 boot**; the cause and mechanism of the later restart are not established from available logs.
+
+**Qualification impact:** the tested AUTO/MOTOROLA/AUTO card reinitialization and guard paths physically PASSED during the earlier uninterrupted session. However, v020 must NOT yet be claimed to maintain an indefinitely stable Linux session. Long-duration stability, controller-rebind reset side effects, possible host/tool concurrent activity, device power reliability and any persistent crash evidence remain open. v015 is retained as fallback. Do not conflate this later restart with a failure of a particular card-reinit command without causal evidence.
+

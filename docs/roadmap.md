@@ -60,3 +60,6 @@
 - [x] Refuse reinit when Broadcom drivers loaded; host waits for terminal response.
 - [ ] Test recovery under deliberately failed bind/re-enumeration and compare card reinit to actual chip power cycle.
 - [ ] Extend independent clock profile safely after no-change controls; continue firmware CPU/SDPCM and matched OEM calibration research.
+
+- [ ] Investigate v020 post-test USB/Android/Linux mode transitions and fresh Linux uptime; establish whether the restart was kernel crash, power event, external tooling, or physical interaction. Preserve accurate logs and avoid causal guesses.
+- [ ] Perform an independently monitored stability/soak and repeated on-demand MMC2 reinit test before promoting v020 as a long-duration stable environment.
