@@ -11,3 +11,6 @@ Before a boot, the work must: enable and build the sequencing core; add a board 
 **No active power/reset sequence has been qualified, and Wi-Fi still fails F2.** The 20 passing logic-model tests do not prove this new kernel code runs.
 
 See [whole-chip design](../../docs/research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) and [BCM4329 datasheet audit](../../docs/research/BCM4329_DATASHEET_REQUIREMENT_AUDIT.md).
+
+## v028/v029 continuation
+See [v028 physical GPIO register checkpoint](../../docs/checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [v029 isolated Linux 7 compile-only checkpoint](../../docs/checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md). The new disabled DTS preview does not bind consumers or change the Xoom. Build-only: `bash scripts/experiments/v029-compile-shared-owner.sh`.

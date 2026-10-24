@@ -137,3 +137,12 @@
 - [ ] Integrate both MMC and Bluetooth target consumers and board binding; reconcile existing GPIO and regulator votes without overlap.
 - [ ] Validate I7/U0 pinmux ownership and a passive OEM-equivalent Bluetooth state, then time-stamp power sequencing.
 - [ ] Keep temporary v025 boot and no partition flashing until full source/integration and physical testing qualifies a change.
+
+## Next after v028/v029 shared-chip compile-only milestone
+- [x] Direct read-only Tegra GPIO CNF/OE/OUT/IN test, no reset or GPIO writes; resolved direction=-22 root cause.
+- [x] Linux 7 POWER_SEQUENCING core + Motorola shared-resource provider compile as ARM objects in isolated output.
+- [x] Disabled DTS reference node compiles and resolves shared-supply and LPO clock; no active power change.
+- [ ] Verify BT serdev driver binding and Tegra pinmux register selection independent of GPIO CNF.
+- [ ] Design and compile a consumer integration that propagates power sequencing errors; migrate source ownership of U4/I7/U0/U2 without duplicate GPIO requests.
+- [ ] Avoid experimental boot until a verified 25MHz legacy MMC profile, source/DTB match, known v025 rollback, and no conflicting clock/reset control.
+- [ ] Establish actual internal PMU resource progress, Cortex-M3 execution, chip-derived ready response, and only then conclude root cause.
