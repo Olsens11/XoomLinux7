@@ -1,6 +1,6 @@
 # On-demand SDMMC2 initialization — design proposal (2026-10-24)
 
-**Status: PROPOSED, NOT IMPLEMENTED OR HARDWARE QUALIFIED.** This document describes a test-harness extension, not an available USB command.
+**Updated 2026-10-24: IMPLEMENTED in v020 and physically qualified for AUTO to MOTOROLA to AUTO SDIO card re-enumeration without reboot.** The original design discussion below remains as context. The precise acceptance limits appear in the [v020 physical checkpoint](../checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).
 
 ## Why this is necessary
 Linux `drivers/mmc/core/sdio.c` and `sdhci-tegra` are built into the experimental kernel. Loading/unloading `brcmfmac.ko` already works dynamically but does **not** rerun `mmc_sdio_init_card()`, nor re-read raw CCCR capabilities, choose host bus timing or rerun the controller power sequence. v018/v019 have required temporary kernel boots because the six-field OEM override and SDMMC2 max-frequency were compiled in.
@@ -44,3 +44,6 @@ Each is distinct; do not promote one result as proof of another.
 - Only after the mechanism is stable, test independent clock, reset and firmware sequencing profiles. Do not confuse the loader with a Wi-Fi fix.
 
 **No such dynamic control was executed in v018.** The v018 workaround was compiled into a temporary-boot image and its F2 error remained -62. This design is the next infrastructure workstream.
+
+## v020 implementation outcome
+The root-only kernel MMC profile, guarded MMC2-only USB reinitialization, loaded-driver denial and explicit client terminal acknowledgement now work on hardware. MMC2_BIND recovery and deliberate failure injection remain unverified. Controller rebind is CARD_REINIT, not proven POWER_CYCLE or COLD_BOOT. See the [v020 physical checkpoint](../checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).

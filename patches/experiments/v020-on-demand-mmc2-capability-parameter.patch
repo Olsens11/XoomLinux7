@@ -1,0 +1,77 @@
+--- a/drivers/mmc/core/sdio.c
++++ b/drivers/mmc/core/sdio.c
+@@ -6,6 +6,9 @@
+  */
+ 
+ #include <linux/err.h>
++#include <linux/of.h>
++#include <linux/moduleparam.h>
++#include <linux/compiler.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/sysfs.h>
+ 
+@@ -15,6 +18,30 @@
+ #include <linux/mmc/sdio.h>
+ #include <linux/mmc/sdio_func.h>
+ #include <linux/mmc/sdio_ids.h>
++
++
++/*
++ * XOOM_MMC2_V020: experimental runtime profile, NEVER a universal quirk.
++ * mode 0: standard Linux behavior; mode 1: six Motorola embedded capabilities.
++ * Values may change in RAM; they take effect only on a NEW card enumeration.
++ */
++static unsigned int xoom_mmc2_profile;
++static int xoom_mmc2_profile_set(const char *val, const struct kernel_param *kp)
++{
++    unsigned int value;
++    int rc = kstrtouint(val, 0, &value);
++    if (rc)
++        return rc;
++    if (value > 1)
++        return -EINVAL;
++    return param_set_uint(val, kp);
++}
++static const struct kernel_param_ops xoom_mmc2_profile_ops = {
++    .set = xoom_mmc2_profile_set,
++    .get = param_get_uint,
++};
++module_param_cb(xoom_mmc2_profile, &xoom_mmc2_profile_ops,
++                &xoom_mmc2_profile, 0600);
+ 
+ #include "core.h"
+ #include "card.h"
+@@ -843,6 +870,33 @@
+ 
+ 	mmc_fixup_device(card, sdio_fixup_methods);
+ 
++    /* XOOM_MMC2_V020: scoped, runtime-selected OEM capability emulation.
++     * Must run after standard CCCR/CIS/fixups, before final timing selection.
++     * Do not apply to any other board, vendor or SDIO device.
++     */
++    if (of_machine_is_compatible("motorola,stingray") &&
++        card->cis.vendor == SDIO_VENDOR_ID_BROADCOM &&
++        card->cis.device == SDIO_DEVICE_ID_BROADCOM_4329) {
++        unsigned int mode = READ_ONCE(xoom_mmc2_profile);
++        pr_info("XOOM_MMC2_V020 mode=%u before vsn=%u multi=%u low=%u wide=%u hp=%u hs=%u\n",
++                mode, card->cccr.sdio_vsn, card->cccr.multi_block,
++                card->cccr.low_speed, card->cccr.wide_bus,
++                card->cccr.high_power, card->cccr.high_speed);
++        if (mode == 1) {
++            card->cccr.sdio_vsn = SDIO_SDIO_REV_1_20;
++            card->cccr.multi_block = 1;
++            card->cccr.low_speed = 0;
++            card->cccr.wide_bus = 0;
++            card->cccr.high_power = 1;
++            card->cccr.high_speed = 1;
++        }
++        pr_info("XOOM_MMC2_V020 mode=%u final vsn=%u multi=%u low=%u wide=%u hp=%u hs=%u\n",
++                mode, card->cccr.sdio_vsn, card->cccr.multi_block,
++                card->cccr.low_speed, card->cccr.wide_bus,
++                card->cccr.high_power, card->cccr.high_speed);
++    }
++
++
+ 	if (mmc_card_sd_combo(card)) {
+ 		err = mmc_sd_setup_card(host, card, oldcard != NULL);
+ 		/* handle as SDIO-only card if memory init failed */

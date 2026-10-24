@@ -44,3 +44,5 @@ When a new record is added, link it here and from its local index; update status
 
 - [On-demand SDMMC2 capability profiles and safe re-enumeration design](architecture/MMC2_ON_DEMAND_DESIGN.md) — proposed, not yet implemented.
 - [Supplementary v018 recheck and actual host-clock discrepancy](checkpoints/V018_RECHECK_2026-10-24.md).
+
+- [v020 physical no-reboot MMC2 capability profile acceptance](checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).

@@ -12,3 +12,5 @@ Do **not** execute a historical recipe merely because it is present. Inspect its
 - build/v15-* — v015 source compile, initramfs, kernel rebuild and image packaging; temporary boot only.
 
 - \`experiments/v016-build-f2probe.py\` — diagnostic-only source overlay, uses ARM toolchain and temporary local Linux tree, verifies restoration; no device-flash instructions.
+
+- v020 scripts in experiments/: ARM/no-NEON PID1, initramfs packer and self-restoring kernel build for RAM-only MMC2 reinit testing. The Surface v020 client supports controlled profiles and waits for final acknowledgements.

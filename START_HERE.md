@@ -15,3 +15,6 @@ This is the **session handoff**, not a historical narrative. Begin with [AGENTS.
 **Do not assume:** a kernel build is a boot test; an SDIO card is a functional wlan0; an embedded firmware file is legally redistributable; a branch has write access because a public clone succeeded.
 
 Historical original source: `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`. Our maintainable integration lives here.
+
+## Current 2026-10-24 diagnostic baseline
+v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT and MMC2_BIND recovery control. Physical AUTO/MOTOROLA/AUTO card re-enumeration and loaded-module safety guard PASS; native Wi-Fi F2 -62 persists. Start with docs/checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md before further experiments. Keep v015 as USB fallback, and never touch mmc0 or mmc1.

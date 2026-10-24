@@ -49,3 +49,10 @@ Project Git is authoritative for *new changes*. Imported historical files are tr
 - scripts/experiments/v019-package-tempboot.sh — v019 boot-image verifier; no flash.
 - patches/experiments/v019-sdmmc2-maxclock-25mhz.patch — actual compiled -usbdiag.dts node, not ordinary unconsumed DTS.
 - releases/v019-manifest.txt and docs/checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md — physical negative evidence.
+
+## v020 runnable on-demand MMC2 infrastructure
+- patches/experiments/v020-on-demand-mmc2-capability-parameter.patch: root-only kernel profile.
+- src/diag-init/phase1-v20/init.c: safe USB MMC2 command interface.
+- scripts/experiments/v020-*: build and private-image packaging.
+- scripts/host/surface/Xoom-v20-Mmc2LiveLab.ps1: tested USB client awaiting terminal responses.
+- releases/v020-manifest.txt and docs/checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md: verified artifact and physical result.

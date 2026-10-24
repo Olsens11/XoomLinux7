@@ -43,3 +43,6 @@ Motorola supplied a **complete six-capability embedded SDIO override**. Previous
 
 ## Current BCM4329 truth: 2026-10-24
 v018 reproduced Motorola complete six-capability SDIO configuration and SD-HS timing on physical hardware but F2 stayed -62 twice. v019 changed ONLY the compiled diagnostic DTS SDMMC2 max-frequency cap and physically measured 25MHz, F2 still -62 twice. Both variants are unsuccessful Wi-Fi experiments; v015 remains accepted as RAM-only diagnostic infrastructure. Do not infer firmware CPU startup from a successful RAM download. See v018/v019 checkpoint links in docs/checkpoints/README.md.
+
+## Runtime testing acceptance
+The v020 RAM-only diagnostic environment is physically qualified for guarded MMC2 reinit and AUTO/MOTOROLA capability switching. It is not a Wi-Fi fix; no working wlan0. eMMC (mmc0) and unrelated mmc1 must never be unbound; never publish private firmware/MACs. Profile switches are pending until successful re-enumeration; check kernel trace.

@@ -12,3 +12,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v019 measured 25 MHz control](../checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md): lower clock effective but F2 still fails.
 
 - [On-demand MMC2 re-enumeration design](../architecture/MMC2_ON_DEMAND_DESIGN.md): safe profile controls, controller-specific unbind/rebind and test acceptance — proposal only.
+
+- [v020 physical on-demand MMC2 card re-enumeration](../checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).

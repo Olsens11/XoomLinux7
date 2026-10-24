@@ -52,3 +52,11 @@
 - [ ] Add board-scoped runtime capability profile and safe USB MMC2-only reinit controls, **requiring one further experimental temporary-boot diagnostic candidate**.
 - [ ] Validate no-change controller rebind, clean removal/re-enumeration, effective capability changes, rollback and no impact to eMMC/USB; do not mark available until real hardware testing passes.
 - [ ] Then vary capability, clock, reset, matched firmware/NVRAM one at a time without whole-kernel reboot, with cold-boot control runs.
+
+## v020 on-demand controller integration
+- [x] Implement and test root-only Stingray BCM4329 SDIO AUTO/MOTOROLA runtime profile.
+- [x] Implement and test MMC2_STATUS, MMC2_PROFILE, MMC2_REINIT with USB command allowlists.
+- [x] Demonstrate AUTO to MOTOROLA to AUTO card removal/re-enumeration, verified effective capabilities, with NO kernel reboot.
+- [x] Refuse reinit when Broadcom drivers loaded; host waits for terminal response.
+- [ ] Test recovery under deliberately failed bind/re-enumeration and compare card reinit to actual chip power cycle.
+- [ ] Extend independent clock profile safely after no-change controls; continue firmware CPU/SDPCM and matched OEM calibration research.

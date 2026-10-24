@@ -5,3 +5,5 @@
 - Kernel source itself is external: `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`, fetched locally rather than committed wholesale.
 
 Full source file placement is listed in [source map](../docs/reference/SOURCE_MAP.md). Keep generated binaries private or in explicitly reviewed releases.
+
+- diag-init/phase1-v20/init.c: physically qualified guarded MMC2 on-demand capability reinit and existing RAM USB hotload.

@@ -36,3 +36,6 @@ Board/chip-scoped complete six-field OEM override was physically effective: SDIO
 
 ## v019 host clock A/B fails to resolve F2
 With complete Motorola six-field override active, reducing actual host SDIO clock from 46,153,846 to 25,000,000Hz (single compiled DTB max-frequency property) left IORx at 02 and F2 timeout -62 on two trials. Neither the full capability correction nor lower host clock alone resolves F2 under tested OEM firmware/generic NVRAM. [v019](../checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md).
+
+## v020 dynamic testing environment
+MZ600 v020 physically supports MMC2-only card reinit and runtime full OEM six-field capability mode without reboot. Actual Motorola capability fields and host HS mode were verified; the v017 driver still showed IOEx 06 / IORx 02 and -62. Bundled v020 test firmware is 253,748 bytes with generic NVRAM: compare only with matched payloads. This **does not fix native wireless**. [v020 hardware acceptance](../checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md).
