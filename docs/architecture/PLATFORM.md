@@ -10,3 +10,6 @@ Native Linux installation, Debian userspace and Windows 95 emulator integration 
 
 ### Important source distinction discovered in v019
 The \`tegra20-motorola-stingray-usbdiag.dts\` is a **standalone copied device tree**, not an include of \`tegra20-motorola-stingray.dts\`. Editing the ordinary DTS alone does not alter the experimental temporary-boot DTB. The first v019 draft changed the unconsumed file and was blocked by a compiled-DTB comparison; the corrected v019 targeted the actual -usbdiag DTS. Always verify built DTB properties, not merely the source touched.
+
+## Proposed runtime SDMMC2 lab control
+See [on-demand MMC2 profile and re-enumeration design](MMC2_ON_DEMAND_DESIGN.md). The observed Wi-Fi host is platform device `c8000200.mmc`; existing sysfs driver bind/unbind operations are untested for controlled hot reinitialization and must not be confused with guaranteed power cycling. Do not touch the eMMC controller.

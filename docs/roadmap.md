@@ -46,3 +46,9 @@
 
 - [x] v019 controlled clock-only comparison physically tested; effective host clock 25,000,000Hz, F2 still timed out on two trials.
 - [ ] Prioritize read-only BCM4329 firmware CPU/SDPCM startup checks and exact same-device OEM firmware + NVRAM provenance; no further MMC tweaks without specific evidence.
+
+## On-demand SDIO test architecture
+- [x] Identify actual Wi-Fi MMC2 platform device `c8000200.mmc` and Linux driver bind/unbind surfaces via existing read-only USB SDIO tool.
+- [ ] Add board-scoped runtime capability profile and safe USB MMC2-only reinit controls, **requiring one further experimental temporary-boot diagnostic candidate**.
+- [ ] Validate no-change controller rebind, clean removal/re-enumeration, effective capability changes, rollback and no impact to eMMC/USB; do not mark available until real hardware testing passes.
+- [ ] Then vary capability, clock, reset, matched firmware/NVRAM one at a time without whole-kernel reboot, with cold-boot control runs.
