@@ -24,3 +24,5 @@ v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT 
 - [Broadcom BCM4329 full datasheet review](docs/research/BCM4329_DATASHEET_PAGE_INDEX.md): all 149 pages indexed; follow the requirement audit and cross-subsystem fault tree before changing Wi-Fi initialization.
 
 - [Shared BCM4329 physical-chip ownership design](docs/research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) and offline tests: Motorola already coordinated both radios through shared U4, whereas Linux 7 currently does not.
+
+- v028/v029 milestone: [GPIO controller proof](docs/checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [compile-only shared-chip coordinator](docs/checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md). The coordinator is NOT deployed or linked to MMC/BT consumers.

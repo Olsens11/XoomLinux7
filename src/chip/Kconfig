@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config POWER_SEQUENCING_STINGRAY_BCM4329
+    tristate "Stingray BCM4329 shared-resource prototype (experimental)"
+    depends on POWER_SEQUENCING && OF && REGULATOR && COMMON_CLK
+    help
+      Source-only experiment using the upstream power sequencing framework.
+      Requires explicit WLAN and Bluetooth consumer integration and correct
+      ownership migration. Do not enable in the shipping kernel.

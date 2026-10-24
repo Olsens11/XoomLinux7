@@ -130,3 +130,12 @@
 - [ ] Build and compile a proper board-specific shared pwrseq provider and two consumer hooks *without duplicate GPIO ownership*; keep standard WLAN/BT protocol drivers.
 - [ ] Validate temporary-boot callbacks, timing, on-chip PMU behavior and F2 after a controlled one-variable A/B against v025.
 - [ ] Do not claim cold POR or a Wi-Fi fix until physical state and actual F2 readiness demonstrate it.
+
+## Next after v028/v029 shared-chip compile-only milestone
+- [x] Direct read-only Tegra GPIO CNF/OE/OUT/IN test, no reset or GPIO writes; resolved direction=-22 root cause.
+- [x] Linux 7 POWER_SEQUENCING core + Motorola shared-resource provider compile as ARM objects in isolated output.
+- [x] Disabled DTS reference node compiles and resolves shared-supply and LPO clock; no active power change.
+- [ ] Verify BT serdev driver binding and Tegra pinmux register selection independent of GPIO CNF.
+- [ ] Design and compile a consumer integration that propagates power sequencing errors; migrate source ownership of U4/I7/U0/U2 without duplicate GPIO requests.
+- [ ] Avoid experimental boot until a verified 25MHz legacy MMC profile, source/DTB match, known v025 rollback, and no conflicting clock/reset control.
+- [ ] Establish actual internal PMU resource progress, Cortex-M3 execution, chip-derived ready response, and only then conclude root cause.

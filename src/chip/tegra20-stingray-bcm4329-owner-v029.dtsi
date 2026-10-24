@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * EXPERIMENTAL SOURCE-ONLY overlay; intentionally disabled.
+ * DO NOT incorporate into a boot DTB without both MMC and BT consumer hooks.
+ * Shared U4 remains owned by regulator-wifi, U2 by mmc-pwrseq-simple,
+ * and I7/U0 by Bluetooth serdev if/when hci_bcm binds.
+ */
+/ {
+    bcm4329_chip_owner: bcm4329-shared-resources {
+        compatible = "motorola,stingray-bcm4329-shared-pwrseq";
+        shared-supply = <&reg_wifi_vdd>;
+        clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
+        clock-names = "lpo";
+        status = "disabled";
+    };
+};
+
+/*
+ * The provider's match() requires an explicit motorola,shared-chip
+ * phandle on each consumer node. Reference these ONLY after the
+ * appropriate MMC host and hci_bcm consumer hooks are wired.
+ *
+ * DO NOT use the following lines in a boot DTB yet:
+ *
+ * &sdmmc2 { motorola,shared-chip = <&bcm4329_chip_owner>; };
+ * &uartc { bluetooth { motorola,shared-chip = <&bcm4329_chip_owner>; }; };
+ *
+ * In particular, the existing MMC path uses mmc-pwrseq-simple;
+ * the generic power sequencing core does not silently replace it.
+ */

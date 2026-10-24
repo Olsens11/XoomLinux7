@@ -66,3 +66,5 @@ When a new record is added, link it here and from its local index; update status
 - [Broadcom BCM4329 complete 149-page datasheet index](research/BCM4329_DATASHEET_PAGE_INDEX.md), [36-requirement source and physical audit](research/BCM4329_DATASHEET_REQUIREMENT_AUDIT.md), and [cross-subsystem fault tree](research/BCM4329_CROSS_SUBSYSTEM_FAULT_TREE.md).
 
 - [BCM4329 whole-chip power coordinator design](research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md): OEM shared power reference counts, two Linux consumers, resource ownership and rollback.
+
+- [v028 read-only Bluetooth/WLAN controller register test](checkpoints/V028_BCM4329_GPIO_CONTROLLER_PHYSICAL_2026-10-24.md) and [v029 disabled whole-chip coordinator compiled prototype](checkpoints/V029_BCM4329_SHARED_OWNER_COMPILE_ONLY_2026-10-24.md).
