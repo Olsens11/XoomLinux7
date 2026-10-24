@@ -96,7 +96,7 @@ def make_chip(s):
                      "chip ktime include")
     s = replace_once(s,
                      "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n\n\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
-                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_BEGIN\n",\n' +
+                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_BEGIN\\n",\n' +
                      '\t        (unsigned long long)ktime_get_ns());\n' +
                      "\tchip->ops->activate(chip->ctx, &chip->pub, 0);\n\n" +
                      "\tcore = brcmf_chip_get_core(&chip->pub, BCMA_CORE_ARM_CM3);",
@@ -104,7 +104,7 @@ def make_chip(s):
     s = replace_once(s,
                      "\tbrcmf_chip_resetcore(core, 0, 0, 0);\n\n\treturn true;\n}\n\nstatic inline void",
                      '\tbrcmf_chip_resetcore(core, 0, 0, 0);\n' +
-                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_DONE\n",\n' +
+                     '\tpr_info("XOOM_V035 t_ns=%llu phase=CM3_ACTIVATE_DONE\\n",\n' +
                      '\t        (unsigned long long)ktime_get_ns());\n\n\treturn true;\n}\n\nstatic inline void',
                      "CM3 reset release")
     return s
