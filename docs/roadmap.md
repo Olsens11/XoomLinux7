@@ -63,3 +63,11 @@
 
 - [ ] Investigate v020 post-test USB/Android/Linux mode transitions and fresh Linux uptime; establish whether the restart was kernel crash, power event, external tooling, or physical interaction. Preserve accurate logs and avoid causal guesses.
 - [ ] Perform an independently monitored stability/soak and repeated on-demand MMC2 reinit test before promoting v020 as a long-duration stable environment.
+
+## Evidence-based F2 isolation
+- [x] Compare preserved OEM BCM4329 calibration and generic NVRAM values without exposing original MAC: all 53 shared values matched.
+- [x] Test standard/old Motorola-era firmware under AUTO and Motorola profile with unchanged NVRAM: F2 still -62 in all three conditions.
+- [x] Build exact SHA-verified read-only kernel clock-provider observer as replaceable v021 module; untouched kernel source restored after build.
+- [ ] Test v021 observer through authorized RAM-only workflow (current remote upload blocked; not yet physically executed).
+- [ ] Compare actual Tegra PMC 32.768kHz clock gating/clock-rate and OEM 100/100/200ms U4/U2 GPIO reset sequence using controlled MMC2 on-demand trials.
+- [ ] Confirm firmware chip-CPU execution and true F2 readiness (not just firmware byte readback); restore original MAC provenance before RF activity.

@@ -1,0 +1,87 @@
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+@@ -16,6 +16,11 @@
+ #include <linux/mmc/sdio_ids.h>
+ #include <linux/mmc/sdio_func.h>
+ #include <linux/mmc/card.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_clk.h>
++#include <linux/mmc/host.h>
+ #include <linux/mmc/core.h>
+ #include <linux/semaphore.h>
+ #include <linux/firmware.h>
+@@ -4240,6 +4245,26 @@
+ 	bus->sdcnt.tickcnt = 0;
+ 	brcmf_sdio_wd_timer(bus, true);
+ 
++
++    {
++        struct device_node *pnode;
++        struct clk *lpo;
++        pnode = of_find_node_by_name(NULL, "wifi-pwrseq");
++        if (!pnode) {
++            pr_info("XOOM_LPOV021 wifi-pwrseq node MISSING\n");
++        } else {
++            lpo = of_clk_get(pnode, 0);
++            if (IS_ERR(lpo)) {
++                pr_info("XOOM_LPOV021 pwrseq clk lookup errno=%ld\n",
++                        PTR_ERR(lpo));
++            } else {
++                pr_info("XOOM_LPOV021 pwrseq rate=%lu enabled=%d\n",
++                        clk_get_rate(lpo), __clk_is_enabled(lpo));
++                clk_put(lpo);
++            }
++            of_node_put(pnode);
++        }
++    }
+ 	sdio_claim_host(sdiod->func1);
+ 
+ 	/* Make sure backplane clock is on, needed to generate F2 interrupt */
+@@ -4265,7 +4290,45 @@
+ 	brcmf_sdiod_writel(sdiod, core->base + SD_REG(tosbmailboxdata),
+ 			   SDPCM_PROT_VERSION << SMB_DATA_VERSION_SHIFT, NULL);
+ 
++	
++    {
++        struct mmc_card *xc = sdiod->func1->card;
++        struct mmc_host *xh = xc->host;
++        int errev=0, ercaps=0, erpow=0, erspeed=0;
++        u8 rawrev=sdio_f0_readb(sdiod->func1,SDIO_CCCR_CCCR,&errev);
++        u8 rawcaps=sdio_f0_readb(sdiod->func1,SDIO_CCCR_CAPS,&ercaps);
++        u8 rawpow=sdio_f0_readb(sdiod->func1,SDIO_CCCR_POWER,&erpow);
++        u8 rawspeed=sdio_f0_readb(sdiod->func1,SDIO_CCCR_SPEED,&erspeed);
++        pr_info("XOOM_F2V021 RAW cccr=%02x/%d caps=%02x/%d power=%02x/%d speed=%02x/%d\n",
++                rawrev,errev,rawcaps,ercaps,rawpow,erpow,rawspeed,erspeed);
++        pr_info("XOOM_F2V021 CARD sdio_vsn=%u multi=%u low=%u wide=%u highpower=%u highspeed=%u\n",
++                xc->cccr.sdio_vsn,xc->cccr.multi_block,xc->cccr.low_speed,
++                xc->cccr.wide_bus,xc->cccr.high_power,xc->cccr.high_speed);
++        pr_info("XOOM_F2V021 HOST clock=%u timing=%u buswidth=%u signalvoltage=%u vdd=%u\n",
++                xh->ios.clock,xh->ios.timing,xh->ios.bus_width,
++                xh->ios.signal_voltage,xh->ios.vdd);
++    }
++    /* XOOM V021: read-only SDIO CCCR/clock snapshot before the F2-ready wait. */
++	{
++		int exerr = 0, rdyerr = 0, clkerr = 0;
++		u8 ex = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IOEx, &exerr);
++		u8 ready = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IORx, &rdyerr);
++		u8 clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR,
++					   &clkerr);
++		pr_info("XOOM_F2V021 before ioex=%02x/%d iorx=%02x/%d clkcsr=%02x/%d clkstate=%d\n",
++			ex, exerr, ready, rdyerr, clk, clkerr, bus->clkstate);
++	}
+ 	err = sdio_enable_func(sdiod->func2);
++	/* XOOM V021: same registers immediately after sdio_enable_func returns. */
++	{
++		int exerr = 0, rdyerr = 0, clkerr = 0;
++		u8 ex = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IOEx, &exerr);
++		u8 ready = sdio_f0_readb(sdiod->func1, SDIO_CCCR_IORx, &rdyerr);
++		u8 clk = brcmf_sdiod_readb(sdiod, SBSDIO_FUNC1_CHIPCLKCSR,
++					   &clkerr);
++		pr_info("XOOM_F2V021 after ioex=%02x/%d iorx=%02x/%d clkcsr=%02x/%d result=%d\n",
++			ex, exerr, ready, rdyerr, clk, clkerr, err);
++	}
+ 
+ 	brcmf_dbg(INFO, "enable F2: err=%d\n", err);
+ 
