@@ -103,3 +103,11 @@
 - [ ] Trace actual physical firmware request path, returned digest, NVRAM payload and platform MAC provenance without exposing identifiers.
 - [ ] Timestamp actual MMC power sequencing, U4/U2 controls and clock voting to compare against source.
 - [ ] Consider full Tegra20 and BCM4329 device modeling only where needed to answer questions userspace emulation cannot.
+
+## Runtime provenance findings
+- [x] Compile/rebuild v026 and physically verify actual requested firmware/NVRAM paths with monotonic kernel timestamps; first request board-specific then generic fallback.
+- [x] Compare firmware 253748B, source NVRAM 1550B and packed NVRAM 672B CRC32 to virtual reference: all match.
+- [x] Check platform-provided MAC callback without printing identifier: unavailable in current generic configuration; OTP/other sources and causality unresolved.
+- [ ] Prove whether Tegra U4 WL power is actually cycled on MMC2 rebind and whether boot-on regulator or shared rail prevents it. Observe U2 reset command sequence with timestamped core traces, not just steady states.
+- [ ] Trace internal Broadcom Cortex-M3/PMU execution, mailbox and real F2 response; do not conflate firmware RAM readback with execution.
+- [ ] Find device-specific MAC provenance from correct replacement hardware without copying another Xoom MAC.

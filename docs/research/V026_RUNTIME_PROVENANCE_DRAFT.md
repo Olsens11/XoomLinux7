@@ -82,3 +82,6 @@ bound, profile AUTO, Broadcom modules unloaded, Function 2 unresolved.
 
 No source or user private MAC, EEPROM, original OEM binary, or calibration
 payload belongs in this public branch.
+
+## Superseded by physically qualified result (later 2026-10-24)
+A corrected v026 module was built and run on the replacement Xoom. The draft status and checklist above describe the initial unqualified version; the corrected physical reference is [v026 physical checkpoint](../checkpoints/V026_RUNTIME_PROVENANCE_PHYSICAL_2026-10-24.md). Firmware/NVRAM CRC matched the virtual lab and F2 still failed. Do not equate the initial draft with final artifact SHA.

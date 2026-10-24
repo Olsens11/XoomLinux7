@@ -60,3 +60,5 @@ When a new record is added, link it here and from its local index; update status
 - [v025 verified 100 ms host pre-reset delay — 3 physical F2 trials](checkpoints/V025_PRE_RESET_100MS_PHYSICAL_2026-10-24.md).
 
 - [Virtual Linux 7 forensic lab v1](research/VIRTUAL_FORENSIC_LAB_V1_2026-10-24.md): actual v025 image, two ARM/QEMU consumers, firmware/NVRAM audit, seven negative tests.
+
+- [v026 actual runtime firmware and NVRAM provenance hardware test](checkpoints/V026_RUNTIME_PROVENANCE_PHYSICAL_2026-10-24.md): generic source selection, CRC32 match, unavailable platform MAC, F2 still -62.

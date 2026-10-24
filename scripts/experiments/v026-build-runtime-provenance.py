@@ -27,6 +27,7 @@ REL_FW = "drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c"
 SDIO = KERNEL / REL_SDIO
 FW = KERNEL / REL_FW
 EXPECTED_SDIO_SHA256 = "74491e8fa7326dacc9049821ed74bec2ac55338443793735e5c3bf8f3f0963ab"
+EXPECTED_FW_SHA256 = "f2b6fe570981bf69a81fd5965712f18840df9b97dabcdbd4aa4cf260b4e9760b"
 PATCH = ROOT / "patches/experiments/v024-gpio-regulator-readonly.patch"
 
 def require_once(s: str, needle: str, label: str) -> None:
@@ -74,112 +75,108 @@ static void xoom_v026_blob(const char *label, const u8 *data, size_t length)
 def make_fw(src: str) -> str:
     s = src
     s = inject(s, "#include <linux/efi.h>\n",
-               "#include <linux/ktime.h>\n", "firmware include")
+               "#include <linux/ktime.h>\n", "firmware timing include")
     s = inject(s, "static void *brcmf_fw_nvram_strip(",
-               FW_HELPERS + "\n", "NVRAM parser helper")
-    # Track exactly which asynchronous file path was requested (as opposed
-    # to printing a canonical path and assuming it was actually chosen).
-    marker = "\tunsigned int board_index;\n"
-    require_once(s, marker, "firmware request context")
-    s = s.replace(marker, marker +
-                  "\tchar xoom_v026_request_path[BRCMF_FW_NAME_LEN];\n", 1)
-    marker = "\tif (alt_path) {\n\t\tfwctx->board_index++;\n"
-    require_once(s, marker, "initial board candidate")
-    s = s.replace(marker, marker +
-                  "\t\tstrscpy(fwctx->xoom_v026_request_path, alt_path,\n"
-                  "\t\t\tsizeof(fwctx->xoom_v026_request_path));\n", 1)
-    marker = "fallback:\n\t/* Fall back to canonical path if board firmware not found */\n"
-    require_once(s, marker, "first firmware fallback")
-    s = s.replace(marker, marker +
-                  "\tstrscpy(fwctx->xoom_v026_request_path, first->path,\n"
-                  "\t\tsizeof(fwctx->xoom_v026_request_path));\n", 1)
-    marker = "\t\tret = firmware_request_nowait_nowarn(THIS_MODULE,\n"
-    # First and subsequent retry both include this anchor. Retry branch uses
-    # the unique following block; choose a specific enclosing occurrence.
-    retry = """\t\tboard_type = fwctx->req->board_types[fwctx->board_index++];
-\t\tif (!board_type)
-\t\t\tgoto fallback;
-\t\talt_path = brcm_alt_fw_path(first->path, board_type);
-\t\tif (!alt_path)
-\t\t\tgoto fallback;
+               FW_HELPERS + "\n", "CRC32 provenance helpers")
 
-\t\tret = firmware_request_nowait_nowarn"""
-    require_once(s, retry, "board retry")
-    s = s.replace(retry, retry.replace(
-        "\n\t\tret = firmware_request_nowait_nowarn",
-        "\n\t\tstrscpy(fwctx->xoom_v026_request_path, alt_path,\n"
-        "\t\t\tsizeof(fwctx->xoom_v026_request_path));\n"
-        "\t\tret = firmware_request_nowait_nowarn"), 1)
-    # The asynchronous callback may receive either a board-specific blob or
-    # the canonical fallback; do not conflate "requested" with "opened".
-    anchor = """static void brcmf_fw_request_done(const struct firmware *fw, void *ctx)
-{
-\tstruct brcmf_fw *fwctx = ctx;"""
-    require_once(s, anchor, "async completion")
-    s = s.replace(anchor, anchor + r'''
-    pr_info("XOOM_PROV026 t_ns=%llu request_done path=%s found=%d slot=%u\n",
+    # Log whether a platform MAC exists. No MAC values or bytes are logged.
+    anchor = """\tif (eth_platform_get_mac_address(dev, mac) == 0)
+\t\tnvp.strip_mac = true;"""
+    require_once(s,anchor,"platform MAC lookup")
+    s=s.replace(anchor,anchor+r"""
+    pr_info("XOOM_PROV026 t_ns=%llu phase=PLATFORM_MAC available=%d\n",
+            (unsigned long long)ktime_get_ns(), nvp.strip_mac);
+""",1)
+
+    # Capture final NUL-delimited, padded NVRAM plus little endian length token
+    # at exactly the point the kernel parser finishes.
+    anchor = "\t*new_length += sizeof(token_le);\n"
+    require_once(s,anchor,"final packed length")
+    s=s.replace(anchor,anchor+r"""
+    xoom_v026_blob("NVRAM_PACKED", nvp.nvram, *new_length);
+""",1)
+
+    # Capture source text metadata without printing its data or identifiers.
+    anchor = "\tif (data)\n\t\tnvram = brcmf_fw_nvram_strip("
+    require_once(s,anchor,"source text-to-packed path")
+    s=s.replace(anchor,r"""
+    pr_info("XOOM_PROV026 t_ns=%llu phase=NVRAM_SOURCE type=%s\n",
             (unsigned long long)ktime_get_ns(),
-            fwctx->xoom_v026_request_path, !!fw, fwctx->curpos);
+            (fw && fw->data) ? "FILE" :
+                (free_bcm47xx_nvram ? "NVRAM_PLATFORM" :
+                (kfree_nvram ? "EFI" : "ABSENT")));
+    if (data)
+        xoom_v026_blob("NVRAM_SOURCE", data, data_len);
+""" + anchor,1)
+
+    # Capture actual callback outcome and returned firmware file bytes;
+    # file identity comes from the immediately preceding REQUEST log.
+    anchor = '\tbrcmf_dbg(TRACE, "firmware %s %sfound\\n", cur->path, fw ? "" : "not ");'
+    require_once(s,anchor,"firmware callback")
+    s=s.replace(anchor,anchor+r"""
+    pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_RESULT canonical=%s slot=%u present=%d\n",
+            (unsigned long long)ktime_get_ns(), cur->path,
+            fwctx->curpos, !!fw);
     if (fw && fw->data)
-        xoom_v026_blob("ASYNC_FILE", fw->data, fw->size);
-''', 1)
-    # Subsequent blobs use the synchronous helper. Instrument at the precise
-    # site of success to log the selected board-specific or fallback path.
+        xoom_v026_blob("FILE_RETURNED", fw->data, fw->size);
+""",1)
+
+    # Mark actual requested paths: first asynchronous variant,
+    # subsequent variants, generic fallback; and synchronous attempts.
+    anchor = """\tif (alt_path) {
+\t\tfwctx->board_index++;"""
+    require_once(s,anchor,"initial alternate request")
+    s=s.replace(anchor,anchor+r"""
+        pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_ASYNC_BOARD path=%s\n",
+                (unsigned long long)ktime_get_ns(), alt_path);
+""",1)
+    anchor = """\t} else {
+\t\tret = request_firmware_nowait(THIS_MODULE, true, first->path,"""
+    require_once(s,anchor,"first async generic request")
+    s=s.replace(anchor, """\t} else {
+        pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_ASYNC_GENERIC path=%s\\n",
+                (unsigned long long)ktime_get_ns(), first->path);
+\t\tret = request_firmware_nowait(THIS_MODULE, true, first->path,""",1)
+    anchor = """\t\tret = firmware_request_nowait_nowarn(THIS_MODULE,
+\t\t\t\t\t\t     alt_path, fwctx->dev,"""
+    # Exactly twice in this tree: first request and subsequent retry.
+    if s.count(anchor)!=2:
+        raise RuntimeError(f"unexpected async request locations: {s.count(anchor)}")
+    # Source order: retry function precedes first-request function. Instrument the first occurrence only.
+    a=s.index(anchor);b=s.index(anchor,a+len(anchor))
+    s=s[:a]+"""        pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_ASYNC_RETRY path=%s\\n",
+                (unsigned long long)ktime_get_ns(), alt_path);
+"""+s[a:]
+    anchor = """fallback:
+\t/* Fall back to canonical path if board firmware not found */
+\tret = request_firmware_nowait(THIS_MODULE, true, first->path,"""
+    require_once(s,anchor,"async fallback")
+    s=s.replace(anchor, """fallback:
+\t/* Fall back to canonical path if board firmware not found */
+    pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_ASYNC_FALLBACK path=%s\\n",
+            (unsigned long long)ktime_get_ns(), first->path);
+\tret = request_firmware_nowait(THIS_MODULE, true, first->path,""",1)
+
     anchor = """\t\tret = firmware_request_nowarn(fw, alt_path, fwctx->dev);
-\t\tkfree(alt_path);
-\t\tif (ret == 0)
-\t\t\treturn ret;"""
-    require_once(s, anchor, "sync board variant")
-    s = s.replace(anchor, """\t\tret = firmware_request_nowarn(fw, alt_path, fwctx->dev);
-        if (!ret && *fw) {
-            pr_info("XOOM_PROV026 t_ns=%llu sync_path=%s slot=%u\\n",
-                    (unsigned long long)ktime_get_ns(),
-                    alt_path, fwctx->curpos);
-            xoom_v026_blob("SYNC_BOARD", (*fw)->data, (*fw)->size);
-        }
-\t\tkfree(alt_path);
-\t\tif (ret == 0)
-\t\t\treturn ret;""", 1)
+\t\tkfree(alt_path);"""
+    require_once(s,anchor,"sync board request")
+    s=s.replace(anchor, """        pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_SYNC_BOARD path=%s\\n",
+                (unsigned long long)ktime_get_ns(), alt_path);
+\t\tret = firmware_request_nowarn(fw, alt_path, fwctx->dev);
+\t\tkfree(alt_path);""",1)
     anchor = """fallback:
 \tif (cur->flags & BRCMF_FW_REQF_OPTIONAL)
 \t\treturn firmware_request_nowarn(fw, cur->path, fwctx->dev);
 
 \treturn request_firmware(fw, cur->path, fwctx->dev);"""
-    require_once(s, anchor, "sync fallback")
-    s = s.replace(anchor, """fallback:
-    {
-        int xoom_rc;
-        if (cur->flags & BRCMF_FW_REQF_OPTIONAL)
-            xoom_rc = firmware_request_nowarn(fw, cur->path, fwctx->dev);
-        else
-            xoom_rc = request_firmware(fw, cur->path, fwctx->dev);
-        pr_info("XOOM_PROV026 t_ns=%llu sync_fallback_path=%s slot=%u rc=%d\\n",
-                (unsigned long long)ktime_get_ns(), cur->path,
-                fwctx->curpos, xoom_rc);
-        if (!xoom_rc && *fw)
-            xoom_v026_blob("SYNC_FALLBACK", (*fw)->data, (*fw)->size);
-        return xoom_rc;
-    }""", 1)
-    # Trace the actual runtime packed bytes, not just the .txt file.
-    anchor = """\tcur->nv_data.data = nvram;
-\tcur->nv_data.len = nvram_length;"""
-    require_once(s, anchor, "packed NVRAM handoff")
-    s = s.replace(anchor, anchor + r'''
-    pr_info("XOOM_PROV026 t_ns=%llu nvram_pack_valid=%d\n",
-            (unsigned long long)ktime_get_ns(), !!nvram);
-    if (nvram && nvram_length)
-        xoom_v026_blob("NVRAM_PACKED", nvram, nvram_length);
-''', 1)
-    # The MAC is never printed or hashed; only whether the platform source
-    # was available for the NVRAM parser.
-    anchor = """\tif (eth_platform_get_mac_address(dev, mac) == 0)
-\t\tnvp.strip_mac = true;"""
-    require_once(s, anchor, "platform MAC source")
-    s = s.replace(anchor, """\tif (eth_platform_get_mac_address(dev, mac) == 0)
-        nvp.strip_mac = true;
-    pr_info("XOOM_PROV026 t_ns=%llu platform_mac_available=%d\\n",
-            (unsigned long long)ktime_get_ns(), nvp.strip_mac);
-""", 1)
+    require_once(s,anchor,"sync generic fallback")
+    s=s.replace(anchor, """fallback:
+    pr_info("XOOM_PROV026 t_ns=%llu phase=REQUEST_SYNC_FALLBACK path=%s\\n",
+            (unsigned long long)ktime_get_ns(), cur->path);
+\tif (cur->flags & BRCMF_FW_REQF_OPTIONAL)
+\t\treturn firmware_request_nowarn(fw, cur->path, fwctx->dev);
+
+\treturn request_firmware(fw, cur->path, fwctx->dev);""",1)
     return s
 
 def make_sdio(original: str) -> str:
@@ -205,11 +202,8 @@ def main():
     originals = {SDIO: SDIO.read_bytes(), FW: FW.read_bytes()}
     if sha256(originals[SDIO]).hexdigest() != EXPECTED_SDIO_SHA256:
         raise RuntimeError("SDIO source differs from known original: stop")
-    for source in originals:
-        status = subprocess.run(["git", "diff", "--quiet", "--", str(source)],
-                                cwd=KERNEL)
-        if status.returncode:
-            raise RuntimeError("Refusing to build on dirty kernel source " + str(source))
+    if sha256(originals[FW]).hexdigest()!=EXPECTED_FW_SHA256:
+        raise RuntimeError("firmware.c differs from known original: stop")
     env = dict(os.environ, ARCH="arm",
         CROSS_COMPILE=str(TOOLCHAIN / "arm-none-linux-gnueabihf-"))
     try:
