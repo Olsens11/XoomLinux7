@@ -77,3 +77,7 @@
 - [ ] Verify **AUTO/default timing=0 with actual SDIO data clock <=25MHz**, leaving firmware/NVRAM and reset profile unchanged. v019 at 25MHz high-speed does not satisfy this control.
 - [ ] Check 110ms SDIO access delay measured from settled 1.25V VDDC and VDDIO, not only from software post-power-on delay; inspect 10-100k SDIO CMD/DAT pulls.
 - [ ] Read Tegra PMC LPO clock enable/rate and check power regulator/reset sequence, preserving distinct software/physical observations.
+
+- [x] Physically test SDIO Section 11 Table 3 AUTO/legacy at **measured 25 MHz**, unchanged firmware/NVRAM, three on-demand MMC2 trials: still F2 -62. Do not repeat this as an untested hypothesis.
+- [ ] Diagnose WLAN Cortex-M3 firmware startup and measured LPO clock provider, chip core reset/power, GPIO U4/U2 control and settled VDDC min 110ms requirement. v021 LPO observer needs authorized hardware test.
+- [ ] Verify performance and true cold boot after any verified functional fix; avoid declaring driver-loader success equal to Wi-Fi success.

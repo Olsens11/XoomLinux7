@@ -18,3 +18,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v021 calibration/firmware A-B result and clock/reset research](../checkpoints/V021_OEM_FW_AND_LPO_HYPOTHESIS_2026-10-24.md).
 
 - [BCM4329 full datasheet, Section 11 timing and reset requirements](BCM4329_DATASHEET_SECTION11_REVIEW_2026-10-24.md): first untested control is <=25MHz **legacy** mode.
+
+- [Physical outcome of the Section 11 legacy 25 MHz control](../checkpoints/V022_AUTO_LEGACY_25MHZ_PHYSICAL_2026-10-24.md): three attempts, still -62.

@@ -52,3 +52,5 @@ When a new record is added, link it here and from its local index; update status
 - [v021 OEM firmware A/B and LPO/clock hypothesis](checkpoints/V021_OEM_FW_AND_LPO_HYPOTHESIS_2026-10-24.md): three physical F2 trials all -62; read-only clock observer built but not loaded.
 
 - [BCM4329 full datasheet and Section 11 review](research/BCM4329_DATASHEET_SECTION11_REVIEW_2026-10-24.md): legacy SDIO clock <=25MHz, VDDC settled+110ms, pull-ups, SPI-vs-SDIO distinction.
+
+- [v022 actual 25 MHz legacy SDIO three-trial physical result](checkpoints/V022_AUTO_LEGACY_25MHZ_PHYSICAL_2026-10-24.md): specification met, F2 still -62.
