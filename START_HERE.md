@@ -22,3 +22,5 @@ v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT 
 - [Offline virtual forensic lab](tools/forensics/README.md): single-command v025 provenance audit without connecting to the physical Xoom.
 
 - [Broadcom BCM4329 full datasheet review](docs/research/BCM4329_DATASHEET_PAGE_INDEX.md): all 149 pages indexed; follow the requirement audit and cross-subsystem fault tree before changing Wi-Fi initialization.
+
+- [Shared BCM4329 physical-chip ownership design](docs/research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md) and offline tests: Motorola already coordinated both radios through shared U4, whereas Linux 7 currently does not.

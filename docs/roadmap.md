@@ -121,3 +121,12 @@
 - [ ] Reconcile canonical DTS max-frequency and assigned-clock-rates with tested 25MHz legacy control, preserving rollback and no unqualified changes.
 - [ ] Audit all-state SDIO CMD/DAT pullups, identification <=400kHz, reference oscillator, true VDDC settling, and full Motorola six-field SDIO override.
 - [ ] Confirm electrical delivery and timing only if controller, pinmux, PMU, source and emulator checks cannot disambiguate.
+
+## Whole BCM4329 physical-chip coordinator (following datasheet/OEM discovery)
+- [x] Identify OEM shared U4 enable reference counting and BT I7-low rfkill policy, separate reset U0/U2.
+- [x] Compare current Linux 7 fixed regulator + hci_bcm GPIO ownership and note generic pwrseq framework is compiled off and not integrated with consumers.
+- [x] Create offline shared OR/power-refcount safety model; 20 unit tests passed, no hardware actions.
+- [ ] Read-only determine actual BT serdev binding, I7/U0 pinmux, real resource state and U4 controller/clock votes.
+- [ ] Build and compile a proper board-specific shared pwrseq provider and two consumer hooks *without duplicate GPIO ownership*; keep standard WLAN/BT protocol drivers.
+- [ ] Validate temporary-boot callbacks, timing, on-chip PMU behavior and F2 after a controlled one-variable A/B against v025.
+- [ ] Do not claim cold POR or a Wi-Fi fix until physical state and actual F2 readiness demonstrate it.

@@ -64,3 +64,5 @@ When a new record is added, link it here and from its local index; update status
 - [v026 actual runtime firmware and NVRAM provenance hardware test](checkpoints/V026_RUNTIME_PROVENANCE_PHYSICAL_2026-10-24.md): generic source selection, CRC32 match, unavailable platform MAC, F2 still -62.
 
 - [Broadcom BCM4329 complete 149-page datasheet index](research/BCM4329_DATASHEET_PAGE_INDEX.md), [36-requirement source and physical audit](research/BCM4329_DATASHEET_REQUIREMENT_AUDIT.md), and [cross-subsystem fault tree](research/BCM4329_CROSS_SUBSYSTEM_FAULT_TREE.md).
+
+- [BCM4329 whole-chip power coordinator design](research/BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md): OEM shared power reference counts, two Linux consumers, resource ownership and rollback.

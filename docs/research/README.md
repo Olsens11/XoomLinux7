@@ -28,3 +28,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [BCM4329 datasheet, full 149-page reference index](BCM4329_DATASHEET_PAGE_INDEX.md) — every page, relevance and topic.
 - [BCM4329 requirement audit](BCM4329_DATASHEET_REQUIREMENT_AUDIT.md) — 36 direct and cross-system constraints, evidence levels and gaps.
 - [BCM4329 cross-subsystem fault tree](BCM4329_CROSS_SUBSYSTEM_FAULT_TREE.md) — shared WLAN/BT regulators, clocks, reset, straps, PMU and CPU handoff.
+
+- [BCM4329 whole-chip resource ownership and OEM reconstruction](BCM4329_SHARED_CHIP_OWNERSHIP_DESIGN.md): Motorola shared U4 count, deliberately low BT I7 on rfkill, differences from Linux 7, staged safe power sequencer design and offline verification.
