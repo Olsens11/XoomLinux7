@@ -86,3 +86,18 @@ The **original HRI39/HRI66 261,317-byte WLAN firmware** is different from both t
 - [F2 experiment protocol](BCM4329_F2_TEST_MATRIX.md)
 
 **Truth labels:** source-equivalent = compared matching source intentions and order only; artifact-verified = extracted hash/ELF/source matching; chip effect remains unobserved. No permanent or RAM-only hardware experiment in this phase.
+
+## 7. Independent read-only source/ELF audit executed on Raspberry Pi
+
+Ran [`tools/forensics/audit_mz600_oem_f2_startup.py`](../../tools/forensics/audit_mz600_oem_f2_startup.py) against locally cached Motorola 2a65edc source, pinned Linux 7 source, and privately extracted HRI39 `bcm4329.ko` on October 24, 2026. **27 checks PASS; zero FAIL.** This includes six exact public-source SHA256 assertions, original OEM module SHA assertion, five original ELF function-symbol checks, startup-order checks, and PMU source-policy checks.
+
+To reproduce against legitimately held local artifacts:
+
+```bash
+python3 tools/forensics/audit_mz600_oem_f2_startup.py \
+  --oem-root /path/to/motorola-2a65edc \
+  --linux-root /path/to/linux-2404d273 \
+  --module /private/path/to/MZ600_HRI39-bcm4329.ko
+```
+
+The verifier reads no firmware, MAC or calibration and does not touch tablets or hardware interfaces. **Assertions check source text, ordering and ELF symbol presence only**; they are *not* a bit-for-bit OEM module rebuild, proof that every conditional ran, or hardware proof of PMU state or Cortex-M3 execution.
