@@ -52,3 +52,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v039 one-variable original OEM 2011 firmware physical comparison](../checkpoints/V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) — both firmware images fail F2, baseline restored, remaining device-identity/regulatory provenance audit.
 
 - [v040 Motorola default MAC bootstrap requirement, ATAG/OTP provenance and NVRAM safety gate](V040_MOTOROLA_MAC_BOOTSTRAP_ATAG_PROVENANCE.md) — actual OEM `dhd_common.c` requires a default MAC from OTP/NVRAM for firmware bring-up; later unit-specific ATAG callback confirmed in original binary; temporary test upload **rejected before device write** by existing identity/regulatory guard.
+
+- [v038 host-awake test](../checkpoints/V038_MMC2_RUNTIME_PM_HOLD_PHYSICAL_2026-10-24.md) and [v039 authentic MZ600 firmware one-variable test](../checkpoints/V039_ORIGINAL_MZ600_FW_PHYSICAL_2026-10-24.md) — both safely physically exercised and **do not** resolve F2 -62; generic firmware restored afterward. [v038 source-guarded runtime-awake builder](../../scripts/experiments/v038-build-mmc2-runtime-awake.py).
