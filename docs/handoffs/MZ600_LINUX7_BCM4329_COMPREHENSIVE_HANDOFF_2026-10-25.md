@@ -1,5 +1,23 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 19:13 EDT — LATEST LIVE RESULT: v06.3 BOOTS, HCD DRIVER PATCH, HCI UP/DOWN, BT→WI-FI PASS
+
+**NEWEST STATE, supersedes the previous 18:53 “v06.3 NO PONG / RED LIGHT” passage and all historical statements that v06.2 is currently running.** The user recovered after the red LED recurred, and on the identical v06.3 image requested a new RAM-only fastboot boot. **The exact same SHA256 `07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e` v06.3 image PHYSICALLY BOOTED** at 19:04 EDT, USB COM9/PID1 PONG passed 19:04:31 and stable 75-second observation passed 19:05:37. One early serial semaphore timeout recovered without action. Image was never flashed. **This refutes the claim v06.3 is intrinsically unable to boot**, but first failed attempt remains real and its power/USB/boot state root cause unresolved.
+
+**New precise power-button observation:** Removing **both USB and power cables DID NOT clear** the red light this time. User booted Android using Power+Volume Up, shut it down; brief Power still red. Booted TWRP using Power+Volume Up, shut it down; brief Power again red, but **holding Power for ~3 seconds successfully booted original Android**, then Power+Volume Up entered fastboot. Do not over-attribute the earlier recovery to cable disconnection: **button hold duration and startup sequencing now matter**. This was recorded from user's direct physical actions, not inferred from a tool.
+
+**Native v06.3 Bluetooth HCD firmware hardware PASS (bounded stage):** 19:08 EDT six modules (`ecc`, `ecdh_generic`, `cmac`, `bluetooth`, `btbcm`, `hci_uart`) loaded **rc 0**, `hci0` PRESENT, and Linux kernel logged `Bluetooth: hci0: BCM4329B1 'brcm/BCM4329B1.hcd' Patch`. Post-patch controller identification included `BCM4329B1 Generic FMRX 37.4 MHz`; USB PONG passed. **19:10** `BT_ON HCI_DEV_UP rc 0`, `BT_OFF HCI_DEV_DOWN rc 0`, then all six modules cleanly unloaded **rc 0**, hci0 ABSENT, USB PONG still PASS. The firmware was found/processed but no RF discovery, pairing, keyboard typing, or actual FM operation demonstrated.
+
+**Whole BCM4329 sequential path STILL PASS with new HCD (19:12–19:13):** after the Bluetooth firmware/HCI session had stopped, one `WIFI_START` loaded brcmutil/brcmfmac/WCC **rc 0**, Wi-Fi firmware 4.220.48 initialized, **wlan0 PRESENT**. One `WIFI_STOP` removed **WCC rc 0, brcmfmac rc 0, brcmutil rc 0**, and wlan0 became absent. USB PONG remained PASS. **No Wi-Fi scan** yet: v06.3 has no `iw`, shell, or nl80211 userspace. Neither simultaneous Wi-Fi+BT nor electrical shared power-off was tested.
+
+**Current confirmed DUT at 19:13 EDT:** v06.3 LIVE on replacement MZ600, no removable microSD, COM9 responsive, both Bluetooth and Wi-Fi kernel module stacks unloaded. Safely continue by developing standard Debian ARMHF `iw` scan support, `ip` interface-up handling and a real framebuffer/VT terminal plus pairing agent, while preserving v06.3 image and HCD hash. Firmware binary stays private; no flash/partition writes or upstream submissions.
+
+**New canonical checkpoint:** [v06.3 RAM boot + BCM4329B1 HCD/HCI + Wi-Fi-after-BT PHYSICAL PASS](../checkpoints/MZ600_V063_PHYSICAL_PASS_HCD_HCI_AND_BLUETOOTH_TO_WIFI_2026-10-25.md). Raw PRIVATE Surface test logs: `MZ600-V063-hcd-firstboot-PRIVATE.log`, `MZ600-V063-HCD-BT-START-FIRST-20261025-PRIVATE.txt`, `MZ600-V063-HCD-BT-ON-OFF-20261025-PRIVATE.txt`, `MZ600-V063-WIFI-AFTER-HCD-BT-SEQUENCE-PRIVATE-20261025.txt`.
+
+**Continuity rule:** This topmost 19:13 state supersedes the old entries BELOW. Append further measured changes at the top and update `runtime/PROJECT_STATE.env`, `docs/status.md`, and dated checkpoints after each physical test; preserve older contrary episodes as dated evidence.
+
+---
+
 ## 2026-10-25 18:53 EDT — CRITICAL NEW STATE: v06.3 NO PONG; RED LIGHT RETURNED
 
 **NEWER FACT OVERRIDING OLD LIVE-STATE TEXT BELOW:** At 18:50 EDT the formerly running **v06.2** successfully executed a guarded USB REBOOT and Surface verified original Android fully booted. At 18:51:28 EDT the exact checksum-pinned **v06.3 HCD candidate** (6,561,792B, SHA256 07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e) was accepted through fastboot boot on the verified replacement MZ600; no flash. COM9 appeared ~18:51:34 but first serial Write returned device not functioning; subsequent Open COM9 failed, 261 errors in observation, **NO PONG**, and Windows PnP indicated COM9 Unknown/unusable. User reported **red light again**. The tablet is not confirmed running Linux or original Android, and v06.2 is NO LONGER the currently live image.
