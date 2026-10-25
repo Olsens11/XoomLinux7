@@ -1,5 +1,8 @@
 # Documentation router
 
+> **New v06.4 engineering checkpoint:** [offline ARMHF dependency-closure and packing preflight](checkpoints/MZ600_V064_ARMHF_PACKAGING_PREFLIGHT_OFFLINE_2026-10-25.md). The preflight script ran on Desktop WSL; no new image or physical feature pass yet.
+
+
 > **CURRENT project authority — Oct 25, 2026:** [Comprehensive v06.3 physical-results handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md), [dated v06.3 hardware PASS](checkpoints/MZ600_V063_PHYSICAL_PASS_HCD_HCI_AND_BLUETOOTH_TO_WIFI_2026-10-25.md), [canonical current machine state](../runtime/CURRENT_LINUX7_STATE.env) and [v06.4 mandatory functional build instructions](plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md). **v06.3 is PHYSICALLY booted and HCD/HCI and sequential Wi-Fi validated; iw is only OFFLINE-STAGED; no actual scan, keyboard pairing, or usable terminal.** Older v015/v020/F2 evidence is historical.
 
 
