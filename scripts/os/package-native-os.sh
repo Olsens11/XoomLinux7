@@ -14,7 +14,7 @@ O="${XOOM_OS_KERNEL_OUT:-$B/os-build/kernel}"
 OUT="${XOOM_OS_ARTIFACTS:-$B/os-build/artifacts}"
 MK="${XOOM_MKBOOTIMG:-/home/xoomdev/xoom-build/android-7.1/out/host/linux-x86/bin/mkbootimg}"
 REL="$(cat "$O/include/config/kernel.release")"
-DTB="$O/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dtb"
+DTB="$O/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-usbdiag.dtb"
 KERNEL="$O/arch/arm/boot/zImage"
 [[ -s "$KERNEL" && -s "$DTB" && -f "$ROOT/lib/modules/$REL/modules.dep" ]] || {
     echo "Missing native kernel or modules. Build + install modules first" >&2; exit 1;
