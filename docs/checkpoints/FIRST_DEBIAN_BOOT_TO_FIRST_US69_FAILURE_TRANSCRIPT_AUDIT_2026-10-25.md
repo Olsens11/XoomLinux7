@@ -1,8 +1,30 @@
-# Historical transcript audit: first Debian success to first USB-dropout incident
+# Historical transcript audit: first microSD Linux boot, Debian success, then US/69 red-LED failures
 
 **Date reviewed:** October 25, 2026  
 **Source:** User-provided prior-conversation transcript covering the earlier successful Debian USB session, wireless-regdb installation, initial MZ600 US/69 test and first reported black-screen/red-camera-LED event.  
 **Cross-check:** Read the original Surface `Start-Xoom-MZ600-US69-TempBoot.ps1` launcher and its desktop `.cmd` wrapper; compare against earlier repository checkpoints and later controlled replay tests.
+
+## CORRECTION: first SD boot failed before the successful Debian session and before US/69
+
+The user subsequently supplied an **earlier** excerpt from the installation conversation, independently corroborated in the original OS-branch GitHub checkpoints. Previous language calling US/69 the "first observed failure" was **too broad**. US/69 was the **first documented black-screen/red-camera-LED failure after a physically successful Debian boot**, not the first Linux boot attempt to lack USB access.
+
+### More complete sequence (October 25)
+
+1. The approved 32 GB removable microSD, formerly empty FAT32 `DISK_IMG`, was safely converted to a single 1 MiB-aligned Linux MBR p1 of type `0x83`, retaining its private MBR identity. A 768 MiB ext4 Debian image was written, physically SHA256 readback-matched, expanded to nearly the entire card and checked with `e2fsck`. The installed root contained Debian 12.15, `brcmfmac-wcc.ko`, firmware and `serial-getty@ttyGS0`. This was a **filesystem PASS, not yet boot PASS**.
+2. First normal Linux `fastboot boot` used the **5,890,048-byte** image SHA256 `8bb0a98bab1a5043ab335a21a92fb43cf505a060d3c976e283ebdb60e1b9230d`, whose **ramdisk was empty**. The bootloader reported `Booting OKAY`, but no present Linux USB gadget/COM9 or Debian PID1 was confirmed. The first-boot milestone explicitly left cause undiagnosed; it did **not** report the later red-camera-LED symptom.
+3. Additional investigation produced the **6,645,760-byte**, SHA256 `c84172c23e149bf8f215eb78284efeb46aa0a13090df4c159a7ab5d3c2a8cb8c` `xoom-linux7-SDROOT-nonempty-ramdisk-TEMPBOOT.img`. It reused the proven diagnostic initramfs payload but **renamed `/init` to `init.v034.disabled`**, allowing normal microSD Debian root with `root=PARTUUID=...` and `init=/sbin/init`. Physical photo verified tty1 Debian login; live COM9 shell, PID1 systemd, ext4 SD root, kernel 7, and `wlan0` with unique FDT MAC passed. **This one working boot proves the removable ext4 root was usable.**
+4. Debian remained active through the official signed regulatory database installation and an authenticated interactive shell. After an independently gated clean reboot through successfully booted factory Android, the US/69 temporary boot first exhibited brief COM9 enumeration and then the dark screen/red camera LED. That was the **first specifically documented red-LED failure after a successful boot**, not the first boot trouble of the day.
+5. Later retries of the exact previous working boot, v034 USB diagnostics, clean upstream v04 USB tool and same-kernel v05 SD breadcrumb all exhibited transient USB or failed serial communication. No cause has been established. These later experiments used different kernel configurations and initramfs/userland: **do not equate all failures to the original empty-ramdisk symptom**.
+
+### Strong diagnostic implications
+
+- The initial empty ramdisk → nonempty CPIO with `/init` renamed transition is a **proven successful image-composition change**, although the first-boot milestone correctly cautions it is **not proved** to be the only causal difference. Preserve and byte-compare the successful kernel+DTB, ramdisk, command line, DT firmware and source/config manifests against each candidate before the next test.
+- Current so-called *clean upstream* v04/v05 RAM diagnostic images were **7,870,464 bytes**, with a significantly larger kernel+DTB than the known working Debian 6,645,760-byte image. They share upstream source ancestry but **are not byte-identical to the successful Linux image** and cannot independently validate its precise kernel config or boot transition.
+- The distinction between three gates is essential: bootloader `Booting OKAY` ≠ USB gadget COM9 enumeration ≠ functioning PID1/SD root/interactive Debian. Also distinguish `COM9 disappears` from a verified kernel crash or PMIC shutdown.
+- The eMMC factory boot p7 and system p8 were later directly SHA-verified as exact factory backups, and Android booted from internal `/system`; earlier SD root selection came from temporary `fastboot boot` image command lines, not permanent Android boot modification.
+- Prefer forensic comparison **first empty image vs exact successful nonempty image** and **successful nonempty vs experimental US/69**, then test one change at a time with accessible early console and private logs. No reformat or internal eMMC modifications are needed.
+
+**Supporting primary checkpoints:** `docs/checkpoints/MICROSD_ROOT_OFFLINE_PREFLIGHT_2026-10-25.md`, `docs/checkpoints/MICROSD_NATIVE_LINUX_INSTALLED_FIRST_BOOT_2026-10-25.md` and `docs/checkpoints/NATIVE_DEBIAN_SD_BOOT_USB_WIFI_IDENTITY_PHYSICAL_PASS_2026-10-25.md` on `os/mz600-native-rootfs-wifi-20261024`.
 
 ## Facts demonstrated by the first successful session
 
@@ -11,7 +33,7 @@
 - Linux global regulatory domain was **country 00 (world)** while the Broadcom `phy#0` advertised **country 99 (driver custom)**. Distinguish these rather than conflating them with a country code selected by the user. The test did **not** demonstrate US 69 acceptance or legal on-air operation.
 - The authoring of a separate US/69 DTS test image and private OEM calibration file was reported after the healthy session, but only the DTS country map was placed into the temporary candidate; the OEM-calibration file with `ccode=US`/`regrev=69` was explicitly **not installed** at that stage. Do not mistake proposed calibration for deployed firmware settings.
 
-## Exact transition to first observed failure, now cross-checked against original script
+## Exact transition to first post-success red-LED failure (US/69), cross-checked against original script
 
 The original Surface desktop launcher invoked `downloads/Start-Xoom-MZ600-US69-TempBoot.ps1`. Its gates:
 1. Verify image hash/size, open existing COM9 Debian shell; confirm shell prompt and `/sys/class/net/wlan0/operstate=down`.
