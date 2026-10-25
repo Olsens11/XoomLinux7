@@ -91,6 +91,22 @@ check(not (root / "usr/bin/qemu-arm-static").exists(), "host QEMU build helper e
 # fsck exit code 0 = clean; -n does not write to the image.
 fsck = subprocess.run(["e2fsck", "-fn", str(system_image)], text=True, capture_output=True)
 check(fsck.returncode == 0, "offline ext4 integrity check clean (no write)")
+# Confirm *packaged ext4 contents*, not just the staging directory.
+# debugfs performs read-only filesystem metadata lookups without mounting it.
+from pathlib import PurePosixPath
+for artifact in (
+    root / "etc/hostname",
+    root / "etc/shadow",
+    root / "lib/firmware/brcm/brcmfmac4329-sdio.bin",
+    root / "lib/firmware/brcm/brcmfmac4329-sdio.txt",
+    next(p for p in modules if p.name == "brcmfmac-wcc.ko"),
+):
+    on_disk = "/" + artifact.resolve().relative_to(root.resolve()).as_posix()
+    proc = subprocess.run(["debugfs", "-R", "stat " + on_disk,
+                           str(system_image)], text=True, capture_output=True)
+    check("Inode:" in proc.stdout and "Type:" in proc.stdout,
+          "ext4 packaged inode exists: " + on_disk)
+
 check((out / "NOT_INSTALLED.txt").exists(), "persistent-install hold marker")
 print("NATIVE_OS_OFFLINE_ACCEPTANCE_PASS", "kernel=" + krel,
       "boot_bytes=" + str(len(boot)), "system_sha256=" + sha(system_image),
