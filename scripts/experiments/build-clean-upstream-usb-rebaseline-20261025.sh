@@ -74,6 +74,7 @@ fi
   --enable USB_G_SERIAL --enable USB_F_ACM --enable USB_U_SERIAL \
   --enable DEVTMPFS --enable DEVTMPFS_MOUNT \
   --enable PSTORE --enable PSTORE_RAM --enable PSTORE_CONSOLE \
+  --disable IIO_ST_HUB_DRIVERS \
   --disable NEON --set-str INITRAMFS_SOURCE ""
 make -s -C "$SRC" O="$OUT" olddefconfig
 for item in \
