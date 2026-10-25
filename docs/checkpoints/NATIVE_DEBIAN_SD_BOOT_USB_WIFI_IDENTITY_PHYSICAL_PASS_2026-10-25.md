@@ -67,3 +67,9 @@ As the unprivileged `xoom` owner, `systemctl is-enabled` and `systemctl is-activ
 5. Prepare minimal xoom-linux upstream contribution when tests are repeatable and production identity is established.
 
 This checkpoint **supersedes previous 'normal Debian boot unconfirmed' assertions** for this boot image, while preserving all experimental evidence and previously archived milestone files.
+
+## Further passive regulatory and packaging audit (same successful boot)
+
+Serial `iw` appeared "command not found" only because the unprivileged login's PATH omitted `/usr/sbin`. It is installed at **`/usr/sbin/iw`**. Running **`/usr/sbin/iw reg get` read-only** returned **global country 00 / DFS-UNSET** and a self-managed **phy#0 country 99 / DFS-UNSET** with listed band limits. **Country 99 is a driver/private pseudo-domain, not authorization to use any given jurisdiction.** The global rules include passive-scan restrictions on several frequency ranges; do not assume unrestricted active scanning or transmit permissions.
+
+`rfkill` executable/package was not found. The `mz600-wlan.service` enabled symlink exists under `/etc/systemd/system/multi-user.target.wants/`. The `dbus-daemon` package was not found and `/run/dbus` did not exist, accounting for likely unprivileged systemctl bus access failure despite systemd PID1 running. Need verify package state and choose a safe fix (no apt/download attempted). **No regulatory setting, wireless interface UP, RF scan, credential or persistent system edit was performed** during this audit.
