@@ -63,11 +63,11 @@ import pathlib, re, sys
 p, target = pathlib.Path(sys.argv[1]), sys.argv[2]
 lines = p.read_text().splitlines()
 hits = [i for i,l in enumerate(lines)
-        if re.match(r'^(?:PARTLABEL|PARTUUID)=[^\\s]+\\s+/\\s+ext4\\s+',l)]
+        if re.match(r'^(?:PARTLABEL|PARTUUID)=[^\s]+\s+/\s+ext4\s+',l)]
 if len(hits)!=1:
     raise SystemExit("Expected exactly one staged ext4 root entry; abort")
 lines[hits[0]] = target + " / ext4 errors=remount-ro 0 1"
-p.write_text("\\n".join(lines)+"\\n")
+p.write_text("\n".join(lines)+"\n")
 PY
 grep -Fq "$ROOT_SPEC / ext4 " "$ROOT/etc/fstab" ||
     { echo "Root fstab selector mismatch" >&2; exit 1; }
