@@ -29,35 +29,64 @@ assert sha(V06.read_bytes())=="c8240c65bf43064b82acec516ffc863e819db314e6f5fa003
 assert sha(RAW.read_bytes())=="a1d215790758808666314ca2e6a7cc55b91464ed241fcd6d0ad3168679ed6f41"
 assert subprocess.check_output(["git","-C",str(SRC),"rev-parse","HEAD"],text=True).strip()==PIN
 OUT.mkdir(parents=True,exist_ok=True)
-# Avoid subtle custom newc unpacking differences: reserialize with GNU cpio.
-# All files are read from the PRIVATE archive; never put OEM firmware in repo.
-with tempfile.TemporaryDirectory(prefix="xoom-v061-gnu-cpio-") as t:
+# Re-serialize with Linux kernel's OWN gen_init_cpio tool (not custom packer).
+# The source archive contains character device nodes; extracting these on a
+# non-root build host is invalid. Extract regular files to a tempdir and
+# encode dirs and special devices by their original cpio mode/rdev metadata.
+import stat
+def read_entries(blob):
+ entries=[];pos=0
+ while True:
+  assert blob[pos:pos+6]==b"070701",(pos,blob[pos:pos+6])
+  f=[int(blob[pos+6+j*8:pos+14+j*8],16) for j in range(13)]
+  nstart=pos+110
+  name=blob[nstart:nstart+f[11]-1].decode()
+  ds=(nstart+f[11]+3)//4*4
+  data=blob[ds:ds+f[6]]
+  pos=(ds+f[6]+3)//4*4
+  if name=="TRAILER!!!":break
+  entries.append((name,f,data))
+ return entries
+original_entries=read_entries(gzip.decompress(RAW.read_bytes()))
+assert len(original_entries)==26
+gencpio=BLD/"usr/gen_init_cpio"
+assert gencpio.is_file()
+with tempfile.TemporaryDirectory(prefix="xoom-v061-kernel-cpio-") as t:
  td=P(t)
- old=gzip.decompress(RAW.read_bytes())
- p=subprocess.run(["cpio","-idm","--no-absolute-filenames","--quiet"],input=old,cwd=td,capture_output=True)
- if p.returncode:raise RuntimeError("GNU_CPIO_EXTRACT_FAILED "+p.stderr.decode(errors="replace"))
- init=td/"init"
- assert init.is_file() and init.read_bytes()==(ART/"init").read_bytes()
- assert (init.stat().st_mode&0o111)!=0
- assert (td/"wifi"/"brcmfmac.ko").is_file()
- assert (td/"wifi"/"brcmfmac-wcc.ko").is_file()
- assert (td/"bt"/"hci_uart.ko").is_file()
- assert (td/"sbin"/"modprobe").is_file()
- cmd="find . -print0 | LC_ALL=C sort -z | cpio --null -o -H newc --reproducible --owner=0:0 --quiet"
- rebuilt=subprocess.run(["bash","-lc",cmd],cwd=td,capture_output=True,check=True).stdout
- assert b"070701"==rebuilt[:6]
- out=gzip.compress(rebuilt,compresslevel=9,mtime=0)
- gunzip=gzip.decompress(out)
- assert gunzip==rebuilt
- # Confirm GNU can extract the generated archive in a separate directory.
- with tempfile.TemporaryDirectory(prefix="xoom-v061-verify-") as tv:
-  r=subprocess.run(["cpio","-idm","--no-absolute-filenames","--quiet"],cwd=tv,input=gunzip,capture_output=True)
-  assert r.returncode==0,r.stderr.decode(errors="replace")
-  assert (P(tv)/"init").read_bytes()==init.read_bytes()
-  assert (P(tv)/"sbin"/"modprobe").is_file()
- initfiles=sorted(p.relative_to(td).as_posix() for p in td.rglob("*"))
- assert len(initfiles)>20
- embsrc=OUT/"v061-GNU-newc-private.cpio.gz"
+ listing=[]
+ for name,f,data in original_entries:
+  clean=name.removeprefix("./")
+  assert clean and not clean.startswith("/") and ".." not in clean.split("/")
+  mode=f[1];uid=f[2];gid=f[3];perms=f"{mode & 0o7777:04o}"
+  target="/"+clean
+  if stat.S_ISDIR(mode):
+   listing.append(f"dir {target} {perms} {uid} {gid}")
+  elif stat.S_ISREG(mode):
+   path=td/clean
+   path.parent.mkdir(parents=True,exist_ok=True)
+   path.write_bytes(data)
+   listing.append(f"file {target} {path} {perms} {uid} {gid}")
+  elif stat.S_ISCHR(mode) or stat.S_ISBLK(mode):
+   k="c" if stat.S_ISCHR(mode) else "b"
+   listing.append(f"nod {target} {perms} {uid} {gid} {k} {f[9]} {f[10]}")
+  elif stat.S_ISLNK(mode):
+   listing.append(f"slink {target} {data.decode()} {perms} {uid} {gid}")
+  else:raise RuntimeError(f"Unexpected inode type for {name}")
+ assert any(x.startswith("nod /dev/console ") for x in listing)
+ assert any(x.startswith("nod /dev/null ") for x in listing)
+ assert any(x.startswith("file /init ") for x in listing)
+ manifest=td/"initramfs.list"
+ manifest.write_text("\n".join(listing)+"\n")
+ generated=subprocess.run([str(gencpio),str(manifest)],capture_output=True,check=True).stdout
+ assert generated[:6]==b"070701"
+ cpio_files=read_entries(generated)
+ assert len(cpio_files)==len(original_entries)
+ files={n.removeprefix("./"):data for n,f,data in cpio_files}
+ orig={n.removeprefix("./"):data for n,f,data in original_entries}
+ assert files==orig, "CPIO payload changed; refuse embedding"
+ assert next(f[1] for n,f,data in cpio_files if n=="init")&0o111
+ out=gzip.compress(generated,compresslevel=9,mtime=0)
+ embsrc=OUT/"v061-linux-gen_init_cpio-private.cpio.gz"
  embsrc.write_bytes(out)
  assert len(out)>500000
 # Save original v06 external-ramdisk config/zImage and isolate them from
