@@ -1,5 +1,5 @@
-# Linux OS root is the Android-GPT 'system' partition ONLY if
-# explicitly provisioned after verifying partition ID and capacity.
-PARTLABEL=system / ext4 errors=remount-ro 0 1
+# New, dedicated Linux-only GPT partition name. MUST NOT match Android's
+# existing system or userdata partition labels; provision/verify separately.
+PARTLABEL=xoom-linux / ext4 errors=remount-ro 0 1
 proc /proc proc nosuid,nodev,noexec 0 0
 tmpfs /tmp tmpfs mode=1777,nosuid,nodev 0 0
