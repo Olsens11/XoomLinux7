@@ -59,6 +59,16 @@ assert s.count(marker)==1
 s=s.replace(marker,''' }else if(p[0]=='W' && p[1]=='C' && p[2]=='C' && p[3]==' '){
   upl_target="/run/brcmfmac-wcc.ko";type=p+4;
  '''+marker,1)
+# The reference normal-Debian kernel config leaves CONFIG_BRCMDBG disabled.
+# Earlier v034's module option debug=NNNN is invalid on that configuration.
+# Retain the unmodified upstream module ABI and use kernel LOGS for debugging.
+old=''' char opts[]="debug=00000";
+ unsigned v=(unsigned)wifi_debug;
+ for(int i=10;i>=6;i--){opts[i]=(char)('0'+(v%10u));v/=10u;}
+ r=wifi_load_one("/run/brcmfmac.ko","/wifi/brcmfmac.ko",opts);'''
+new=''' r=wifi_load_one("/run/brcmfmac.ko","/wifi/brcmfmac.ko","");'''
+assert s.count(old)==1
+s=s.replace(old,new,1)
 (OUT/"v06-dashboard-bt-wifi-usb-init.c").write_text(s)
 def run(args):
  print("RUN"," ".join(map(str,args)),flush=True)
