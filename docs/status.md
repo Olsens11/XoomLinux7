@@ -1,5 +1,11 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-25 18:53 EDT — v06.3 physical attempt no PONG / red light
+
+The later **18:51 v06.3** checksum-verified RAM-only boot attempt was accepted by fastboot, COM9 briefly enumerated but gave **no PONG** (serial Write failed / Windows PnP Unknown), and the user reported the familiar **red light again**. **The currently running v06.2 assertion below is superseded**: the previous v06.2 session was intentionally rebooted to stock Android at 18:50, which completed, and the v06.3 attempt did NOT yield usable Linux USB. The last **physically proven** image remains v06.2 but it is **not confirmed currently running**. Bluetooth HCD is **not tested in hardware** because **BT_START was never sent**. Exact v06.3 SHA256: 07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e.
+
+**Safe state:** no further remote device commands. Previous successful physical recovery: unplug **both USB and external power**, then try ordinary **Power alone**; if needed OEM forced reset Power+Volume Up. Photograph any visible early console error. The precise cause (USB/charger state, PMIC, kernel boot memory layout, peripheral state) is unknown. See [new v06.3 checkpoint](checkpoints/MZ600_V063_INITIAL_RAM_BOOT_NO_PONG_RED_LED_RECURRENCE_2026-10-25.md) and [continuously updated project handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md).
+
 ## Current superseding hardware state — 2026-10-25
 
 **Read [the complete Oct25 project handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) and dated physical checkpoints before interpreting the historical Oct24 entries below.**
