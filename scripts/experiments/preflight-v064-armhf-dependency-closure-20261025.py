@@ -55,7 +55,7 @@ def deps_for(p):
     r = cmd("readelf", "-d", str(p))
     if r.returncode:
         return [], "readelf_failed: " + r.stderr.strip()[:120]
-    return re.findall(r"\\(NEEDED\\)\\s+Shared library: \\[([^]]+)\\]", r.stdout), None
+    return re.findall(r"\(NEEDED\)\s+Shared library: \[([^]]+)\]", r.stdout), None
 
 def interp_for(p):
     r = cmd("readelf", "-l", str(p))
@@ -147,7 +147,7 @@ def main():
     if a.out.is_file():
         raise SystemExit("Refusing to overwrite existing preflight report: " + str(a.out))
     a.out.parent.mkdir(parents=True, exist_ok=True)
-    a.out.write_text(json.dumps(report, indent=2) + "\\n")
+    a.out.write_text(json.dumps(report, indent=2) + "\n")
     print("V064_PREFLIGHT_SAVED", a.out)
     print("v063_image_bytes", image_size, "headroom_bytes", LIMIT-image_size)
     for name, item in examined.items():
