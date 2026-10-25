@@ -100,3 +100,5 @@ When a new record is added, link it here and from its local index; update status
 - [v042–v045 first native BCM4329 wlan0 physically demonstrated](checkpoints/V042_V045_NATIVE_WIFI_BRINGUP_2026-10-24.md) — recovered firmware console initialization error 21, proved stock bootstrap MAC unblocks F2, linked upstream WCC for experimental wlan0, safe identity-free rollback verified.
 
 - [Native MZ600 installed-OS workstream](os/NATIVE_OS_INTEGRATION_2026-10-24.md) — staged Debian Bookworm armhf rootfs, clean kernel and factory-MAC ATAG→FDT patch, USB ttyGS0 login, standard upstream brcmfmac/WCC modules; **not flashed or hardware-verified yet**. See dedicated `os/mz600-native-rootfs-wifi-20261024` branch.
+
+- [Native installed-OS offline build PASS checkpoint](checkpoints/NATIVE_OS_OFFLINE_BUILD_PASS_2026-10-24.md) — exact images/hashes/QA and no-flash boundary. [Future xoom-linux upstream handoff draft](os/UPSTREAM_CONTRIBUTION_DRAFT.md) (not sent).
