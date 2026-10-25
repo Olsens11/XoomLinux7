@@ -88,3 +88,5 @@ When a new record is added, link it here and from its local index; update status
 - [v037 SDPCM mailbox verified before persistent F2 timeout](checkpoints/V037_SDPCM_MAILBOX_WRITE_PHYSICAL_2026-10-24.md) — v4 firmware mailbox SDIO write rc=0, now focus on internal WLAN CPU firmware readiness and RAM handoff.
 
 - [v038 on-chip ARM release and NVRAM token physically proven](checkpoints/V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md); [v039 2011 Motorola firmware single-variable physical test](checkpoints/V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) also fails F2 and verified generic firmware rollback. Research branch only.
+
+- [v040 authoritative Motorola MAC bootstrap and protected per-device provenance](research/V040_MOTOROLA_MAC_BOOTSTRAP_ATAG_PROVENANCE.md): candidate missing `macaddr` requirement, OEM bootloader ATAG MAC, current Linux ATAG kernel configuration; lab NVRAM override refused by host guard and not physically tested.
