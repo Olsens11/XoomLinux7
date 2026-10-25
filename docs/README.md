@@ -90,3 +90,5 @@ When a new record is added, link it here and from its local index; update status
 - [v038 on-chip ARM release and NVRAM token physically proven](checkpoints/V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md); [v039 2011 Motorola firmware single-variable physical test](checkpoints/V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) also fails F2 and verified generic firmware rollback. Research branch only.
 
 - [v040 authoritative Motorola MAC bootstrap and protected per-device provenance](research/V040_MOTOROLA_MAC_BOOTSTRAP_ATAG_PROVENANCE.md): candidate missing `macaddr` requirement, OEM bootloader ATAG MAC, current Linux ATAG kernel configuration; lab NVRAM override refused by host guard and not physically tested.
+
+- [v038 MMC2 runtime-PM awake result](checkpoints/V038_MMC2_RUNTIME_PM_HOLD_PHYSICAL_2026-10-24.md) / [v039 original MZ600 firmware result](checkpoints/V039_ORIGINAL_MZ600_FW_PHYSICAL_2026-10-24.md) — two additional controlled, reversible, physically verified negative F2 results and exact generic firmware rollback.
