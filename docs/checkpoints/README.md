@@ -103,3 +103,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [2026-10-25: **microSD Debian root physically INSTALLED**, full SD ext4 expanded, SHA-readback PASS; Linux first temp boot unconfirmed](MICROSD_NATIVE_LINUX_INSTALLED_FIRST_BOOT_2026-10-25.md) — SD blocks dynamically reordered between boots, new MBR verified, staged gzip SHA, 768MiB root write/readback, fsck, ~28.7GiB usable root, temporary fastboot boot OKAY but USB/OS login absent. Android internal storage untouched.
 
 - [First Debian SD boot still displays fastboot screen: controlled legacy ramdisk comparison ready, no EMMC writes](MICROSD_FIRST_BOOT_FASTBOOT_SCREEN_RAMDISK_COMPARISON_2026-10-25.md) — compares valid 71B ramdisk-only variant vs previously working v15 temporary-boot image; both verified and staged on Surface, physical reboot needed.
+
+- [Fastboot image remains on screen: new Linux 7 kernel + proven v034 ramdisk temporary test READY, not yet booted](MICROSD_TEMP_BOOT_STUCK_SCREEN_DIAG_CANDIDATE_2026-10-25.md) — exact original/new boot header comparison, no live USB after bootloader handoff, diagnostic SHA and safe restart plan.
