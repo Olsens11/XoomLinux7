@@ -1,8 +1,11 @@
 # Documentation router
 
+> **CURRENT project authority — Oct 25, 2026:** [Comprehensive v06.3 physical-results handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md), [dated v06.3 hardware PASS](checkpoints/MZ600_V063_PHYSICAL_PASS_HCD_HCI_AND_BLUETOOTH_TO_WIFI_2026-10-25.md), [canonical current machine state](../runtime/CURRENT_LINUX7_STATE.env) and [v06.4 mandatory functional build instructions](plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md). **v06.3 is PHYSICALLY booted and HCD/HCI and sequential Wi-Fi validated; iw is only OFFLINE-STAGED; no actual scan, keyboard pairing, or usable terminal.** Older v015/v020/F2 evidence is historical.
+
+
 > **Read the newest dated [October 25, 2026 comprehensive Linux 7 / BCM4329 handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) before the historical index below.** Its v06.2 Wi-Fi and Bluetooth hardware checks supersede old v015/v020 F2 status; v06.3 HCD and iw are offline only. Keep raw private logs/firmware off GitHub.
 
-**Canonical current authority:** [status.md](status.md) + [../runtime/PROJECT_STATE.env](../runtime/PROJECT_STATE.env). Historical records remain immutable and may describe older states.
+**Canonical CURRENT authority:** [complete handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) + [unique-key live state](../runtime/CURRENT_LINUX7_STATE.env) + [human-readable status](status.md); [legacy historical ledger](../runtime/PROJECT_STATE.env) retains older trial values and is not an unqualified current-state reference.
 
 ## Project and decisions
 - [Project purpose and goals](PROJECT_INTENT.md)
