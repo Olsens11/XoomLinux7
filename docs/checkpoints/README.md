@@ -111,3 +111,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - **[2026-10-25 PHYSICAL SUCCESS — full Debian 12 microSD root boot, systemd PID1, COM9 serial login, native modular BCM4329 wlan0 and matching dynamic FDT MAC](NATIVE_DEBIAN_SD_BOOT_USB_WIFI_IDENTITY_PHYSICAL_PASS_2026-10-25.md)** — replaces former first-boot-unconfirmed status; no Android eMMC flash, RF still untested.
 
 - **[2026-10-25 MZ600-US69 DTB-only TEMPBOOT prepared, NOT YET BOOTED](MZ600_US69_COUNTRY_MAP_VARIANT_BUILT_NOT_BOOTED_2026-10-25.md)** — exact one-property DTB diff, known-good Linux7 kernel/ramdisk, SHA-verified new image, separate no-MAC Motorola calibration, safe Surface one-click test with no flashing.
+
+- **[2026-10-25 US/69 test actual physical attempt — transient COM9 then missing](MZ600_US69_TRANSIENT_USB_POSTBOOT_2026-10-25.md)** — bootloader reports fastboot boot OKAY, COM9 briefly enumerates and disappears within timestamp resolution of one second. Linux login/firmware country NOT confirmed. Baseline known-good retained and no flash performed.
