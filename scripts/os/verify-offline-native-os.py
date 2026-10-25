@@ -44,7 +44,14 @@ check(kernel_size == len(kernel_bytes), "boot image kernel + appended DTB exact 
 check(boot[page_size:page_size + kernel_size] == kernel_bytes, "boot image payload byte-for-byte zImage+USB-DTB")
 check(ramdisk_size == 0, "no embedded diagnostic initramfs")
 cmdline = boot[64:576].split(b"\0", 1)[0].decode()
-for keyword in ("root=PARTLABEL=xoom-linux", "rootfstype=ext4", "rootwait", "init=/sbin/init"):
+card_partuuid = os.environ.get("XOOM_LINUX_ROOT_PARTUUID", "").lower()
+if card_partuuid:
+    check(bool(re.fullmatch(r"[0-9a-f]{8}-0[1-4]", card_partuuid)),
+          "MBR card PARTUUID selector syntax")
+    root_selector = "PARTUUID=" + card_partuuid
+else:
+    root_selector = "PARTLABEL=xoom-linux"
+for keyword in ("root=" + root_selector, "rootfstype=ext4", "rootwait", "init=/sbin/init"):
     check(keyword in cmdline, "normal OS cmdline includes " + keyword)
 check("root=PARTLABEL=system" not in cmdline and "root=PARTLABEL=userdata" not in cmdline,
       "Android system/userdata are NOT Linux root")
@@ -86,8 +93,8 @@ check((root / "etc/systemd/system/getty.target.wants/serial-getty@ttyGS0.service
       "normal USB gadget serial login is enabled")
 check((root / "etc/systemd/system/multi-user.target.wants/mz600-wlan.service").is_symlink(),
       "identity-gated WLAN startup enabled")
-check("PARTLABEL=xoom-linux / ext4" in (root / "etc/fstab").read_text(),
-      "native root fstab targets dedicated Linux-only partition")
+check(root_selector + " / ext4" in (root / "etc/fstab").read_text(),
+      "native root fstab matches selected Linux root partition")
 check("xoom:$6$" in (root / "etc/shadow").read_text(),
       "owner account has non-default generated hash (secret not printed)")
 check(not (root / "usr/bin/qemu-arm-static").exists(), "host QEMU build helper excluded from OS image")
