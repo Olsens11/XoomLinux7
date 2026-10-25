@@ -1,5 +1,8 @@
 # XoomLinux7 agent operating contract
 
+> **CURRENT v06.3 verified 2026-10-25, 19:25 EDT:** Replacement MZ600 is running RAM-only Linux 7 with USB PONG, onboard BCM4329 detected, both radio stacks currently unloaded. This exact v06.3 image physically loaded the private Broadcom HCD patch path, registered hci0, completed HCI UP/DOWN, then loaded wlan0 and cleanly unloaded both stacks. Actual Wi-Fi scanning, Motorola Bluetooth keyboard pairing and a real terminal **are not yet implemented**. Next engineering contract: [v06.4 functional build instructions](docs/plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md) and [complete evolving handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). **All hardware safety, original-MZ600 protection, privacy and Linux upstream/DCO rules below remain binding.** All Oct24 current-state labels below are historical.
+
+
 > **2026-10-25 continuity notice:** [Current comprehensive hardware/source handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) documents physically booted clean v06.2 with Wi-Fi wlan0, Bluetooth hci0 and sequential BT→Wi-Fi PASS. It supersedes the old Oct24 *version/status* labels below. **All original safety, device protection, privacy, provenance and upstream submission constraints remain fully in force.**
 
 **Read this document first, then [START_HERE.md](START_HERE.md), [docs/status.md](docs/status.md), [runtime/PROJECT_STATE.env](runtime/PROJECT_STATE.env), [docs/README.md](docs/README.md), and the relevant hardware/architecture pages.**
