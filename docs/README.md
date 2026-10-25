@@ -107,3 +107,5 @@ When a new record is added, link it here and from its local index; update status
 - [Android-preserving Linux root and boot artifacts — offline PASS](checkpoints/ANDROID_PRESERVING_NATIVE_OS_OFFLINE_REBUILD_2026-10-24.md) — `xoom-linux` dedicated root target, SHA-reverified images, no device writes, reversible Android requirement.
 
 - [Native Linux installation preflight and Android rollback backups (2026-10-25)](checkpoints/NATIVE_OS_INSTALL_RECOVERY_PREFLIGHT_2026-10-25.md) — real 10-partition eMMC map, private off-device images, TegraPT warning; staged Linux remains uninstalled.
+
+- [MicroSD Linux root target — physical media inspection and verified offline build](checkpoints/MICROSD_ROOT_OFFLINE_PREFLIGHT_2026-10-25.md) — microSD detected as independent mmcblk1; no writes or Android modification. Root ext4 installation requires media erase approval.
