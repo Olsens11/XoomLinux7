@@ -45,3 +45,11 @@ Script `scripts/forensics/compare-v061-v062-boot-images-20261025.py` examined th
 5. For upstream work, keep current WLAN MAC ATAG→FDT RFC **candidate**, not signed/submitted, and the v06.2 WCC unload fix under **lab patches only**. Do not mix chip power or reset patch into the reviewed RFC without actual hardware evidence.
 
 **Preserve** private firmware, unique identifiers and host diagnostics off public GitHub. No filesystem repartitions or eMMC writes. Last physical-good candidate remains v06.1.
+
+## Post-checkpoint verification: modular radio config and safe pstore collector
+
+Offline kernel configuration reconfirmed on Desktop WSL: `CONFIG_BRCMFMAC=m`, `CONFIG_BRCMUTIL=m`, `CONFIG_BT_HCIUART=m`, `CONFIG_CFG80211=y`, `CONFIG_USB_G_SERIAL=y`, `CONFIG_MMC_SDHCI_TEGRA=y`. Thus core SDIO discovery and USB gadget can run before freestanding PID1, whereas brcmfmac/hci_uart driver modules only load on explicit requests in this RAM environment. The diagnostic `run_init` does not invoke WIFI_START or BT_START automatically.
+
+Read-only TWRP evidence script on Surface: `C:\\Users\\olsen\\xoom-linux-rom\\captures\\Xoom-MZ600-Capture-Pstore-ReadOnly-After-v062.ps1`. PowerShell parser **PASS**, **NOT EXECUTED** while device is in black/red-LED state. Only executes after exact authorized MZ600 TWRP 3.1.1-0 identity check; copies existing `/sys/fs/pstore` records and `/proc/last_kmsg` if readable to PRIVATE Surface host, no mount, no pstore deletion and no target writes. If no pstore is mounted/available, it reports that fact rather than trying to create/mount/reset it.
+
+**Prioritize user’s photograph/description of the current LCD before resetting, followed by TWRP recovery and read-only pstore capture; keep microSD removed.** Never promote the current WCC shutdown fix to an upstream kernel patch. It is a lab userspace correction with a physically failed v06.2 image; further attribution requires an A/B cold-boot test.
