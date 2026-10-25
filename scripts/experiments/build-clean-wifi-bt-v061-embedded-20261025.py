@@ -97,7 +97,8 @@ snapshot=OUT/"v06-original-external-kernel.config"
 if not snapshot.exists(): shutil.copyfile(original_config,snapshot)
 original_z=BLD/"arch/arm/boot/zImage"
 assert original_z.is_file()
-shutil.copyfile(original_z,OUT/"v06-original-external-kernel-zImage")
+if not (OUT/"v06-original-external-kernel-zImage").exists():
+ shutil.copyfile(original_z,OUT/"v06-original-external-kernel-zImage")
 config=SRC/"scripts/config"
 run(config,"--file",BLD/".config",
     "--enable","BLK_DEV_INITRD","--enable","RD_GZIP",
