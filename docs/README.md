@@ -109,3 +109,5 @@ When a new record is added, link it here and from its local index; update status
 - [Native Linux installation preflight and Android rollback backups (2026-10-25)](checkpoints/NATIVE_OS_INSTALL_RECOVERY_PREFLIGHT_2026-10-25.md) — real 10-partition eMMC map, private off-device images, TegraPT warning; staged Linux remains uninstalled.
 
 - [MicroSD Linux root target — physical media inspection and verified offline build](checkpoints/MICROSD_ROOT_OFFLINE_PREFLIGHT_2026-10-25.md) — microSD detected as independent mmcblk1; no writes or Android modification. Root ext4 installation requires media erase approval.
+
+- **[MicroSD native Debian installation succeeded; first boot not yet qualified](checkpoints/MICROSD_NATIVE_LINUX_INSTALLED_FIRST_BOOT_2026-10-25.md)** — complete physical SD layout and integrity, bootloader temp boot evidence, no Android flash, USB/boot remains unresolved.
