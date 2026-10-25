@@ -1,5 +1,16 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-25 19:13 EDT — v06.3 PHYSICAL PASS: HCD Bluetooth controller and BT→Wi-Fi
+
+**This supersedes the earlier 18:53 v06.3 no-PONG/red-light attempt without erasing that historical event.** The user recovered to Android/fastboot after discovering that unplugging both cables alone did not resolve the red LED this time, but holding ordinary Power for about three seconds after TWRP shutdown DID start Android (brief Power presses still red). At 19:04 EDT the **exact same SHA256 v06.3 image** (07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e) successfully booted RAM-only, Linux USB COM9 PING/PONG passed, and USB remained stable over 75 seconds (one transient initial serial timeout recovered).
+
+At 19:08 EDT `BT_START` loaded all six modules with rc0, registered **hci0** and kernel logged actual firmware path **`BCM4329B1 'brcm/BCM4329B1.hcd' Patch`**. At 19:10 `HCI_DEV_UP rc0` then `HCI_DEV_DOWN rc0`, all six Bluetooth modules unloaded rc0, hci0 absent, USB PONG intact. At 19:12–19:13 the same kernel successfully reinitialized Wi-Fi **after HCD-patched Bluetooth**, created **wlan0**, then unloaded WCC/brcmfmac/brcmutil all rc0; COM9 PONG retained. **Actual Wi-Fi scans, BT keyboard pairing, FM operation, concurrent dual-radio use and complete regulator POR remain UNTESTED.**
+
+**Current device state:** Replacement MZ600 running **v06.3 Linux 7 in RAM**, no removable SD, USB COM9 responsive, Wi-Fi/BT modules unloaded. No permanent partitions changed. **Source of truth:** [exact v06.3 physical test checkpoint](checkpoints/MZ600_V063_PHYSICAL_PASS_HCD_HCI_AND_BLUETOOTH_TO_WIFI_2026-10-25.md) and [continuously updated complete handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md).
+
+**Next goal:** Standard Debian ARMHF `iw` network discovery and a real keyboard-accessible terminal with pairing agent. Do not treat finding/processing HCD as proof of Bluetooth RF pairing yet.
+
+
 ## 2026-10-25 18:53 EDT — v06.3 physical attempt no PONG / red light
 
 The later **18:51 v06.3** checksum-verified RAM-only boot attempt was accepted by fastboot, COM9 briefly enumerated but gave **no PONG** (serial Write failed / Windows PnP Unknown), and the user reported the familiar **red light again**. **The currently running v06.2 assertion below is superseded**: the previous v06.2 session was intentionally rebooted to stock Android at 18:50, which completed, and the v06.3 attempt did NOT yield usable Linux USB. The last **physically proven** image remains v06.2 but it is **not confirmed currently running**. Bluetooth HCD is **not tested in hardware** because **BT_START was never sent**. Exact v06.3 SHA256: 07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e.
