@@ -54,7 +54,7 @@ s=s.replace(marker,'''else if(equals(cmd,"GRID SHOW")){dashboard_mode=0;grid_sce
  else if(equals(cmd,"GRID HIDE")){dashboard_mode=1;dashboard(0);usb_send("DASHBOARD ENABLED\\\\r\\\\n");}
  '''+marker,1)
 # Allow only WCC vendor module in same already-enforced fixed-path RAM upload.
-marker='}else if(p[0]==\\'F\\' && p[1]==\\'I\\' && p[2]==\\'R\\' && p[3]==\\'M\\' &&'
+marker="}else if(p[0]=='F' && p[1]=='I' && p[2]=='R' && p[3]=='M' &&"
 assert s.count(marker)==1
 s=s.replace(marker,''' }else if(p[0]=='W' && p[1]=='C' && p[2]=='C' && p[3]==' '){
   upl_target="/run/brcmfmac-wcc.ko";type=p+4;
