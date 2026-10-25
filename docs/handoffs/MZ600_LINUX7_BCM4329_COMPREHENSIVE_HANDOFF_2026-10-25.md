@@ -1,5 +1,16 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## Clarification: v06.3 was a firmware-only test, not the requested functional Linux environment
+
+User pointed out that, despite previous discussion of **standard Wi-Fi scanning and a keyboard-usable on-screen terminal**, v06.3 contains neither. **The criticism is valid**: the assistant built v06.3 solely as a controlled HCD-firmware delta from v06.2, without including `iw`, `ip`, a shell, pairing agent or real terminal. The firmware-only scope was intentionally useful for A/B driver validation, but was insufficiently differentiated from the user's requested next *functional* build.
+
+**Decision for subsequent work:** The next proposed image/environment must be planned around the actual user-visible capabilities, not another cosmetic dashboard version. Minimum explicit integration acceptance criteria: (1) real ARMHF `iw` (nl80211) with needed libraries and interface-up command, a user-triggered physical scan displaying BSS/channel/signal information with regulatory and privacy safeguards; (2) genuine terminal/shell on the Xoom display with input/output and USB fallback, not just test text; (3) appropriate BlueZ pairing/HID input path for the existing Motorola keyboard, staged and tested against real device capabilities. Keep the HCD-patched v06.3 as a validated rollback and isolate source changes in patch manifests; do not misrepresent optional software as already available.
+
+**Packaging constraint:** The clean image has a roughly 8 MiB Android RAM-boot envelope. Before promising all BlueZ/D-Bus/console/runtime dependencies will fit in one initramfs, measure actual dependency and image sizes and consider a conventional Debian rootfs on approved removable storage if necessary. Never silently replace the no-microSD hardware-isolation baseline or write eMMC. Name a new candidate/version distinctly, record what functions are actually present, and test each acceptance condition physically.
+
+**Current technical truth unchanged:** v06.3 has real BCM4329B1 firmware-path/HCI physical PASS and sequential BT→Wi-Fi PASS, but neither wireless scanning nor keyboard pairing nor terminal is implemented. The user wants these next, not another firmware-only validation advertised as meaningful OS functionality.
+
+
 ## 2026-10-25 19:13 EDT — LATEST LIVE RESULT: v06.3 BOOTS, HCD DRIVER PATCH, HCI UP/DOWN, BT→WI-FI PASS
 
 **NEWEST STATE, supersedes the previous 18:53 “v06.3 NO PONG / RED LIGHT” passage and all historical statements that v06.2 is currently running.** The user recovered after the red LED recurred, and on the identical v06.3 image requested a new RAM-only fastboot boot. **The exact same SHA256 `07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e` v06.3 image PHYSICALLY BOOTED** at 19:04 EDT, USB COM9/PID1 PONG passed 19:04:31 and stable 75-second observation passed 19:05:37. One early serial semaphore timeout recovered without action. Image was never flashed. **This refutes the claim v06.3 is intrinsically unable to boot**, but first failed attempt remains real and its power/USB/boot state root cause unresolved.
