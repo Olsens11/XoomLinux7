@@ -111,3 +111,5 @@ When a new record is added, link it here and from its local index; update status
 - [MicroSD Linux root target — physical media inspection and verified offline build](checkpoints/MICROSD_ROOT_OFFLINE_PREFLIGHT_2026-10-25.md) — microSD detected as independent mmcblk1; no writes or Android modification. Root ext4 installation requires media erase approval.
 
 - **[MicroSD native Debian installation succeeded; first boot not yet qualified](checkpoints/MICROSD_NATIVE_LINUX_INSTALLED_FIRST_BOOT_2026-10-25.md)** — complete physical SD layout and integrity, bootloader temp boot evidence, no Android flash, USB/boot remains unresolved.
+
+- **[New milestone: real Debian 12 boots on MZ600 microSD with USB console and native BCM4329 wlan0](checkpoints/NATIVE_DEBIAN_SD_BOOT_USB_WIFI_IDENTITY_PHYSICAL_PASS_2026-10-25.md)** — systemd, verified factory-MAC FDT/interface match, separate WCC module; no RF association yet.
