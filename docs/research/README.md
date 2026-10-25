@@ -41,3 +41,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [MZ600 OEM versus Linux 7 Cortex-M3/PMU/SDIO F2 startup audit v4](MZ600_BCM4329_OEM_VS_LINUX7_F2_STARTUP_AUDIT_V4.md) — detailed source-equivalence matrix, two nonproven chip-setup differences, untested 261,317-byte early OEM firmware, and 27/27 independent read-only assertions. [Verifier](../../tools/forensics/audit_mz600_oem_f2_startup.py).
 
 - [v5 original MZ600 firmware / PMU / Cortex-M3 evidence gates](MZ600_BCM4329_V5_FIRMWARE_PMU_CM3_EVIDENCE_PLAN.md) — January 2011 vs May 2012 firmware versions, private NVRAM structural comparison, live passive USB status and six-event read-only register capture design. [Privacy-preserving offline comparison utility](../../tools/forensics/compare_mz600_oem_firmware_private.py).
+
+- [v035 physical PMU/CM3/F2 state-retention result](../checkpoints/V035_BCM4329_PMU_CM3_F2_PHYSICAL_2026-10-24.md) — measured 3-trial register/timing trace from the [v035 reversible observer builder](../../scripts/experiments/v035-build-readonly-pmu-cm3.py). This is new evidence after the v5 pre-test plan, not a Wi-Fi fix.
