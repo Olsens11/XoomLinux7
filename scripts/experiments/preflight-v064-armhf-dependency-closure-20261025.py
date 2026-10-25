@@ -59,7 +59,7 @@ def deps_for(p):
 
 def interp_for(p):
     r = cmd("readelf", "-l", str(p))
-    matches = re.findall(r"Requesting program interpreter:\\s*([^]]+)", r.stdout)
+    matches = re.findall(r"Requesting program interpreter:\s*([^]]+)", r.stdout)
     return matches[0] if matches else None
 
 def closure(root, start):
