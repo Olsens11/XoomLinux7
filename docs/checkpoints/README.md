@@ -113,3 +113,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - **[2026-10-25 MZ600-US69 DTB-only TEMPBOOT prepared, NOT YET BOOTED](MZ600_US69_COUNTRY_MAP_VARIANT_BUILT_NOT_BOOTED_2026-10-25.md)** — exact one-property DTB diff, known-good Linux7 kernel/ramdisk, SHA-verified new image, separate no-MAC Motorola calibration, safe Surface one-click test with no flashing.
 
 - **[2026-10-25 US/69 test actual physical attempt — transient COM9 then missing](MZ600_US69_TRANSIENT_USB_POSTBOOT_2026-10-25.md)** — bootloader reports fastboot boot OKAY, COM9 briefly enumerates and disappears within timestamp resolution of one second. Linux login/firmware country NOT confirmed. Baseline known-good retained and no flash performed.
+
+- **[2026-10-25 baseline original Debian image ALSO reproduces one-second USB dropout after US69 attempt](MZ600_BASELINE_REPRODUCES_US69_USB_DROPOUT_2026-10-25.md)** — user recovered black-screen Xoom to Android with Power+Vol Up; battery 100% and charging; known-good RAM-only image fastboot OKAY, COM9 09:38:40–09:38:41 then absent; no persistent Debian login. Rules out attributing failure solely to US69 mapping.
