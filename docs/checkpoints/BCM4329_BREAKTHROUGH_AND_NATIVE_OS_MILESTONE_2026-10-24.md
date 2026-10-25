@@ -238,3 +238,21 @@ The drafted communication is [here](../os/UPSTREAM_CONTRIBUTION_DRAFT.md). Neith
 8. Publish the minimum portable fix to the upstream maintainer **after** physical normal-OS acceptance, respecting license/provenance/security constraints.
 
 **Permanent milestone status:** **BCM4329 native WLAN device-interface breakthrough achieved; no stock hardware modification needed.** Clean Debian/Linux 7 OS built offline. **Android preserved, future dual-boot design pending**, no eMMC write and no boot-manager feature claimed.
+## 16. Later same-day acceptance update — Android-preserving package rebuilt (authoritative current files)
+
+After the full history above was committed, the normal-OS packager was corrected and **actually rerun offline** for the user's desired preserve-Android architecture. This is a new *offline build*, **not** an installed or reboot-tested device.
+
+- Older `root=PARTLABEL=system` boot/system images were **independently hash-checked and archived under** `os-build/archive-rejected-android-system-root-target/`, with an explicit rejected/do-not-install marker. They are *historical evidence*, not deployment candidates.
+- `configs/os/fstab` and the kernel boot-image cmdline now target **`PARTLABEL=xoom-linux`**. The packager explicitly rejects Android's `system`, `userdata`, `data`, `cache`, `boot`, `recovery` and `misc` as target root names.
+- A new 768MiB ext4 root was packed and named **`xoom-linux-root.ext4`**, deliberately **not** `xoom-linux-system.ext4`. The rebuilt boot image's root argument is `root=PARTLABEL=xoom-linux rootfstype=ext4 rootwait`.
+- **Latest correct offline hashes:**
+  
+  | File under Desktop WSL `os-build/artifacts/` | SHA256 |
+  | --- | --- |
+  | `xoom-linux-boot.img` (5,890,048 bytes) | `40e32a9806183482b3e440ce493e505d9fa32b6f4c9dde9364f528b1b55c6756` |
+  | `xoom-linux-root.ext4` (805,306,368 bytes) | `0aafdddccf58c5259007f272fb7878c417006629f5cb678c6d5e0f361ef8376e` |
+
+- A full offline acceptance suite, including root cmdline, fstab, boot image payload, ARM FDT Motorola MAC translator, USB0 UDC, standard USB login, separate upstream WCC, privacy-free 1550-byte calibration, packed filesystem inodes, SHA hashes, and `e2fsck -fn`, returned **`NATIVE_OS_OFFLINE_ACCEPTANCE_PASS`** again after the rename.
+- **No matching new Linux partition has been created or verified.** Do not try to boot the image until a separate GPT filesystem can be safely provisioned without Android damage and the boot-selection/restore method is established. All tablet partitions remain untouched.
+
+For exact updated script/hash evidence see [Android-preserving image rebuild](ANDROID_PRESERVING_NATIVE_OS_OFFLINE_REBUILD_2026-10-24.md). This section **supersedes only** the old `root=system` paths/hashes in Section 8; all v040–v045 physically measured evidence and analysis above remain unchanged.
