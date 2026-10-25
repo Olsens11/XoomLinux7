@@ -35,3 +35,17 @@ Surface ADB verified the actual authorized replacement MZ600:
 - TWRP 3.1.1-0 does not expose pstore. Before next experiments, prioritize optional durable earliest boot evidence via kernel display/uart or explicitly planned RAM logging that can be recovered without exposing private user data.
 
 **Release classification remains:** v06.1 has physical boot+Wi-Fi driver bring-up PASS; v06.2 has **one unsuccessful physical boot attempt, inherent validity undetermined**. No submitted upstream patches or invented DCO signoffs.
+
+## Updated physical test: original Android shutdown reproduces red LED
+
+**Subsequent direct user observation:** After recovering through TWRP, user selected **Reboot to System**, verified normal original Android availability by use, then selected **Shut Down from original Android 3.1**. Subsequent attempt to start normally with Power still produced the **same red camera-side LED symptom**, rather than normal startup. The user reports the red light persists in the sense that the **failure phenotype persists**; do **not** reinterpret this as the LED electrically staying continuously lit without clarification.
+
+### Effect on hypothesis testing
+
+- TWRP's shutdown routine is **not a necessary condition**: ordinary original Android power-off can reproduce the phenomenon too.
+- Neither this Android test nor the earlier TWRP test proves PMIC rail drop, BCM4329 reset, or a truly unpowered state. Both Android and TWRP sessions followed earlier experimental Linux radio activity. A *retained board state* from a preceding Linux session is still a valid, **unproved**, shared cause.
+- The current symptom may arise **before any new Linux kernel image is loaded**, at normal Power-on/reset/PMIC sequencing. That is a reason to halt repeated `fastboot boot` tests and investigate the stock-only power lifecycle; it is **not** proof that Linux images or the BCM4329 are free of faults.
+- The recovery snapshot previously recorded battery 82% and approximately 7.915V, AC offline; software fuel-gauge capacity alone does not prove voltage at the instant of startup. A controlled physical test with an appropriate OEM dock charger (which was previously physically confirmed to charge this unit) is preferable to speculative reflashing or invasive battery disconnection.
+- **Proposed discriminating control**: with removable SD still absent, use the OEM dock charger, verify actual charge indicator/AC-online in recovery or Android before shutdown, then compare normal Power-on after stock Android power-off versus the OEM documented Power+Volume-Up forced reboot. Record LED behavior and exact button timing. No further Linux image changes until observed baseline is recorded.
+- Preserve any future OEM CPCAP/Tegra power management investigation as **separate evidence-gated source patch candidate**, not a change to the WLAN MAC RFC or experimental userspace WCC unload patch. Do not claim that root cause is a BCM4329 retained rail until a measurable board reset/power sequence or matched-state A/B supports it.
+
