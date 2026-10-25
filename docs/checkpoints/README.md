@@ -88,3 +88,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [v040/v041 physical Cortex-M3 execution / NVRAM token / SDPCM shared header checkpoint](V040_V041_CM3_NVRAM_SHARED_STRUCTURE_PHYSICAL_2026-10-24.md) — verified CM3 down→up, NVRAM token matches, RAM tail becomes genuine v3 SDPCM shared header with no trap/assert and valid console/msgtrace; F2 still -62, safe unload.
 
 - [v042–v045 successful BCM4329 F2 and first native wlan0 physical bring-up](V042_V045_NATIVE_WIFI_BRINGUP_2026-10-24.md) — firmware console err21 exposed missing stock MAC NVRAM bootstrap field, verified F2=0 with one variable changed, upstream WCC vendor ops enabled first wlan0; original MAC-free NVRAM and modules safely restored, no RF scan.
+
+- [Normal installed-OS Debian ARMhf and clean kernel offline acceptance — 2026-10-24](NATIVE_OS_OFFLINE_BUILD_PASS_2026-10-24.md) — 5.89MB boot image + 768MiB ext4 OS image, exact firmware, separate upstream WCC, Motorola dynamic-MAC patch, USB ttyGS0 login; **offline PASS, not installed/boot-tested**.
