@@ -1,3 +1,11 @@
+## Resolution of image-validity question — successful physical retest at 17:28 EDT
+
+**Later evidence supersedes any implication that v06.2 is unbootable.** The **exact same** SHA256 `bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8` image physically booted successfully from a verified original-Android baseline via RAM-only `fastboot boot` at **17:28:27 EDT**. COM9 enumerated at 17:28:33, PID1 USB PING/PONG passed at 17:28:35, and COM9 remained stable over the 75-second observation with no disconnects; second independent read-only USB session confirmed BCM4329 onboard SDIO device present but **Wi-Fi and Bluetooth modules NOT LOADED**.
+
+The earlier 14:25 no-COM9 failure is a **single unsuccessful attempt in a different prior state**, not a demonstrated image-specific defect. The new boot result **proves v06.2 is boot-capable** but neither identifies why the first attempt failed nor proves a specific PMIC/BCM4329/USB-VBUS issue. User independently reported recovering normal Power-only startup after **disconnecting both USB and external power** first; separate effects were not isolated. Full immutable pass checkpoint: [MZ600 v06.2 controlled boot PASS](MZ600_V062_CONTROLLED_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md).
+
+**Current acceptance:** v06.2 Linux PID1/USB physical PASS; Wi-Fi WCC shutdown routine physical execution **PENDING** (neither WIFI_START nor WIFI_STOP was sent during successful retest). Do not repeat stale "v06.2 physical boot failed" characterization without separating that original attempt from the subsequently successful retest.
+
 # v06.2 boot attempt with no USB after BCM4329 use — image validity unresolved
 
 **Date:** 2026-10-25 (EDT), physical device MZ600, microSD **removed**, no eMMC flashes. **Status: unresolved.** This checkpoint records **one failed physical boot attempt** following a different working image's BCM4329 initialization. **The v06.2 candidate itself has not been demonstrated defective or inherently unbootable; repeatability and independence from prior chip/system state are untested.**
