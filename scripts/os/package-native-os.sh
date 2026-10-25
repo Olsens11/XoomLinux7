@@ -37,8 +37,6 @@ rm -rf "$ROOT/debootstrap"
 # writing to any eMMC partition. This packager cannot provision passwords.
 mkdir -p "$OUT"
 cat "$KERNEL" "$DTB" > "$OUT/zImage-stingray-with-dtb"
-truncate -s 768M "$OUT/xoom-linux-root.ext4"
-mkfs.ext4 -F -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-root.ext4" > "$OUT/mkfs.log" 2>&1
 
 : > "$OUT/empty-ramdisk"
 # Normal, direct ext4 root. GPT uses PARTLABEL; MBR microSD uses PARTUUID.
@@ -73,6 +71,9 @@ p.write_text("\\n".join(lines)+"\\n")
 PY
 grep -Fq "$ROOT_SPEC / ext4 " "$ROOT/etc/fstab" ||
     { echo "Root fstab selector mismatch" >&2; exit 1; }
+# Build AFTER updating /etc/fstab, so the packed ext4 image has the same selector as boot.
+truncate -s 768M "$OUT/xoom-linux-root.ext4"
+mkfs.ext4 -F -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-root.ext4" > "$OUT/mkfs.log" 2>&1
 CMDLINE="androidboot.modelno=MZ600 product_type=cw console=tty0 loglevel=4 root=$ROOT_SPEC rootfstype=ext4 rootwait rw init=/sbin/init"
 python3 "$MK" \
     --kernel "$OUT/zImage-stingray-with-dtb" \
