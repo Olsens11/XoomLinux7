@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-25 evening EDT — v06.4 OFFLINE PREFLIGHT PASS; NO IMAGE BUILT
+
+The Desktop ARMHF dependency/boot-size audit was executed and committed, with results documented in [v06.4 ARMHF dependency and packaging OFFLINE preflight](checkpoints/MZ600_V064_ARMHF_PACKAGING_PREFLIGHT_OFFLINE_2026-10-25.md). Verified **v06.3 SHA256** and **1,826,816-byte image headroom**. ARMHF shell/iw/ip/getty dependency closures resolved individually, but the inspected Debian ARMHF rootfs lacks BlueZ/D-Bus daemon and client, BusyBox and signed regulatory files. Existing VT/fbcon config is present and kernel HIDP module has been built but not packaged. **No new v06.4 image was produced; no target device accessed or RF used.** Live device state remains the separately observed 19:25 v06.3 PONG. Next action: source/verify missing ARMHF userspace, measure combined compression, then build an isolated genuine shell + scan + Bluetooth candidate without weakening chip safety.
+
+
 ## 2026-10-25 19:25 EDT — CURRENT VERIFIED v06.3 + mandatory v06.4 build plan
 
 **Current physical truth reverified read-only on Surface at 19:25 EDT:** Replacement MZ600 continues running **v06.3 RAM-only Linux 7**; USB **COM9 PING/PONG PASS**, MMC2 onboard **BCM4329 VERIFIED**, WIFI_STATUS **WLAN0 ABSENT** and BT_STATUS **HCI0 ABSENT** because radio modules were deliberately unloaded after previous physical tests. **No reboot or new radio command** during this audit. v06.3 previously physically loaded HCD and registered hci0, performed HCI_UP/DOWN, then successfully started Wi-Fi/wlan0 and cleanly unloaded WCC, brcmfmac and brcmutil. One earlier same-image no-PONG/red-light attempt remains a separate historical observation.
