@@ -82,3 +82,40 @@ The compiled custom Linux kernel has `CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=y` an
 **CONFIRMED:** Motorola OEM `US/69` in TWO archived builds; live PHY channels 1–11; firmware interface up and down-state; source of Broadcom pseudo-country 99; BCM4329 requires country-code map unless a DT trivial override; upstream regulatory database cryptographic detached signature verified offline; exact package moved to /tmp via serial with correct hash.
 
 **PENDING:** Debian package installation, regulatory database acceptance by running kernel, MZ600 board-specific DT/regrev deployment, direct firmware-country iovar verification, correct effective Linux US country state, RF/regulatory qualification, any association/connectivity. **No RF activity initiated; no persistent eMMC writes.**
+
+## USER-CONFIRMED PHYSICAL UPDATE — official regulatory package installed and upstream-signed alternative selected (2026-10-25)
+
+The user opened the interactive COM9 Surface launcher and entered the Debian sudo password locally (credential not supplied to chat). **Actual tablet terminal output**:
+
+```
+/tmp/xoom-wireless-regdb-20261025.deb: OK
+[sudo] password for xoom:
+(Reading database ... 10728 files and directories currently installed.)
+Preparing to unpack .../xoom-wireless-regdb-20261025.deb ...
+Unpacking wireless-regdb (2026.05.30-1~deb12u1) over (2026.05.30-1~deb12u1) ...
+Setting up wireless-regdb (2026.05.30-1~deb12u1) ...
+UPSTREAM_SIGNED_REGDB_SELECTED
+/usr/lib/firmware/regulatory.db-upstream
+/usr/lib/firmware/regulatory.db.p7s-upstream
+```
+
+**Status upgraded to PASS for on-device official package hash, dpkg configuration and the two upstream-signed symlink targets.** The `over (2026.05.30-1~deb12u1)` line indicates the package was already installed before this `dpkg -i` invocation; do not infer exactly when the earlier installation occurred. Latest explicit invocation reinstalled and configured it successfully.
+
+**Still NOT established:** custom kernel signature-loading/acceptance in current session, change of global regulatory country from `00`, firmware country value, or RF compliance. The immediate `iw reg get` remained world `00` plus Broadcom custom phy `99`, with no country selection/driver country-map deployed. The active radio remains DOWN. No `iw reg set`, network scans, transmit tests or reboot were performed.
+
+### DT source location verified for next MZ600-only build
+
+The active development tree is `/home/xoomdev/xoom-linux-rom/linux-src/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-usbdiag.dts` (1717 lines); the embedded BCM4329 node is:
+
+```dts
+/* mmc@c8000200 / SDMMC2 */
+wifi@1 {
+    compatible = "brcm,bcm4329-fmac";
+    reg = <1>;
+    interrupt-parent = <&gpio>;
+    interrupts = <TEGRA_GPIO(U, 5) IRQ_TYPE_LEVEL_HIGH>;
+    interrupt-names = "host-wake";
+};
+```
+
+The root-compatible includes `motorola,stingray`, `motorola,xoom` (not MZ600-specific). Therefore the board-specific `brcm,ccode-map = "US-US-69";` **must not be baked unconditionally into a shared universal Xoom DTS**. Prefer an MZ600-US variant boot DTB or controlled overlay, preserving the generic upstream source. No source patch, runtime DT write, NVRAM update or boot image change has been applied by this milestone.
