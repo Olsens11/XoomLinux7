@@ -1327,10 +1327,12 @@
         assigned-clock-rates = <46153846>;
         
         /*
-		 * For some reason it won't run at 48MHz like downstream does
-         * For now, this messy number will do (600mHz / 15)
-		 */
-        max-frequency = <46153846>;
+         * BCM4329 SDIO legacy/default transfers are limited to 25 MHz.
+         * Do not allow the 46.15 MHz assigned parent clock to overclock
+         * legacy mode. Revisit the cap only after native high-speed
+         * negotiation and electrical timing are validated.
+         */
+        max-frequency = <25000000>;
 		keep-power-in-suspend;
         bus-width = <4>;
 		non-removable;
