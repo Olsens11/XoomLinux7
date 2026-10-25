@@ -1,3 +1,6 @@
+
+> **SUPERSEDED DEPLOYMENT TARGET:** This checkpoint preserves the historically accepted offline build made for the original (now rejected) Android `system` replacement scheme. Its boot image `ba50...` and root image `398e...` are archived **DO NOT INSTALL**. For the latest Android-preserving, independently named root image and boot image, see [Android-preserving rebuild](ANDROID_PRESERVING_NATIVE_OS_OFFLINE_REBUILD_2026-10-24.md), verified `root=PARTLABEL=xoom-linux`, and [master breakthrough milestone](BCM4329_BREAKTHROUGH_AND_NATIVE_OS_MILESTONE_2026-10-24.md).
+
 # Native MZ600 OS images — completed OFFLINE build and acceptance (2026-10-24)
 
 **State:** OFFLINE BUILD PASS / EXT4 IMAGE PASS / CLEAN KERNEL PASS / DRIVER PACKAGE PASS / USB OS GETTY STAGED / **NOT INSTALLED OR HARDWARE BOOTED**. This checkpoint is for the dedicated `os/mz600-native-rootfs-wifi-20261024` branch, not replacement of the physically accepted v045 temporary-boot evidence.
