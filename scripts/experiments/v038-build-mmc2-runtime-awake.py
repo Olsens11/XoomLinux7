@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
-"""v038: build ONLY a RAM-replaceable BCM4329 read-only PMU/CM3 lifecycle observer.
+"""v038: build a RAM-replaceable BCM4329 MMC2 host runtime-awake experiment.
 
-No Xoom contact. Test holds the verified Tegra MMC host awake during FW/F2, without flashes, firmware swaps, regulator or reset changes. Source/build only.
-writes or changes to the shared regulator. Adds only bounded register reads,
-single-shot printk events around pre-existing driver operations, timestamps,
-and standard compiler instrumentation. Original local Linux source bytes are
-restored byte-for-byte in finally even after a compiler failure.
-
-The F2 failure should remain unchanged. Any change must be reviewed as a
-potential observability effect, not taken as a valid fix.
+Hold a balanced runtime-PM reference on the verified MMC host throughout
+firmware download and F2 enable, and log source-verified PMU/SDIO status.
+No flashing, rebooting, regulator or core reset changes are performed by
+the build. All original kernel source bytes restore in finally.
 """
 from pathlib import Path
 from hashlib import sha256
@@ -80,7 +76,7 @@ def replace_once(s, old, new, label):
 
 def make_sdio(s):
     s = replace_once(s, "#include <linux/unaligned.h>\n",
-                     "#include <linux/unaligned.h>\n#include <linux/ktime.h>\n#include <linux/pm_runtime.h>\n",
+                     "#include <linux/unaligned.h>\n#include <linux/ktime.h>\n#include <linux/pm_runtime.h>\n#include <linux/mmc/host.h>\n",
                      "SDIO ktime+runtime PM include")
     s = replace_once(s, "static int brcmf_sdio_download_firmware(struct brcmf_sdio *bus,",
                      SNAPSHOT + "\nstatic int brcmf_sdio_download_firmware(struct brcmf_sdio *bus,",
