@@ -75,7 +75,7 @@ grep -Fq "$ROOT_SPEC / ext4 " "$ROOT/etc/fstab" ||
 truncate -s 768M "$OUT/xoom-linux-root.ext4"
 # Keep ext4 compatible with the old recovery resize2fs 1.41.14; Linux 7 supports it too.
 # The desktop default enables 64bit/metadata_csum, which legacy TWRP may not resize.
-mkfs.ext4 -F -O ^64bit,^metadata_csum,^orphan_file -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-root.ext4" > "$OUT/mkfs.log" 2>&1
+mkfs.ext4 -F -O ^64bit,^metadata_csum -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-root.ext4" > "$OUT/mkfs.log" 2>&1
 CMDLINE="androidboot.modelno=MZ600 product_type=cw console=tty0 loglevel=4 root=$ROOT_SPEC rootfstype=ext4 rootwait rw init=/sbin/init"
 python3 "$MK" \
     --kernel "$OUT/zImage-stingray-with-dtb" \
