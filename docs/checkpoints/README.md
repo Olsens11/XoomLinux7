@@ -81,3 +81,6 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 
 - [v038 read-only Cortex-M3 and NVRAM end-of-RAM handoff](V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md) — core down→up, 288KiB RAM, length token matches, F2 -62. Motorola reference values match all shared NVRAM fields.
 - [v039 original HRI39/HRI66 Wi-Fi firmware physical A/B](V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) — original 2011 BCM4329B1 firmware also fails F2 -62 under unchanged Linux 7; generic firmware restored with known USB CRC.
+
+- [v038 SDMMC2 host runtime-active F2 physical trial](V038_MMC2_RUNTIME_PM_HOLD_PHYSICAL_2026-10-24.md) — bounded PM runtime hold rc0 across firmware/F2 on actual c8000200.mmc; timeout -62 unchanged, balanced release and clean unload.
+- [v039 original MZ600 2011 Wi-Fi firmware physical trial](V039_ORIGINAL_MZ600_FW_PHYSICAL_2026-10-24.md) — source-authenticated 261317-byte OEM firmware changed alone, F2 -62; rollback to generic 253748-byte image CRC32 B4092AA6 verified in RAM.
