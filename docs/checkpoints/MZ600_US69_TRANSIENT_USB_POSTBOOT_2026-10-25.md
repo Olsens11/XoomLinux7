@@ -57,3 +57,13 @@ The technical next test should capture host PnP arrival/removal and USB console 
 - New variant **DEBIAN PID1 / WIFi FIRMWARE US69 COUNTRY ACCEPTANCE UNCONFIRMED**.
 - Baseline physically proven Debian/COM9 successful in previous test; keep it as recovery image.
 - Regulatory signed package installation previously user-confirmed; SD root untouched in this trial.
+
+## Recovery helper staged, not executed
+
+Created a one-click **known-good baseline** recovery launcher on Surface desktop:
+- `C:\Users\olsen\OneDrive\Desktop\Xoom - Restore Known Good Debian.cmd`
+- `C:\Users\olsen\xoom-linux-rom\downloads\Xoom-Restore-Known-Good-TempBoot.ps1`
+
+Checks exact known-good SHA256 and 6,645,760-byte size, target serial identity, Android Stingray when coming from ADB, and `xoom-cdma` unlocked in fastboot, then uses **`fastboot boot` only**. When no authorized Xoom ADB/fastboot transport is detected, it stops without doing anything. **Offline syntax preflight PASS; no USB transport present, so recovery launcher was NOT run to boot**. Leave tablet unmodified while physically inaccessible.
+
+The user remains away from the device, so physical framebuffer state and actual kernel panic information remain unknown. Avoid attributing USB loss to country-map property until contrasted to baseline under the same power/cable conditions.
