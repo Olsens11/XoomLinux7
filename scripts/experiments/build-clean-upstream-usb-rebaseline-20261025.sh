@@ -50,7 +50,7 @@ for old,new in repl:
     if txt.count(old) != 1: raise SystemExit(f"Board source anchor unexpected ({txt.count(old)}): {old[:75]}")
     txt=txt.replace(old,new,1)
 dts=src/'arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-clean-usb.dts'
-preamble="// XoomLinux7 isolated clean-upstream USB-only test. NOT an upstream source patch.\\n"
+preamble="// XoomLinux7 isolated clean-upstream USB-only test. NOT an upstream source patch.\n"
 if dts.exists() and dts.read_text() != preamble+txt: raise SystemExit("Staged board DTS differs: stop")
 dts.write_text(preamble+txt)
 mk=src/'arch/arm/boot/dts/nvidia/Makefile'
