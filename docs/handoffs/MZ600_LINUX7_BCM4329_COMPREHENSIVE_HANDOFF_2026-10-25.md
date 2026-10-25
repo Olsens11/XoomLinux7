@@ -48,7 +48,7 @@ User pointed out that, despite previous discussion of **standard Wi-Fi scanning 
 
 ---
 
-## 2026-10-25 18:53 EDT — CRITICAL NEW STATE: v06.3 NO PONG; RED LIGHT RETURNED
+## HISTORICAL 2026-10-25 18:53 EDT — first v06.3 NO PONG; RED LIGHT (later identical image PASSED)
 
 **NEWER FACT OVERRIDING OLD LIVE-STATE TEXT BELOW:** At 18:50 EDT the formerly running **v06.2** successfully executed a guarded USB REBOOT and Surface verified original Android fully booted. At 18:51:28 EDT the exact checksum-pinned **v06.3 HCD candidate** (6,561,792B, SHA256 07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e) was accepted through fastboot boot on the verified replacement MZ600; no flash. COM9 appeared ~18:51:34 but first serial Write returned device not functioning; subsequent Open COM9 failed, 261 errors in observation, **NO PONG**, and Windows PnP indicated COM9 Unknown/unusable. User reported **red light again**. The tablet is not confirmed running Linux or original Android, and v06.2 is NO LONGER the currently live image.
 
@@ -56,7 +56,7 @@ User pointed out that, despite previous discussion of **standard Wi-Fi scanning 
 
 **SAFE RECOVERY:** Stop all remote DUT operations. Ask user whether screen shows any early kernel text and take photograph before reset, if applicable. The prior successful physical recovery was **unplug BOTH USB and external power, then press ordinary Power alone**. Only if that fails consider OEM Power+Volume-Up forced reboot. Do not repeat blind fastboot boots, flash, or invoke unproven PMIC/BCM fixes. Private Surface logs: captures/MZ600-V063-hcd-firstboot-PRIVATE.log and captures/MZ600-V062-to-Android-before-v063-PRIVATE.log.
 
-**Current accepted level:** v06.2 remains previously physically proven for Wi-Fi, Bluetooth HCI and sequential radio operation but is not currently running. v06.3 offline validity PASS, first physical attempt NO PONG/red light, image bootability and HCD compatibility UNDETERMINED. Roadmap remains standard iw scanning, real framebuffer terminal and keyboard, and evidence-gated whole-chip regulator/USB power management. Full [physical checkpoint](../checkpoints/MZ600_V063_INITIAL_RAM_BOOT_NO_PONG_RED_LED_RECURRENCE_2026-10-25.md). Append findings to this handoff every turn.
+**Historical as-of 18:53 only (superseded by the later 19:13 physical PASS):** v06.2 was previously verified and no longer running; the first v06.3 attempt had no PONG/red light and HCD had not yet been requested. The exact same image subsequently booted, its HCD path was processed, HCI up/down passed, and Wi-Fi initialized afterward. Roadmap remains standard iw scanning, real framebuffer terminal and keyboard, and evidence-gated whole-chip regulator/USB power management. Full [physical checkpoint](../checkpoints/MZ600_V063_INITIAL_RAM_BOOT_NO_PONG_RED_LED_RECURRENCE_2026-10-25.md). Append findings to this handoff every turn.
 
 ---
 
@@ -83,7 +83,7 @@ The user is developing **native Linux 7.0 on Motorola Xoom tablets**, especially
 
 **Not achieved yet:** No nearby Wi-Fi network scan, network association/WPA/DHCP, proven legal full-channel RF operation, Bluetooth firmware HCD patch application on physical hardware, Bluetooth keyboard pairing/typing on Linux, usable interactive on-screen terminal, simultaneous Wi-Fi+Bluetooth, FM, proven shared-rail POR, good suspend/resume, or permanent Linux eMMC install.
 
-**Prepared OFFLINE but NOT physically booted:** v06.3, a v06.2-derived boot image with one additional privately supplied **BCM4329B1.hcd** firmware file. Separately, a standard Debian 12 **ARMHF `iw` 5.19** package for real `nl80211` scanning has been downloaded, SHA-verified and executed with QEMU. **`iw` is NOT yet included in v06.3 or on the currently running v06.2.**
+**Current status:** v06.3 is now PHYSICALLY booted and its private BCM4329B1.hcd firmware path, HCI controller and subsequent Wi-Fi initialization have passed; earlier it was offline-only. Separately Debian 12 ARMHF `iw` 5.19 was downloaded, hash-verified and QEMU-smoked, but **has never run on the Xoom, and no Wi-Fi scan has occurred**.
 
 **Next user requirements:** Before another build, take Wi-Fi as far as possible; the existing v06.2 can't scan because it lacks an `nl80211` client, so move to **standard `iw`** in the next build. The **next build should expose a real terminal on the tablet usable with the Bluetooth keyboard** if pairing succeeds. The user insists the **entire physical BCM4329** remains the unit of architectural analysis; record changes as preliminary **actual patch candidates**, not just prose notes.
 
@@ -156,8 +156,8 @@ A prior Debian ARMHF rootfs on SD and USB terminal was experimented with, but **
 | Clean no-SD v04 USB baseline | 7,870,464 | `da6de4c2add6d2b13be993898db6ff9930440a8adf55adf2bd195f32fa45528b` | **Physical USB/PID1 PASS**, preserved rollback |
 | v06 **external** RAM CPIO | 6,547,456 | `c8240c65bf43064b82acec516ffc863e819db314e6f5fa0033586241390e00e9` | **Physical kernel panic**, missing `rdinit=/init` and VFS unknown-block(0,0) |
 | v06.1 **built-in** CPIO | 6,547,456 | `b913b62943eebd52992a05273d9ce4ab5d4d8e9109e3bc571d7829889a81888a` | Physical USB/PING, Wi-Fi firmware and **wlan0 PASS**; old stop failed (-11) |
-| **v06.2 WCC teardown** | **6,549,504** | **`bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8`** | **CURRENT LIVE PHYSICAL PASS:** Linux/PID1/USB, Wi-Fi and Bluetooth lifecycle, sequential BT→Wi-Fi |
-| **v06.3 private HCD** | **6,561,792** | **`07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e`** | **OFFLINE/HASH/HEADER PASS ONLY. NEVER physically booted**; one extra HCD CPIO file |
+| **v06.2 WCC teardown** | **6,549,504** | **`bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8`** | **PRIOR v06.2 PHYSICAL PASS (protected baseline):** Linux/PID1/USB, Wi-Fi and Bluetooth lifecycle, sequential BT→Wi-Fi |
+| **v06.3 private HCD** | **6,561,792** | **`07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e`** | **PHYSICAL PASS on second identical-image boot:** USB/PONG, BCM4329B1 HCD path/hci0 up-down and sequential Wi-Fi/wlan0, both cleaned up; first earlier no-PONG/red-light attempt preserved |
 
 **v06 initramfs panic:** Linux actually started and enumerated storage, then printed `check access for rdinit=/init failed: -2` and VFS panic. COM9 may enumerate without a working PID1. v06.1 embedded the CPIO via kernel compilation (rather than external Android ramdisk). Verified `usr/initramfs_inc_data` exact SHA and Android header/DTB. **Don't convert it back to an unproven external ramdisk**.
 
@@ -293,7 +293,7 @@ If repeated, log USB/power/dock state, screen/LED and exact timing. Compare **bo
 
 **B. Finish standard Wi-Fi scanning:** Use staged official Debian 12 ARMHF `iw` plus runtime loader/libraries and `ip link set wlan0 up` equivalent in new reproducible RAM image; provide bounded USB scan or real on-device shell. Once built/verified and safely booted, perform **one scan** under real regulatory constraints, log error codes, nearby BSS privately and public counts/frequencies redacted. Then install `iwd` or `wpa_supplicant`/DHCP later to actually connect, with user's network credentials private.
 
-**C. Bluetooth HCD + Motorola keyboard:** The **single-variable v06.3** with private HCD is ready but unbooted; test it on physical MZ600 with guarded `fastboot boot` **only after explicit user request and normal power preflight**, log firmware patch acceptance and safe BT_ON/OFF/STOP. Add BlueZ+agent, HIDP input path, passkey/pair, verify `/dev/input/event*`, actual keyboard keys, disconnect and reconnection. Keep bonding keys secure; RAM-only no persistence unless a user-approved backing store exists.
+**C. Bluetooth HCD + Motorola keyboard:** **v06.3 is already physically booted and its HCD/HCI and clean up/down tests PASSED**, so do not repeat that test by default. For **v06.4**, implement BlueZ/DBus or a validated pairing agent, HIDP/evdev input, passkey/PIN and user-controlled pairing; verify `/dev/input/event*`, actual keyboard typing into the real on-screen terminal, disconnect/reconnection, preserving USB fallback. See the dedicated v06.4 plan. Keep bonding keys secure; RAM-only no persistence unless a user-approved backing store exists.
 
 **D. User's next-build terminal:** Add a real visible framebuffer/VT terminal and ARMHF shell, keyboard input and keymaps with USB serial shell fallback, **not just decorative diagnostic screen**. The user explicitly wants to type commands on the Xoom if Bluetooth keyboard is working. Preserve current robust USB diagnostics and avoid hardware-only lockout. If new build combines iw+terminal+HCD, note multi-variable integration and keep prior images immutable.
 
@@ -322,6 +322,6 @@ Useful references: GitHub `scripts/resume-state.sh`, `python3 tools/check_reposi
 - [iw staged / terminal plan](https://github.com/Olsens11/XoomLinux7/blob/wip/clean-wifi-bt-usb-20261025/docs/checkpoints/MZ600_NL80211_ARMHF_IW_STAGED_AND_TERMINAL_PLAN_2026-10-25.md)
 - [Red LED + USB/power condition](https://github.com/Olsens11/XoomLinux7/blob/wip/clean-wifi-bt-usb-20261025/docs/checkpoints/MZ600_TWRP_SHUTDOWN_POWER_BUTTON_FORCED_REBOOT_PHENOTYPE_2026-10-25.md)
 
-**Boot image SHA256:** v06.1 `b913b62943eebd52992a05273d9ce4ab5d4d8e9109e3bc571d7829889a81888a`; **v06.2 current** `bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8`; **v06.3 offline** `07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e`. **Private HCD SHA** `7fbab01012c909b9b2de0fda3a76c43fa1c5c150e08642d7d1dbaf4d5ebf887c`. **Official armhf iw .deb SHA** `fd1f6c926853505b0eb03a3afb4c6b68e4350f42b140fe6c5295012eeca872ee`.
+**Boot image SHA256:** v06.1 `b913b62943eebd52992a05273d9ce4ab5d4d8e9109e3bc571d7829889a81888a`; **v06.2 physically proven prior baseline** `bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8`; **v06.3 CURRENT PHYSICAL PASS** `07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e`. **Private HCD SHA** `7fbab01012c909b9b2de0fda3a76c43fa1c5c150e08642d7d1dbaf4d5ebf887c`. **Official armhf iw .deb SHA** `fd1f6c926853505b0eb03a3afb4c6b68e4350f42b140fe6c5295012eeca872ee`.
 
 **Final reminder to the next agent:** Native Linux 7 v06.2 **works now** as USB/PID1 and standard separate Wi-Fi/Bluetooth hardware interfaces; both have been brought up and down cleanly; Wi-Fi also restarted successfully after Bluetooth in the same session. The next step is **real network scanning and a keyboard-driven on-screen terminal**, while validating private HCD and whole-chip power/coexistence using controlled experiments. Never flash or use the protected original Xoom; preserve exact working images, source patches, private firmware provenance and intermittent USB/charger/red-LED history.
