@@ -101,3 +101,7 @@ The user subsequently reported **"it seems that the power condition has been res
 4. Preserve known-good v06.1 and offline-verified v06.2 with exact source/firmware identities; the new observation **supports studying power/connector-dependent state**, not rejecting either image or touching OEM partitions.
 
 **Interpretation:** Confirmed Power-only recovery after removing external power and USB is a major new hardware-state clue. Causal source **unknown**. The user explicitly asked that unplugging both cables before successful normal Power startup be retained in the milestone record for future recurrence.
+
+## Subsequent independently successful exact v06.2 Linux boot
+
+After the user confirmed normal Power-only startup **with USB and external power disconnected at the Power-button event**, the Surface was again connected via USB and independently verified stock Android completed boot. The **same SHA-pinned v06.2 image** that had earlier produced no COM9 now passed a `fastboot boot` RAM-only test on **2026-10-25 17:28 EDT**. It reached Linux diagnostic PID1/COM9, answered USB PING, and remained connected for 75 seconds, without Wi-Fi/Bluetooth module activation. This proves **v06.2 can boot**, not that the earlier red LED was caused by USB, the charger, or a specific PMIC reset latch. Read-only USB status later confirmed no radios loaded. See [physical v06.2 pass record](MZ600_V062_CONTROLLED_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md). The exact charger-state at the retest itself remains unmeasured.
