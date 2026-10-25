@@ -1,5 +1,16 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 evening EDT — v06.4 FIRST OFFLINE PREFLIGHT MEASURED (NO NEW IMAGE)
+
+**New engineering progress:** The authorized Desktop WSL workspace was read non-destructively; working Git branch `wip/clean-wifi-bt-usb-20261025` was clean at the initial audit and the Linux kernel tree is still upstream-pinned at `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3` with pre-existing dirty DTS/atags edits preserved. The v06.3 immutable input hash passed. Public preflight script [`preflight-v064-armhf-dependency-closure-20261025.py`](../../scripts/experiments/preflight-v064-armhf-dependency-closure-20261025.py) was committed, pulled to Desktop and run successfully. Its detailed JSON remains local/private at `artifacts-embedded-v064-preflight/PREFLIGHT.json`. **No hardware action, reboot, flash, Wi-Fi scan, keyboard pairing, or new build image** occurred in this phase.
+
+**Verified size and packages:** v06.3 is 6,561,792B, conservative boot ceiling 8,388,608B, headroom 1,826,816B. ARMHF recursive ELF closure raw/compressed-proxy sizes: dash 1,362,012/794,613B; iw 1,637,340/901,218B; iproute2 ip 2,325,572/1,320,857B; getty 1,272,344/769,738B. Dependencies overlap; proxies are not zImage delta estimates. The examined ARMHF sysroot has no BusyBox, bluetoothd, bluetoothctl, dbus-daemon, or signed regulatory.db/.p7s in checked paths. Kernel has VT/fbcon and CONFIG_BT_HIDP=m; HIDP module exists in build tree but is not in embedded v06.3 CPIO. Signed regulatory DB is required by config. A complete v06.4 packing method is therefore **not yet chosen**, and BlueZ functionality is neither staged nor accepted.
+
+**Required continuation:** finish immutable ARMHF BlueZ/D-Bus/busybox/regulatory sourcing and transitive-dependency QA, then measure combined closure and actual zImage increase; choose self-contained or separately validated nonpersistent RAM transport; preserve private HCD and no-SD/no-eMMC guard. Next build must still satisfy genuine on-Xoom terminal, standard iw scan, and Motorola keyboard typing before claiming functional v06.4. See [new precise OFFLINE checkpoint](../checkpoints/MZ600_V064_ARMHF_PACKAGING_PREFLIGHT_OFFLINE_2026-10-25.md). The most recent device-state observation remains **19:25 EDT v06.3 PONG/idle radios**, not a new live measurement.
+
+---
+
+
 ## 2026-10-25 19:25 EDT — DOCUMENTATION AUDIT & NEXT CHAT v06.4 IMPLEMENTATION ORDER
 
 **This is the latest current operational summary; it supersedes all older interim state paragraphs further down this dated handoff.** At 19:25 EDT the authorized Surface independently verified the replacement MZ600 still running **v06.3 RAM-only Linux 7** (USB COM9 **PONG PASS**, onboard MMC2 BCM4329 VERIFIED, wlan0 and hci0 **absent because their respective stacks are unloaded**). No reboot, flash, radio activation or new image generation occurred during this documentation audit. **v06.4 is NOT BUILT yet.**
