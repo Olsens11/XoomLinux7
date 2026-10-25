@@ -97,3 +97,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [Android 3.1 stock-kernel touchscreen comparison and OEM restore-media audit](ANDROID_3_1_TOUCHSCREEN_COMPARISON_2026-10-24.md) — qtouch I²C NACK at 0x5b and 0x35 under both TWRP/Android; HRI39/HRI66 stock images already privately archived; no disk writes.
 
 - [2026-10-25 native OS installation preflight — actual replacement MZ600 recovery storage, same-unit Android boot/system/TWRP backups, TegraPT gate](NATIVE_OS_INSTALL_RECOVERY_PREFLIGHT_2026-10-25.md). **No eMMC install or partition formatting performed**; microSD or explicitly approved userdata decision remains.
+
+- [32GB microSD physical preflight and normal Debian PARTUUID-root offline build, 2026-10-25](MICROSD_ROOT_OFFLINE_PREFLIGHT_2026-10-25.md) — real empty FAT32 removable media, validated DOS MBR, card-specific root selector, legacy-resizable ext4 and verified offline images; **media formatting requires explicit authorization**.
