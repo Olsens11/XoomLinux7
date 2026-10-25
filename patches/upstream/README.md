@@ -18,6 +18,12 @@ The formatted RFC patch is the **exact intended logic** of the WIP source patch 
 - After USB status preflight, chip ID **BCM4329 detected** at onboard SDIO `mmc2`, driver unloaded. Exactly one opt-in `WIFI_START` sent over USB with microSD physically removed; `brcmutil rc 0`, `brcmfmac rc 0`; upstream `brcmfmac_wcc` dependency loaded automatically; `wlan0 PRESENT`; firmware boot log reports `BCM4329/3 wl0` and `version 4.220.48`. `/sys/class/net/wlan0/addr_assign_type` reported `0` (permanent), though independent byte-for-byte comparison to the protected factory MAC must be maintained privately before formal identity claims. COM9 remained usable. **No RF scan, association, DHCP, country-code override, or transmission test.**
 - Bluetooth dashboard and status control included, but `hci_uart` and HCI0 were **NOT initialized**; no Bluetooth functionality yet proven. The original Motorola-specific HCD firmware is missing from v06.1 CPIO; do not claim full Bluetooth hardware readiness.
 
+## v06.2 exact-image physical boot PASSED on controlled retest (2026-10-25, 17:28 EDT)
+
+**This later checkpoint supersedes the older status table below concerning v06.2's unknown boot capability.** The same immutable SHA-pinned v06.2 RAM image (`bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8`) successfully initialized Linux diagnostic PID1, enumerated USB COM9, answered PING/PONG, and remained connected through a 75-second observation after the user had restored normal Power-only startup by disconnecting both USB and power cables. A second independent read-only status session confirmed BCM4329 detected but `brcmfmac`, `brcmutil`, Bluetooth HCI **not loaded**. Therefore the image is **demonstrably boot-capable**, whereas the earlier 14:25 boot attempt was unsuccessful in a different preceding hardware/power condition.
+
+**Still not validated:** v06.2's ordered `brcmfmac_wcc` → `brcmfmac` → `brcmutil` unloading routine, Wi-Fi RF, Bluetooth HCI or reset/PMIC shared-power cause. This successful no-radio startup does not test those functions. The lab-only teardown patch stays separate from upstream RFC kernel patches. See [exact v06.2 physical PASS checkpoint](../../docs/checkpoints/MZ600_V062_CONTROLLED_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md) for timestamps, file hashes and private logs. No eMMC flash or new Linux source patches were required.
+
 ## Experimental boot-version status — avoid conflating attempts and images
 
 | Image | Offline verified | Physically proved USB/PID1 | Latest observation | Image attribution |
