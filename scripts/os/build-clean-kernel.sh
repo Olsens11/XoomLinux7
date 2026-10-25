@@ -33,7 +33,7 @@ restore_source() {
 trap restore_source EXIT
 (cd "$K" && patch -p1 --batch --forward < "$PATCH_FILE")
 
-"$K/scripts/config" --file "$OUT/.config" --set-str INITRAMFS_SOURCE ""
+"$K/scripts/config" --file "$OUT/.config" --set-str INITRAMFS_SOURCE "" --disable BRCMDBG --disable BRCM_TRACING
 export ARCH=arm CROSS_COMPILE="$CROSS"
 make -C "$K" O="$OUT" olddefconfig
 for requirement in \
@@ -45,12 +45,13 @@ for requirement in \
     'CONFIG_DEVTMPFS=y' \
     'CONFIG_USB_G_SERIAL=y' \
     'CONFIG_BRCMFMAC=m' \
-    'CONFIG_INITRAMFS_SOURCE=""'; do
+    'CONFIG_INITRAMFS_SOURCE=""' \
+    '# CONFIG_BRCMDBG is not set'; do
     grep -Fx "$requirement" "$OUT/.config" || { echo "Kernel missing: $requirement" >&2; exit 1; }
 done
 
 # Keep all existing board drivers (display, touchscreen, battery, USB, etc.).
-# CONFIG_INITRAMFS_SOURCE is the ONLY config change from the qualified v034 base.
+# Only diagnostic initramfs and optional Broadcom debug/tracing are disabled.
 make -C "$K" O="$OUT" -j"${XOOM_JOBS:-2}" \
     zImage nvidia/tegra20-motorola-stingray.dtb modules
 
