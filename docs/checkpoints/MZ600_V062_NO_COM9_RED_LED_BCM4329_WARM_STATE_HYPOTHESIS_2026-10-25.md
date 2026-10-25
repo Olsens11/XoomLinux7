@@ -1,6 +1,6 @@
-# v06.2 fails to enumerate USB after BCM4329 use — forensic status and controlled next tests
+# v06.2 boot attempt with no USB after BCM4329 use — image validity unresolved
 
-**Date:** 2026-10-25 (EDT), physical device MZ600, microSD **removed**, no eMMC flashes. **Status: unresolved.** This checkpoint records a reproducible failed candidate rather than claiming a BCM4329 kernel defect.
+**Date:** 2026-10-25 (EDT), physical device MZ600, microSD **removed**, no eMMC flashes. **Status: unresolved.** This checkpoint records **one failed physical boot attempt** following a different working image's BCM4329 initialization. **The v06.2 candidate itself has not been demonstrated defective or inherently unbootable; repeatability and independence from prior chip/system state are untested.**
 
 ## Immediately preceding successful state
 
@@ -20,7 +20,7 @@
 
 ## Offline binary forensics (actually executed, PASS)
 
-Script `scripts/forensics/compare-v061-v062-boot-images-20261025.py` examined the exact saved, SHA-pinned physical-good v06.1 and failed v06.2 images and embedded CPIO blobs:
+Script `scripts/forensics/compare-v061-v062-boot-images-20261025.py` examined the exact saved, SHA-pinned physically working v06.1 image and the v06.2 image from the unsuccessful attempt and embedded CPIO blobs:
 
 - **Device tree exactly byte-identical**, DTB SHA256 both `a352337e2a8554322a83ca430cb0632b7a1fb390cd15137a0c5f895169ee7c37`.
 - **Android bootload addresses, all other header fields and raw kernel command line byte-identical**, including `rdinit=/init` and lack of `root=SD`.
@@ -32,7 +32,7 @@ Script `scripts/forensics/compare-v061-v062-boot-images-20261025.py` examined th
 ## Competing hypotheses (NONE validated)
 
 1. **Warm-state / shared-combo-chip power-reset sequencing:** after a session with Wi-Fi firmware active and WCC userspace unload failing, Linux rebooted to Android and returned to fastboot. BCM4329 WLAN/BT may not have had a full independent power/reset cycle. Motorola OEM coordinated shared U4 vote, WL reset U2, BT reset U0, BT shutdown I7 and low-power oscillator are not yet fully integrated in mainline board power management. But original Android successfully booted between experiments and no actual rail/reset measurement is available, so **do not assert the chip is the cause**.
-2. **v06.2 image-/init-size regression / early Linux fault:** the sole intentional change is the later-called userspace `wifi_stop()`, but it changes the embedded kernel payload and its compressed layout. A packing/memory/bootloader interaction or other nondeterministic early startup issue has not been excluded. QEMU nonPID1 test does not validate PID1 execution under Tegra 2.
+2. **Possible v06.2 image-/init-size regression / early Linux fault (not established):** the sole intentional change is the later-called userspace `wifi_stop()`, but it changes the embedded kernel payload and its compressed layout. A packing/memory/bootloader interaction or other nondeterministic early startup issue has not been excluded. QEMU nonPID1 test does not validate PID1 execution under Tegra 2.
 3. **Generic warm reboot / PMIC/CPU/USB/gadget state:** previous black-screen cases occurred even on diagnostic images without Debian SD root. Need pstore/kernel display logs, not the red LED as a diagnosis.
 4. **External removable microSD controller:** the SD was absent during both v06.1 (PASS) and v06.2 (FAIL); its presence does not explain this paired result. BCM4329 onboard SDIO is a separate host/function.
 
@@ -40,7 +40,7 @@ Script `scripts/forensics/compare-v061-v062-boot-images-20261025.py` examined th
 
 1. **Do not blind-boot again now.** Ask user to describe/photograph screen *before* reset (if anything visible). If dark and red blink only, user should recover using known Power+Volume-Up combination. Keep microSD out.
 2. After recovery, prioritize capture of TWRP `/sys/fs/pstore` (and `/proc/last_kmsg` if present) **read-only** and kernel logs before restarting Android. Physical ramoops memory was reserved and pstore registered in earlier Debian, but preservation through TWRP is unproven. Avoid interpreting empty pstore as no kernel crash.
-3. A/B in **controlled states**: first the **exact previous physical-good v06.1** SHA image with **no SD** after a complete power-off/hardware restart (not only software warm restart), no Wi-Fi startup, verify PONG and uptime. If v06.1 also fails now, shared state/generic reset is stronger suspect. If v06.1 boots but v06.2 fails with same reboot conditions, investigate embedded image and init compatibility before changing BCM4329 kernel code. Stop after one informative A/B step rather than loops.
+3. A/B in **controlled states**: first the **exact previous physical-good v06.1** SHA image with **no SD** after a complete power-off/hardware restart (not only software warm restart), no Wi-Fi startup, verify PONG and uptime. If v06.1 also fails, a common warm-state/reset explanation becomes more plausible. If v06.1 boots but v06.2 does not, **only** infer an image difference after matching starting hardware/power states; one sequential test is insufficient because the first boot changes hardware state. Do not repeatedly boot-loop.
 4. If a state issue is reproducible, prepare a **separate DTS-only** diagnostic variant disabling **only onboard BCM4329 SDIO mmc2**, not internal eMMC or external SD, in otherwise identical boot config; compare pre-PID1 boot and USB. Record exact diff and private physical results before proposing shared-power reset/pwrseq patches.
 5. For upstream work, keep current WLAN MAC ATAG→FDT RFC **candidate**, not signed/submitted, and the v06.2 WCC unload fix under **lab patches only**. Do not mix chip power or reset patch into the reviewed RFC without actual hardware evidence.
 
@@ -52,4 +52,30 @@ Offline kernel configuration reconfirmed on Desktop WSL: `CONFIG_BRCMFMAC=m`, `C
 
 Read-only TWRP evidence script on Surface: `C:\\Users\\olsen\\xoom-linux-rom\\captures\\Xoom-MZ600-Capture-Pstore-ReadOnly-After-v062.ps1`. PowerShell parser **PASS**, **NOT EXECUTED** while device is in black/red-LED state. Only executes after exact authorized MZ600 TWRP 3.1.1-0 identity check; copies existing `/sys/fs/pstore` records and `/proc/last_kmsg` if readable to PRIVATE Surface host, no mount, no pstore deletion and no target writes. If no pstore is mounted/available, it reports that fact rather than trying to create/mount/reset it.
 
-**Prioritize user’s photograph/description of the current LCD before resetting, followed by TWRP recovery and read-only pstore capture; keep microSD removed.** Never promote the current WCC shutdown fix to an upstream kernel patch. It is a lab userspace correction with a physically failed v06.2 image; further attribution requires an A/B cold-boot test.
+**Prioritize user’s photograph/description of the current LCD before resetting, followed by TWRP recovery and read-only pstore capture; keep microSD removed.** Never promote the current WCC shutdown fix to an upstream kernel patch. It is a lab userspace correction included in an image for which **one physical boot attempt failed**; attribution requires controlled A/B testing with matched starting power states.
+
+## Critical interpretation correction — requested by user
+
+**Classification rule:** Separate three dimensions in all milestones and release labels:
+
+| Dimension | v06.1 | v06.2 |
+| --- | --- | --- |
+| Artifact integrity / offline build | PASS | PASS |
+| Has ever fully booted with working USB/PID1 | YES | **UNKNOWN / NOT DEMONSTRATED** |
+| Outcome of last physical attempt | Passed before Wi-Fi initiation | **One attempt had no COM9** |
+| Intrinsic image defect | Not indicated | **UNDETERMINED** |
+| Starting chip/board power state | Prior no-SD recovery and no confirmed prior Wi-Fi use in new environment | Previous v06.1 session had BCM4329 firmware running and failed WIFI_STOP, then software reboot through Android |
+| Relative source difference | Original `wifi_stop()` | Shutdown routine updated, *only* embedded `/init` changed; this code is not called at boot |
+
+**Never call v06.2 "failed release", "bad kernel", or "unbootable" based on this single observation.** Call it **offline-verified / physical attempt 1 unsuccessful / independent boot capability unverified**.
+
+### Refined experimental plan, preserving causal attribution
+
+- **First recover TWRP with SD removed.** Before another OS boot, try the already prepared read-only host-side pstore/last_kmsg collector; a missing log is inconclusive.
+- Do a **known-good control** first: same exact v06.1 bytes and USB PING after a genuinely completed device power-off/restart, leaving Wi-Fi and Bluetooth unloaded. Confirm console, elapsed time, USB visibility, red LED, pstore; no flashing. A power-off/reboot is **not yet evidence** the BCM4329 actually lost power or reset, because shared regulator votes and pin states have not been measured.
+- **Match starting conditions** for a v06.2 attempt: complete the same power-off/cold-start process before testing it, without intervening `WIFI_START` or BT changes. Compare first-stage kernel/USB screen. Only if both have comparable prior state can differences be attributed to the image more confidently.
+- Later test the *state transition itself* using the same known-good image: (a) no BCM4329 initialization → reboot → identical diagnostic boot; versus (b) `WIFI_START` with OEM firmware and failed WCC unload → reboot → identical diagnostic boot. Vary only the preceding chip state. Android in between must be accounted for as a possible partial reset.
+- If the failure follows **preceding radio activation** rather than image version, inspect OEM U4 shared rail vote, U2 WLAN reset, U0 BT reset, I7 shutdown and LPO clock using source/traces and a reversible board-only diagnostic patch. Don't invent a permanent kernel fix without hardware confirmation.
+- Use independent physical evidence: LCD early kernel text/photo, kernel heartbeat, USB enumeration, kernel pstore, regulator/reset state if exposed. **Bootloader "Booting OKAY" and red LED alone do not prove Linux reached or failed a particular subsystem.**
+
+All work remains WIP and repro-focused; independent v06.2 hardware boot validation is pending.
