@@ -1,12 +1,15 @@
 # XoomLinux7 — Motorola Xoom native Linux
 
+> **CURRENT VERIFIED STATE — October 25, 2026:** Replacement MZ600 is running **v06.3 RAM-only Linux 7** (COM9/PONG read-only checked at 19:25 EDT), BCM4329 Bluetooth HCD patch path/hci0 up/down and Wi-Fi firmware/wlan0 plus sequential BT→Wi-Fi startup and clean driver unload **physically PASS**. Wi-Fi **network scan**, Bluetooth **keyboard pairing**, full combo-chip **coexistence**, and a **real on-screen terminal** are **NOT YET IMPLEMENTED/TESTED**. Next: [v06.4 functional build instructions](docs/plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md) and [full current handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). An earlier identical v06.3 boot attempt failed with transient red-light/no-PONG; it later physically booted successfully.
+
+
 > **LATEST HARDWARE AUTHORITY — October 25, 2026:** [Comprehensive handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). On the replacement MZ600, temporary clean Linux **v06.2** physically boots and initializes onboard BCM4329 Wi-Fi **wlan0** and Bluetooth **hci0** separately, including clean unload and sequential BT→Wi-Fi restart. **Network scanning, Bluetooth keyboard pairing, simultaneous operation and full power-off remain unverified.** **v06.3** private HCD image and Debian ARMHF **iw** are offline staged, not physically tested. Older v018–v041 F2 -62 reports below are historical, not current v06.2 behavior.
 
 **Experimental, upstream-first ARMv7 Linux bring-up for the Motorola Xoom (MZ600 Stingray / MZ604 Wingray).**
 
 This repository is the **canonical integration and engineering record** for our Linux 7.0 development. It builds on [xoom-linux/linux](https://github.com/xoom-linux/linux), not a replacement or an unattributed copy of that kernel. The original working kernel snapshot was commit `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3` (2026-06-12).
 
-> **Current hardware authority (2026-10-24):** v014 USB temporary boot and Broadcom module load/unload **physically verified**; F2 timeout and binary USB upload remain unresolved. v015 raw-serial live-lab **physically qualified** for USB transfer and Broadcom hot-reload; Wi-Fi still has the BCM4329 F2 timeout and no wlan0. BCM4329 Wi-Fi enumerates and loads firmware but its SDIO Function 2 fails readiness (`-62` timeout). **No confirmed working native Linux Wi-Fi connection yet.**
+> **HISTORICAL hardware authority AS OF 2026-10-24 ONLY (superseded by verified v06.3):** v014 USB temporary boot and Broadcom module load/unload **physically verified**; F2 timeout and binary USB upload remain unresolved. v015 raw-serial live-lab **physically qualified** for USB transfer and Broadcom hot-reload; Wi-Fi still has the BCM4329 F2 timeout and no wlan0. BCM4329 Wi-Fi enumerates and loads firmware but its SDIO Function 2 fails readiness (`-62` timeout). **No confirmed working native Linux Wi-Fi connection yet.**
 
 ## Start here
 
