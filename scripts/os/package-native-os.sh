@@ -41,12 +41,39 @@ truncate -s 768M "$OUT/xoom-linux-root.ext4"
 mkfs.ext4 -F -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-root.ext4" > "$OUT/mkfs.log" 2>&1
 
 : > "$OUT/empty-ramdisk"
-# The selected root partition MUST be a new Linux-only GPT partition.
-# Existing Android system, userdata, cache and recovery are never accepted.
-ROOT_PARTLABEL="${XOOM_LINUX_ROOT_PARTLABEL:-xoom-linux}"
-[[ "$ROOT_PARTLABEL" =~ ^[a-zA-Z0-9_-]{1,32}$ ]] || { echo 'Invalid Linux GPT label' >&2; exit 1; }
-case "${ROOT_PARTLABEL,,}" in system|userdata|data|cache|boot|recovery|misc) echo 'Refusing Android partition as native Linux root' >&2; exit 1;; esac
-CMDLINE="androidboot.modelno=MZ600 product_type=cw console=tty0 loglevel=4 root=PARTLABEL=$ROOT_PARTLABEL rootfstype=ext4 rootwait rw init=/sbin/init"
+# Normal, direct ext4 root. GPT uses PARTLABEL; MBR microSD uses PARTUUID.
+# A PARTUUID is accepted only when explicitly selected for the target card.
+if [[ -n "${XOOM_LINUX_ROOT_PARTUUID:-}" ]]; then
+    [[ "$XOOM_LINUX_ROOT_PARTUUID" =~ ^[[:xdigit:]]{8}-0[1-4]$ ]] || {
+        echo "Invalid DOS-MBR PARTUUID; expected 8 hex digits + -01..-04" >&2; exit 1;
+    }
+    ROOT_SPEC="PARTUUID=${XOOM_LINUX_ROOT_PARTUUID,,}"
+else
+    ROOT_PARTLABEL="${XOOM_LINUX_ROOT_PARTLABEL:-xoom-linux}"
+    [[ "$ROOT_PARTLABEL" =~ ^[a-zA-Z0-9_-]{1,32}$ ]] || {
+        echo "Invalid Linux GPT label" >&2; exit 1;
+    }
+    case "${ROOT_PARTLABEL,,}" in
+        system|userdata|data|cache|boot|recovery|misc)
+            echo "Refusing Android partition as native Linux root" >&2; exit 1;;
+    esac
+    ROOT_SPEC="PARTLABEL=$ROOT_PARTLABEL"
+fi
+# Exactly one Linux mount entry, with no Android root-device aliases.
+python3 - "$ROOT/etc/fstab" "$ROOT_SPEC" <<'PY'
+import pathlib, re, sys
+p, target = pathlib.Path(sys.argv[1]), sys.argv[2]
+lines = p.read_text().splitlines()
+hits = [i for i,l in enumerate(lines)
+        if re.match(r'^(?:PARTLABEL|PARTUUID)=[^\\s]+\\s+/\\s+ext4\\s+',l)]
+if len(hits)!=1:
+    raise SystemExit("Expected exactly one staged ext4 root entry; abort")
+lines[hits[0]] = target + " / ext4 errors=remount-ro 0 1"
+p.write_text("\\n".join(lines)+"\\n")
+PY
+grep -Fq "$ROOT_SPEC / ext4 " "$ROOT/etc/fstab" ||
+    { echo "Root fstab selector mismatch" >&2; exit 1; }
+CMDLINE="androidboot.modelno=MZ600 product_type=cw console=tty0 loglevel=4 root=$ROOT_SPEC rootfstype=ext4 rootwait rw init=/sbin/init"
 python3 "$MK" \
     --kernel "$OUT/zImage-stingray-with-dtb" \
     --ramdisk "$OUT/empty-ramdisk" \
@@ -68,13 +95,13 @@ cat > "$OUT/NOT_INSTALLED.txt" <<'EOF'
 These are OFFLINE, UNINSTALLED candidate OS images.
 Android system, userdata, boot, recovery partitions are NOT modified.
 STOP before installation:
- - Confirm actual replacement Xoom, Linux-only partition label, GPT GUID, size and backing-device availability.
+ - Confirm exact media ID, partition table (GPT or DOS MBR), target PARTUUID/PARTLABEL, size and whether overwriting existing data is authorized.
  - Preserve Android system/userdata entirely; back up original Android boot and any to-be-modified partition off-device.
  - Provision a unique owner login and test USB serial-getty path.
  - Verify Motorola ATAG factory MAC is present and works during normal OS boot.
- - Obtain explicit user authorization for the exact, verified new Linux-root and boot writes.
+ - Obtain explicit user authorization for the specific microSD/ext4 root partition and any later eMMC boot write.
  - Keep original TWRP recovery, data and protected first Xoom untouched.
 No hardware mods, scans, RF association, or flashing in this build.
 EOF
-echo "OFFLINE_OS_PACKAGE_PASS release=$REL target=PARTLABEL:$ROOT_PARTLABEL rootfs=768MiB"
+echo "OFFLINE_OS_PACKAGE_PASS release=$REL target=$ROOT_SPEC rootfs=768MiB"
 echo "NO PARTITIONS MODIFIED; inspect $OUT/SHA256SUMS"
