@@ -37,8 +37,8 @@ rm -rf "$ROOT/debootstrap"
 # writing to any eMMC partition. This packager cannot provision passwords.
 mkdir -p "$OUT"
 cat "$KERNEL" "$DTB" > "$OUT/zImage-stingray-with-dtb"
-truncate -s 768M "$OUT/xoom-linux-system.ext4"
-mkfs.ext4 -F -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-system.ext4" > "$OUT/mkfs.log" 2>&1
+truncate -s 768M "$OUT/xoom-linux-root.ext4"
+mkfs.ext4 -F -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-root.ext4" > "$OUT/mkfs.log" 2>&1
 
 : > "$OUT/empty-ramdisk"
 # The selected root partition MUST be a new Linux-only GPT partition.
@@ -59,9 +59,9 @@ python3 "$MK" \
     echo "Boot image exceeds 8MiB engineering target; verify real BOOT partition" >&2; exit 1;
 }
 # Check contents without mount/loopback, using filesystem metadata readers.
-dumpe2fs -h "$OUT/xoom-linux-system.ext4" 2>/dev/null | grep -E 'Filesystem volume name|Block count|Block size'
+dumpe2fs -h "$OUT/xoom-linux-root.ext4" 2>/dev/null | grep -E 'Filesystem volume name|Block count|Block size'
 file "$OUT/xoom-linux-boot.img"
-sha256sum "$OUT/xoom-linux-system.ext4" "$OUT/xoom-linux-boot.img" \
+sha256sum "$OUT/xoom-linux-root.ext4" "$OUT/xoom-linux-boot.img" \
     "$KERNEL" "$DTB" > "$OUT/SHA256SUMS"
 
 cat > "$OUT/NOT_INSTALLED.txt" <<'EOF'
