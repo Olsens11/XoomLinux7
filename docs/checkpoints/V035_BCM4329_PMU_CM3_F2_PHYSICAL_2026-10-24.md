@@ -59,3 +59,21 @@ The observations also **do not prove PMU state retention is causing F2 failure**
 After the third trial, `WIFI_STOP` returned `brcmfmac_rc 0 brcmutil_rc 0`. Follow-up USB `MMC2_STATUS` on COM9 returned **`TARGET VALID`**, **`BOUND YES`**, **`CARD BCM4329 VERIFIED`**, **`DRIVER MODULES UNLOADED`**, and `AUTO profile = 0`. No reboot, flash or partition write occurred. Kernel remains temporary-boot v034; the v035 module binary is only staged in RAM.
 
 **Acceptance labels:** v035 *compile PASS / USB upload CRC PASS / physical read-only observation PASS / repeatability 3 trials PASS / unload and stable MMC2 PASS / WLAN F2 FAIL (-62).* Do not promote v035 to a working-Wi-Fi kernel release.
+
+## Register-level decoding of the PMUControl transition (source verified)
+
+Pinned Linux 7 [`bcma_driver_chipcommon.h`](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/include/linux/bcma/bcma_driver_chipcommon.h) defines `PMU_CTL_ILP_DIV=0xFFFF0000` (shift 16), `PMU_CTL_XTALFREQ=0x7C` (shift 2), `PMU_CTL_NOILPONW=0x200`, `HTREQEN=0x100`, `ALPREQEN=0x80`, and the reset control action `RES_RELOAD=0x2` shifted by 13 (the written command bit is `0x4000`). Thus:
+
+| PMUControl field | First-load initial `0x01770180` | First-load later and warm `0x012B03BC` |
+| --- | ---: | ---: |
+| ILP divider raw field (bits 31:16) | 375 | **299** |
+| Crystal-frequency selection **raw code** (bits 6:2) | 0 | **15** |
+| No-ILP-on-wait | 0 | **1** |
+| HT request enable | 1 | 1 |
+| ALP request enable | 1 | 1 |
+| ILP divider enable / LPO select | 0 / 0 | 0 / 0 |
+| Reset control bits in readback | 0 | 0 |
+
+The **original early and later MZ600 calibration files** both specify `xtalfreq=38400` (kHz). This parameter is not a private MAC or board identifier. The BCM4329 datasheet describes 38.4 MHz as a supported default reference. However **code 15 is not yet mapped to 38.4 MHz for this BCM4329 PMU revision**. Published mappings for *different Broadcom PMU families* differ and must **not** be transplanted onto BCM4329 without chip-specific proof. This clock-encoding and actual reference relationship is a priority next evidence gate.
+
+**Important correction to naive readback interpretation:** the Linux 7 code ORs `0x4000` into PMUControl to request **reload of power-on-reset values**. Its absence from the subsequent T1 register read does *not* prove the write was ineffective; the command field may be self-clearing or have write-only/pulse semantics. Only the later change in clock-related fields is directly observed in the snapshots, without an identified writer.
