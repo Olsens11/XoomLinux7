@@ -82,3 +82,5 @@ When a new record is added, link it here and from its local index; update status
 - [BCM4329 OEM v5 firmware/PMU evidence](research/MZ600_BCM4329_V5_FIRMWARE_PMU_CM3_EVIDENCE_PLAN.md): tested read-only firmware version metadata, protected calibration differences, current USB state and next Cortex-M3/PMU observation gates.
 
 - [v035 BCM4329 PMU/CM3/F2 read-only physical test](checkpoints/V035_BCM4329_PMU_CM3_F2_PHYSICAL_2026-10-24.md): 3 RAM-module trials established a chip PMUControl transition after CM3 release on first load and stable retained PMUControl on warm driver reloads; F2 remains -62.
+
+- [v036 BCM4329B1 PMU resource physical checkpoint](checkpoints/V036_BCM4329_PMU_RESOURCE_CLOCK_PHYSICAL_2026-10-24.md) — OEM-specific resource-state decoding confirms ALP/HT and regulator/PLL resource votes, no pending, yet F2 remains -62 in two trials.
