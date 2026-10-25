@@ -1,5 +1,22 @@
 # Verified project state — imported 2026-10-24
 
+## Current superseding hardware state — 2026-10-25
+
+**Read [the complete Oct25 project handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) and dated physical checkpoints before interpreting the historical Oct24 entries below.**
+
+- **PHYSICAL CURRENT CLEAN BASELINE:** replacement MZ600, **v06.2 RAM-only fastboot boot, no removable SD**, SHA256 **bfa8c7385329a6429c2bc03736133443d59864d2877142308ad2a4573dd2f4b8**, size **6,549,504**. Linux USB/PID1 **COM9 PING/PONG**, BCM4329 detected onboard MMC2, reliable driver lifecycles.
+- **PHYSICAL Wi-Fi PASS through driver stage:** standard brcmfmac firmware **4.220.48** starts, brcmutil + brcmfmac + brcmfmac_wcc load and **wlan0 exists**. v06.2 explicit WIFI_STOP unloads **WCC → brcmfmac → brcmutil**, all rc0, wlan0 disappears and USB PONG survives. **No real RF scan, WPA association, DHCP or verified network connectivity**.
+- **PHYSICAL Bluetooth HCI PASS through controller stage:** six modules **ecc, ecdh_generic, cmac, bluetooth, btbcm, hci_uart** all load rc0; kernel identifies **BCM4329B1** and **hci0**. HCI_DEV_UP rc0 and HCI_DEV_DOWN rc0, all six unload rc0. **Bluetooth firmware HCD not in v06.2; no keyboard pairing or RF discovery validated.**
+- **PHYSICAL sequential whole-chip test PASS:** on **same v06.2 kernel** after BT ON/OFF/unload, Wi-Fi START reinitialized BCM4329 firmware/wlan0 and STOP unloaded cleanly; USB remained responsive. **Simultaneous dual-radio, full shared-power POR and correct charger/USB shutdown unproven**.
+- **OFFLINE v06.3 ONLY:** image **07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e**, size **6,561,792**, adds private user-provided **BCM4329B1.hcd** with SHA **7fbab01012c909b9b2de0fda3a76c43fa1c5c150e08642d7d1dbaf4d5ebf887c**. Boot image structure/hash PASS, **never physically booted**. Firmware binaries are private and not public-Git tracked.
+- **OFFLINE Debian ARMHF iw 5.19 staged:** Debian Bookworm official package SHA **fd1f6c926853505b0eb03a3afb4c6b68e4350f42b140fe6c5295012eeca872ee**, extracted ARMHF utility under QEMU printed iw 5.19; **not yet in a Xoom boot image**. Next implementation is true nl80211 Wi-Fi scan and a real framebuffer terminal/BlueZ keyboard path.
+- **INTERMITTENT normal-Power issue:** after one earlier unsuccessful v06.2 boot attempt, normal Power showed red camera LED even after Android and TWRP shutdown; user's **Power-only restart recovered when BOTH USB and external power had been unplugged before button press**. Exact image then booted cleanly. Root cause unknown; Power+Volume-Up forces reset, not proven full PMIC POR. Do not call v06.2 defective or assert specific latching PMIC fault.
+- **PATCH STATUS:** staged upstream RFC WLAN bootloader vendor-ATAG MAC→FDT patch applies to clean pinned source and has zero style warnings, but lacks actual contributor DCO signoff; separate physically tested v06.2 userspace/WCC lab patch; DTS/kernel source work remains provisional. **No upstream submission and no permanent eMMC install**.
+
+**Note:** All F2 error -62, wlan0 absent, v015/v020 as current statements *below* represent **older 2026-10-24 Phase1 variants**. Preserve their measured negative evidence, but they do **not** represent the current clean v06.2 hardware stage.
+
+
+
 > **Verification labels are intentionally strict.** This is the working status as recovered from measured local outputs; it does not imply all parts were independently re-run at repository initialization.
 
 ## Source
