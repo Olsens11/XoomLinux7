@@ -1,5 +1,8 @@
 # START HERE — XoomLinux7
 
+> **CURRENT — October 25, 2026:** Replacement MZ600 runs **verified v06.3** (19:25 EDT read-only COM9 PONG). BCM4329B1 HCD firmware path/HCI up/down and subsequent Wi-Fi/wlan0 initialization and cleanup **physically PASS**. **No Wi-Fi RF scan or Bluetooth keyboard pairing yet; no real on-screen terminal.** Mandatory NEXT functional deliverable is [v06.4 build specification](docs/plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md), using the [comprehensive handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). Earlier Oct24 F2 -62 and v015/v020 guidance is *historical*, not the current clean v06.3 state.
+
+
 > **Current Oct 25, 2026 handoff (newer than the Oct 24 baselines below):** [Full XoomLinux7 / BCM4329 next-session handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). Exact v06.2 physical Wi-Fi **wlan0** and Bluetooth **hci0** lifecycle PASS, sequential BT→Wi-Fi PASS; v06.3 HCD and Debian ARMHF iw remain OFFLINE only. The old F2 -62 / v015-v020 entries in this page are historical experiments, not current clean Linux status. Read the handoff and newest checkpoint files before operating the device.
 
 This is the **session handoff**, not a historical narrative. Begin with [AGENTS.md](AGENTS.md).
@@ -12,13 +15,13 @@ This is the **session handoff**, not a historical narrative. Begin with [AGENTS.
 6. On each machine, run `scripts/resume-state.sh` then `python3 tools/check_repository.py` and inspect `git status --short`, `git branch -vv`, `git worktree list`.
 7. Resolve current DUT identity, USB status, and user approval **before** any hardware command.
 
-**Current next action:** review [v018](docs/checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md) and [v019](docs/checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md) measured failures, then investigate BCM4329 firmware CPU/SDPCM startup and same-device OEM NVRAM provenance. v015 remains diagnostic baseline. No temporary OEM patch is an accepted Wi-Fi fix.
+**HISTORICAL 2026-10-24 NEXT ACTION (SUPERSEDED by v06.3):** review [v018](docs/checkpoints/V018_OEM_SIX_CAPABILITIES_PHYSICAL_2026-10-24.md) and [v019](docs/checkpoints/V019_SDMMC2_25MHZ_AB_2026-10-24.md) measured failures, then investigate BCM4329 firmware CPU/SDPCM startup and same-device OEM NVRAM provenance. v015 remains diagnostic baseline. No temporary OEM patch is an accepted Wi-Fi fix.
 
 **Do not assume:** a kernel build is a boot test; an SDIO card is a functional wlan0; an embedded firmware file is legally redistributable; a branch has write access because a public clone succeeded.
 
 Historical original source: `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`. Our maintainable integration lives here.
 
-## Current 2026-10-24 diagnostic baseline
+## Historical 2026-10-24 diagnostic baseline (superseded by clean v06.3)
 v020 supports no-reboot MMC2_STATUS, MMC2_PROFILE AUTO or MOTOROLA, MMC2_REINIT and MMC2_BIND recovery control. Physical AUTO/MOTOROLA/AUTO card re-enumeration and loaded-module safety guard PASS; native Wi-Fi F2 -62 persists. Start with docs/checkpoints/V020_MMC2_ON_DEMAND_PHYSICAL_2026-10-24.md before further experiments. Keep v015 as USB fallback, and never touch mmc0 or mmc1.
 
 - [Offline virtual forensic lab](tools/forensics/README.md): single-command v025 provenance audit without connecting to the physical Xoom.
