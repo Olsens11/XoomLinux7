@@ -50,8 +50,8 @@ assert s.count(marker)==1
 s=s.replace(marker,marker+"\n if(dashboard_mode)return;",1)
 marker='else if(equals(cmd,"GRID")){'
 assert s.count(marker)==1
-s=s.replace(marker,'''else if(equals(cmd,"GRID SHOW")){dashboard_mode=0;grid_scene();usb_send("GRID ENABLED\\\\r\\\\n");}
- else if(equals(cmd,"GRID HIDE")){dashboard_mode=1;dashboard(0);usb_send("DASHBOARD ENABLED\\\\r\\\\n");}
+s=s.replace(marker,'''else if(equals(cmd,"GRID SHOW")){dashboard_mode=0;grid_scene();usb_send("GRID ENABLED\\r\\n");}
+ else if(equals(cmd,"GRID HIDE")){dashboard_mode=1;dashboard(0);usb_send("DASHBOARD ENABLED\\r\\n");}
  '''+marker,1)
 # Allow only WCC vendor module in same already-enforced fixed-path RAM upload.
 marker="}else if(p[0]=='F' && p[1]=='I' && p[2]=='R' && p[3]=='M' &&"
@@ -96,7 +96,7 @@ __attribute__((used)) static int main0(unsigned long *sp){
  return (result==0 || result==-17)?0:4;
 }
 __attribute__((naked,noreturn))void _start(void){
- asm volatile("mov r0, sp\\n bl main0\\n mov r7, #1\\n svc 0\\n 1: b 1b");
+ asm volatile("mov r0, sp\n bl main0\n mov r7, #1\n svc 0\n 1: b 1b");
 }
 '''
 (OUT/"modprobe-wcc.c").write_text(MODPROBE)
