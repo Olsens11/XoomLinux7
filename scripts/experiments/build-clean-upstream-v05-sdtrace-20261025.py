@@ -18,7 +18,6 @@ V04_SRC = (PROJECT / "src/diag-init/phase1-v04/init.c").read_bytes()
 assert hashlib.sha256(V04_SRC).hexdigest() == "aaed4a0ec02ceefcc8ff89e5da89029c4ca84193bebffc28909032cb698782e2"
 KERNEL = (BASE / "zImage-with-stingray-usb.dtb").read_bytes()
 assert len(KERNEL) == 7860816
-assert hashlib.sha256(KERNEL).hexdigest() == "f3aef8a6c9a98ee5f8386dce64b9b602bfbb7d073ff46e92cac2b4bfe6174a81" if False else True
 INITRAMFS = gzip.decompress((BASE / "phase1-v04-usb-readonly.cpio.gz").read_bytes())
 
 LOGGER = r'''
