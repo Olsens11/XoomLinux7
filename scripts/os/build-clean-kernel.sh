@@ -50,20 +50,20 @@ for requirement in \
     grep -Fx "$requirement" "$OUT/.config" || { echo "Kernel missing: $requirement" >&2; exit 1; }
 done
 
-# Keep all existing board drivers (display, touchscreen, battery, USB, etc.).
+# The existing -usbdiag DTS is the only proven USB0 peripheral-mode board\n# variant: despite its historical name, it provides UDC hardware wiring and\n# contains no diagnostic driver code. Keep USB CDC-ACM for the installed OS.\n# Keep all existing board drivers (display, touchscreen, battery, USB, etc.).
 # Only diagnostic initramfs and optional Broadcom debug/tracing are disabled.
 make -C "$K" O="$OUT" -j"${XOOM_JOBS:-2}" \
-    zImage nvidia/tegra20-motorola-stingray.dtb modules
+    zImage nvidia/tegra20-motorola-stingray-usbdiag.dtb modules
 
 KREL="$(make -s -C "$K" O="$OUT" kernelrelease)"
 [[ -s "$OUT/arch/arm/boot/zImage" ]]
-[[ -s "$OUT/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dtb" ]]
+[[ -s "$OUT/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-usbdiag.dtb" ]]
 [[ -s "$OUT/drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko" ]]
 [[ -s "$OUT/drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/brcmfmac-wcc.ko" ]] || {
     echo "Missing upstream WCC plugin: STOP, do not use inline test workaround" >&2; exit 1;
 }
 sha256sum "$OUT/arch/arm/boot/zImage" \
-    "$OUT/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dtb" \
+    "$OUT/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-usbdiag.dtb" \
     "$OUT/drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko" \
     "$OUT/drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/brcmfmac-wcc.ko"
 echo "CLEAN_NATIVE_KERNEL_BUILD_PASS RELEASE=$KREL OUTPUT=$OUT"
