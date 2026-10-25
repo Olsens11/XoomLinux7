@@ -82,7 +82,7 @@ static long call(long n,long a,long b,long c){
  return r0;
 }
 static int eq(const char *a,const char *b){while(*a&&*b&&*a==*b){a++;b++;}return *a==*b;}
-static int main0(unsigned long *sp){
+__attribute__((used)) static int main0(unsigned long *sp){
  int n=(int)*sp;char **v=(char**)(sp+1);
  if(n<2||n>24)return 1;
  int ok=0;
