@@ -96,3 +96,5 @@ When a new record is added, link it here and from its local index; update status
 - [BCM4329 supply transient / buffering research](research/MZ600_BCM4329_STARTUP_RAIL_DROOP_AUDIT_2026-10-24.md) — distinguish real 3.3 V, CPCAP VWLAN1 and internal 1.25 V from DTS regulators, plan scoped transient measurement before choosing decoupling additions; no physical experiment yet.
 
 - [v040/v041 CM3 and SDPCM shared-header physical test](checkpoints/V040_V041_CM3_NVRAM_SHARED_STRUCTURE_PHYSICAL_2026-10-24.md) — firmware runs far enough to publish a version-3 shared header and console pointer, while F2 still times out.
+
+- [v042–v045 first native BCM4329 wlan0 physically demonstrated](checkpoints/V042_V045_NATIVE_WIFI_BRINGUP_2026-10-24.md) — recovered firmware console initialization error 21, proved stock bootstrap MAC unblocks F2, linked upstream WCC for experimental wlan0, safe identity-free rollback verified.
