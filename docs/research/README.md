@@ -56,3 +56,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v038 host-awake test](../checkpoints/V038_MMC2_RUNTIME_PM_HOLD_PHYSICAL_2026-10-24.md) and [v039 authentic MZ600 firmware one-variable test](../checkpoints/V039_ORIGINAL_MZ600_FW_PHYSICAL_2026-10-24.md) — both safely physically exercised and **do not** resolve F2 -62; generic firmware restored afterward. [v038 source-guarded runtime-awake builder](../../scripts/experiments/v038-build-mmc2-runtime-awake.py).
 
 - [MZ600 BCM4329 startup rail-droop and regulator-buffering audit](MZ600_BCM4329_STARTUP_RAIL_DROOP_AUDIT_2026-10-24.md) — verifies actual CPCAP VWLAN1 and switched 3.3 V paths, manufacturer 110 ms-after-VDDC-settled requirement, explains why software PMU snapshots do not exclude short droop, and provides a no-guesswork oscilloscope/capacitor decision gate. Research only, no electrical modifications.
+
+- [v040/v041 firmware shared-state physical checkpoint](../checkpoints/V040_V041_CM3_NVRAM_SHARED_STRUCTURE_PHYSICAL_2026-10-24.md) — validated end-of-SOCRAM NVRAM token, Cortex-M3 release and version-3 SDPCM shared header with console and msgtrace pointers.
