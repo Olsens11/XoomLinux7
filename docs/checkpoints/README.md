@@ -72,3 +72,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [v033 real Bluetooth power votes, BCM4329B1 identification, USB teardown and Wi-Fi F2 retest](V033_BLUETOOTH_PHYSICAL_2026-10-24.md). Includes the HCIDEVDOWN argument bug and accurate cleanup sequence.
 
 - v034 physical corrected HCI device-down and BCM4329B1 test: V034_HCI_IOCTL_PHYSICAL_2026-10-24.md. HCIDEVDOWN rc 0, BT modules unload, U4 vote released, MMC2 bound.
+
+- [v035 BCM4329 PMU/CM3/F2 physical event timeline](V035_BCM4329_PMU_CM3_F2_PHYSICAL_2026-10-24.md) — three read-only instrumented RAM driver trials, PMUControl 01770180→012B03BC on first load and retained 012B03BC on warm reloads; Wi-Fi F2 still -62, final USB/MMC2 clean.
