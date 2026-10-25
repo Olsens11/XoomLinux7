@@ -1,5 +1,7 @@
 # XoomLinux7 agent operating contract
 
+> **2026-10-25 continuity notice:** [Current comprehensive hardware/source handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) documents physically booted clean v06.2 with Wi-Fi wlan0, Bluetooth hci0 and sequential BT→Wi-Fi PASS. It supersedes the old Oct24 *version/status* labels below. **All original safety, device protection, privacy, provenance and upstream submission constraints remain fully in force.**
+
 **Read this document first, then [START_HERE.md](START_HERE.md), [docs/status.md](docs/status.md), [runtime/PROJECT_STATE.env](runtime/PROJECT_STATE.env), [docs/README.md](docs/README.md), and the relevant hardware/architecture pages.**
 
 ## Authority and integrity
