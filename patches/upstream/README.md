@@ -18,6 +18,17 @@ The formatted RFC patch is the **exact intended logic** of the WIP source patch 
 - After USB status preflight, chip ID **BCM4329 detected** at onboard SDIO `mmc2`, driver unloaded. Exactly one opt-in `WIFI_START` sent over USB with microSD physically removed; `brcmutil rc 0`, `brcmfmac rc 0`; upstream `brcmfmac_wcc` dependency loaded automatically; `wlan0 PRESENT`; firmware boot log reports `BCM4329/3 wl0` and `version 4.220.48`. `/sys/class/net/wlan0/addr_assign_type` reported `0` (permanent), though independent byte-for-byte comparison to the protected factory MAC must be maintained privately before formal identity claims. COM9 remained usable. **No RF scan, association, DHCP, country-code override, or transmission test.**
 - Bluetooth dashboard and status control included, but `hci_uart` and HCI0 were **NOT initialized**; no Bluetooth functionality yet proven. The original Motorola-specific HCD firmware is missing from v06.1 CPIO; do not claim full Bluetooth hardware readiness.
 
+## Experimental boot-version status — avoid conflating attempts and images
+
+| Image | Offline verified | Physically proved USB/PID1 | Latest observation | Image attribution |
+| --- | --- | --- | --- | --- |
+| v06.1 embedded | YES | **YES**, Wi-Fi firmware + `wlan0` | Wi-Fi shutdown failed because WCC dependency remained loaded; reboot through Android worked | Working under tested state |
+| v06.2 WCC teardown | YES | **UNKNOWN** — no successful boot yet | **One unsuccessful RAM boot attempt:** no COM9, black/red-LED after v06.1 had previously initialized BCM4329 | **Undetermined**; possible retained chipset/PMIC state, early boot issue, or image-specific change |
+
+**Do not call v06.2 inherently bad or a failed patch.** Its kernel/DTS/boot cmdline, firmware, and .ko modules are identical to v06.1; only built-in diagnostic `/init` differs. That routine's `wifi_stop()` is invoked by USB command, not at startup. The fact that one attempt failed is not proof of a source regression. The precise failure chronology and future matched-state tests are in [v06.2 investigation checkpoint](../../docs/checkpoints/MZ600_V062_NO_COM9_RED_LED_BCM4329_WARM_STATE_HYPOTHESIS_2026-10-25.md). Preserve artifact hashes and track physical attempt outcomes independently from offline build and release quality.
+
+The v06.2 fix remains a **laboratory userspace patch**, not an upstream Linux C patch, at `patches/lab/0001-v062-broadcom-wcc-unload-order.patch`. Do not submit it as a kernel change. Potential Broadcom shared-rail/reset work remains **hypothesis only** until evidence supports a separate focused kernel patch.
+
 ## Not yet candidate Linux patches
 
 1. **Stingray board DTS split from Wingray**: working USB0 UDC/peripheral and hardware identity are created by the isolated build generator. For proper upstream submission make a stand-alone `arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts` (+ DTS Makefile) series. Validate binding compatibility, UART/BT clock, board PMIC, pinmux and mode-specific nodes rather than forwarding a lab file named `*-clean-usb.dts`. The generic `motorola,stingray` compatible is already used by lab builds; inspect potential binding changes separately.
