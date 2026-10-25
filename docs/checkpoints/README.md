@@ -78,3 +78,6 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [v036 BCM4329B1 PMU-rev6 resource/clock physical trace](V036_BCM4329_PMU_RESOURCE_CLOCK_PHYSICAL_2026-10-24.md) — 2 reproducible RAM-module trials, Motorola's actual 22-bit resource map, ALP→HT, zero PMU pending and zero ChipCommon pullups; F2 still -62, safe unload.
 
 - [v037 SDPCM mailbox write physical audit](V037_SDPCM_MAILBOX_WRITE_PHYSICAL_2026-10-24.md) — exact OEM protocol 4, successful live SDIO mailbox-write return rc0, yet F2 -62; modules unloaded and MMC2 bound.
+
+- [v038 read-only Cortex-M3 and NVRAM end-of-RAM handoff](V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md) — core down→up, 288KiB RAM, length token matches, F2 -62. Motorola reference values match all shared NVRAM fields.
+- [v039 original HRI39/HRI66 Wi-Fi firmware physical A/B](V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) — original 2011 BCM4329B1 firmware also fails F2 -62 under unchanged Linux 7; generic firmware restored with known USB CRC.
