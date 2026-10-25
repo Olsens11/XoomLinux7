@@ -107,3 +107,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [Fastboot image remains on screen: new Linux 7 kernel + proven v034 ramdisk temporary test READY, not yet booted](MICROSD_TEMP_BOOT_STUCK_SCREEN_DIAG_CANDIDATE_2026-10-25.md) — exact original/new boot header comparison, no live USB after bootloader handoff, diagnostic SHA and safe restart plan.
 
 - [2026-10-25 **PHYSICAL Linux 7 framebuffer + microSD PARTUUID PROOF**](LINUX7_PHYSICAL_KERNEL_AND_MICROSD_PARTUUID_PROOF_2026-10-25.md) — user screen photo shows kernel started, partitions enumerated, correct SD UUID, and rootless hybrid panic; verbose normal Debian microSD-root image prepared and hash-verified, not yet booted.
+
+- **[2026-10-25 PHYSICAL SUCCESS — full Debian 12 microSD root boot, systemd PID1, COM9 serial login, native modular BCM4329 wlan0 and matching dynamic FDT MAC](NATIVE_DEBIAN_SD_BOOT_USB_WIFI_IDENTITY_PHYSICAL_PASS_2026-10-25.md)** — replaces former first-boot-unconfirmed status; no Android eMMC flash, RF still untested.
