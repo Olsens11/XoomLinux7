@@ -47,3 +47,6 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v036 Motorola-specific PMU resource decoding](../checkpoints/V036_BCM4329_PMU_RESOURCE_CLOCK_PHYSICAL_2026-10-24.md) — physical ChipCommon 29 / PMU 6 and resource mask 003FE63E decoded via OEM sbchipc.h. [Source-guarded v036 observer](../../scripts/experiments/v036-build-pmu-status-readonly.py); [source writer / clock audit](MZ600_V036_PMU_CLOCK_WRITER_SOURCE_AUDIT.md).
 
 - [v037 firmware mailbox/write acknowledgment checkpoint](../checkpoints/V037_SDPCM_MAILBOX_WRITE_PHYSICAL_2026-10-24.md) — original OEM and Linux 7 both advertise SDPCM v4, live mailbox SDIO write rc=0. [v037 reversible source builder](../../scripts/experiments/v037-build-sdpcm-mailbox-status.py).
+
+- [v038 CM3/NVRAM token physical investigation](../checkpoints/V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md) and [reversible v038 builder](../../scripts/experiments/v038-build-cm3-nvram-handoff.py) — verified 288KiB RAM/CM3 core-up and end-of-RAM token, source-vs-runtime NVRAM provenance.
+- [v039 one-variable original OEM 2011 firmware physical comparison](../checkpoints/V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) — both firmware images fail F2, baseline restored, remaining device-identity/regulatory provenance audit.
