@@ -1,5 +1,17 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 18:53 EDT — CRITICAL NEW STATE: v06.3 NO PONG; RED LIGHT RETURNED
+
+**NEWER FACT OVERRIDING OLD LIVE-STATE TEXT BELOW:** At 18:50 EDT the formerly running **v06.2** successfully executed a guarded USB REBOOT and Surface verified original Android fully booted. At 18:51:28 EDT the exact checksum-pinned **v06.3 HCD candidate** (6,561,792B, SHA256 07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e) was accepted through fastboot boot on the verified replacement MZ600; no flash. COM9 appeared ~18:51:34 but first serial Write returned device not functioning; subsequent Open COM9 failed, 261 errors in observation, **NO PONG**, and Windows PnP indicated COM9 Unknown/unusable. User reported **red light again**. The tablet is not confirmed running Linux or original Android, and v06.2 is NO LONGER the currently live image.
+
+**DO NOT BLAME HCD OR REJECT IMAGE:** v06.3 contains one added HCD file in embedded CPIO. Loading it requires BT_START, **which was never sent**. No Bluetooth or Wi-Fi activation, no scan, no subsequent device reboot. One unsuccessful boot attempt does not prove intrinsic v06.3 fault, and v06.2 had a similar prior transient no-PONG episode before it later physically passed. Compressed kernel payload/layout changes and board power/USB state remain open hypotheses.
+
+**SAFE RECOVERY:** Stop all remote DUT operations. Ask user whether screen shows any early kernel text and take photograph before reset, if applicable. The prior successful physical recovery was **unplug BOTH USB and external power, then press ordinary Power alone**. Only if that fails consider OEM Power+Volume-Up forced reboot. Do not repeat blind fastboot boots, flash, or invoke unproven PMIC/BCM fixes. Private Surface logs: captures/MZ600-V063-hcd-firstboot-PRIVATE.log and captures/MZ600-V062-to-Android-before-v063-PRIVATE.log.
+
+**Current accepted level:** v06.2 remains previously physically proven for Wi-Fi, Bluetooth HCI and sequential radio operation but is not currently running. v06.3 offline validity PASS, first physical attempt NO PONG/red light, image bootability and HCD compatibility UNDETERMINED. Roadmap remains standard iw scanning, real framebuffer terminal and keyboard, and evidence-gated whole-chip regulator/USB power management. Full [physical checkpoint](../checkpoints/MZ600_V063_INITIAL_RAM_BOOT_NO_PONG_RED_LED_RECURRENCE_2026-10-25.md). Append findings to this handoff every turn.
+
+---
+
 **Snapshot:** Sunday, October 25, 2026, evening EDT.  
 **Project:** [Olsens11/XoomLinux7](https://github.com/Olsens11/XoomLinux7), active branch `wip/clean-wifi-bt-usb-20261025`.  
 **Purpose:** Give the next ChatGPT conversation enough verified project state, reasoning, decisions, provenance, architecture, test history, hardware boundaries, paths, tooling and next steps to continue without repeating previous work.  
