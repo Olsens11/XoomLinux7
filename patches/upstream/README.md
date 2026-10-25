@@ -1,5 +1,8 @@
 # Upstream Linux patch preparation — Motorola Xoom (Stingray MZ600)
 
+> **2026-10-25 current qualification (supersedes older v06.2-only milestones below):** Identical hash-pinned v06.3 **physically boots** after one earlier no-PONG/red-light event; driver found/processed private BCM4329B1 HCD, registered hci0 and cleanly completed HCI UP/DOWN; subsequent BCM4329 WLAN firmware/wlan0 loaded and unloaded cleanly with WCC first. **None of these userspace/HCD steps constitutes a submitted Linux kernel patch.** Hardware evidence: [v06.3 PASS](../../docs/checkpoints/MZ600_V063_PHYSICAL_PASS_HCD_HCI_AND_BLUETOOTH_TO_WIFI_2026-10-25.md). Next [v06.4 standard iw scanning, real terminal, BlueZ keyboard acceptance](../../docs/plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md). Respect lab-vs-upstream source boundaries; no upstream submission or fabricated DCO.
+
+
 **Policy:** Every working Xoom kernel change must be kept in a **separate, reviewable Linux source patch**. Laboratory boot images, userspace diagnostic programs, user-specific MAC addresses, private firmware/calibration blobs and logs **must never be mistaken for Linux kernel patches**. Nothing in this directory is automatically sent to maintainers.
 
 ## Current RFC queue (not submitted)
