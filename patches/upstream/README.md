@@ -24,6 +24,12 @@ The formatted RFC patch is the **exact intended logic** of the WIP source patch 
 
 **Still not validated:** v06.2's ordered `brcmfmac_wcc` → `brcmfmac` → `brcmutil` unloading routine, Wi-Fi RF, Bluetooth HCI or reset/PMIC shared-power cause. This successful no-radio startup does not test those functions. The lab-only teardown patch stays separate from upstream RFC kernel patches. See [exact v06.2 physical PASS checkpoint](../../docs/checkpoints/MZ600_V062_CONTROLLED_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md) for timestamps, file hashes and private logs. No eMMC flash or new Linux source patches were required.
 
+## v06.2 BCM4329 WCC teardown physically PASSED (2026-10-25, 17:40–17:41 EDT)
+
+One controlled live MZ600/COM9 test verified **`WIFI_START` ⇒ firmware version 4.220.48 ⇒ `wlan0 PRESENT` and all three modules loaded ⇒ `WIFI_STOP` ⇒ `brcmfmac_wcc rc 0`, `brcmfmac rc 0`, `brcmutil rc 0` ⇒ **all modules and `wlan0` absent**, with USB/PONG still working. A second independent poststop serial session reconfirmed those results. No reboot, scan, association, BT start or flash was performed. The verified **v06.2 laboratory userspace patch** `patches/lab/0001-v062-broadcom-wcc-unload-order.patch` can be marked **physical PASS** for module unload order, but remains **NOT a Linux upstream source patch**. This does not prove that the BCM4329 shared-power rails, reset lines or USB VBUS were fully cleared.
+
+See [exact v06.2 Wi-Fi/WCC teardown physical test checkpoint](../../docs/checkpoints/MZ600_V062_WIFI_WCC_ORDERED_UNLOAD_PHYSICAL_PASS_2026-10-25.md). This is the current radio-driver lifecycle validation, superseding the earlier table's "WCC shutdown routine untested" entry. The open hardware state/reset/charger interaction investigation is still pending.
+
 ## Experimental boot-version status — avoid conflating attempts and images
 
 | Image | Offline verified | Physically proved USB/PID1 | Latest observation | Image attribution |
