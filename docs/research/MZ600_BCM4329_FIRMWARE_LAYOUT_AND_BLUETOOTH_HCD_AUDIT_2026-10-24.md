@@ -36,3 +36,19 @@ The [Linux Wireless brcm80211 documentation](https://wireless.docs.kernel.org/en
 4. Do not start tests by manipulating shared U4/WL_REG_ON/BT_REG_ON or changing ROM; current replaceable module and v034 temporary-boot rollback baseline must remain intact.
 
 **Device status when checked:** USB COM9, MMC2 bound, BCM4329 verified, Wi-Fi modules unloaded, AUTO profile. No reboot, new flash, driver upload or power changes during this comparison.
+
+## Follow-up: complete LibreELEC master file-tree verification
+
+The supplied [LibreELEC repository master tree](https://github.com/LibreELEC/brcmfmac_sdio-firmware/tree/master) was enumerated with the GitHub tree API (`recursive=1`, 133 total entries; `truncated=false`) rather than relying only on the README. **No Motorola/Stingray-specific firmware or NVRAM entry exists in that tree**, nor a generic `brcmfmac4329-sdio.txt`. BCM4329 Wi-Fi references present:
+
+- `brcmfmac4329-sdio.bin`: ordinary Git blob SHA-1 `d4c4560cddbc305afae1f92b43fa105d45fd9d5a`, 253748 bytes.
+- `brcmfmac4329-sdio.solidrun,cubox-i-dl.txt`: 1287 bytes; `solidrun,cubox-i-q.txt` is a symlink to that board configuration.
+- `brcmfmac4329-sdio.wand,imx6dl-wandboard.txt` and `wand,imx6q-wandboard.txt`: respectively file and symlink for another board-specific NVRAM, not proven appropriate for MZ600.
+- The `*.solidrun*` and `*.wand*` `.bin` entries are symlinks back to `brcmfmac4329-sdio.bin`.
+- `BCM4329B1.hcd`: 17332-byte Bluetooth HCI patch as separately parsed above.
+
+**Independent local identity verification**: on the Desktop Ubuntu-22.04 WSL development environment, `git hash-object /home/xoomdev/xoom-linux-rom/firmware-reference-v07/brcm/brcmfmac4329-sdio.bin` returned **`d4c4560cddbc305afae1f92b43fa105d45fd9d5a`**, *exactly* the official GitHub tree object's SHA-1. Local normal Wi-Fi binary was 253748 bytes and SHA256 `d61983946b1e733e4c75dbe6841ac0f1250ebed2e3ee9058cdfdbbba3ba37c93`. Thus the LibreELEC main BCM4329 WLAN image is **byte-for-byte identical to our existing v07 reference image**. The existing Linux v026 physical provenance already verified the 253748-byte firmware load path, so re-downloading the LibreELEC copy cannot address an unavailable firmware file.
+
+The distinct *later* Motorola private firmware in the same development environment has size 264140 bytes and SHA256 `5d4bdb6c56777e4a1eb27b08600a2782a76b563891dfd18afc163c8462d73834`. The early 261317-byte Motorola reference is documented in v5. Do not assert the binary identity comparison alone proves what code the on-chip Cortex-M3 executes successfully; F2 remains -62.
+
+**Consequence:** no change to modules, initramfs, firmware file layout, calibration, or physical hardware follows from the linked LibreELEC repository. Keep v038 Cortex-M3/NVRAM handoff instrumentation and board power/POR verification as independent pending tasks.
