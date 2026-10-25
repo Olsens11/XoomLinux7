@@ -94,3 +94,5 @@ When a new record is added, link it here and from its local index; update status
 - [v038 MMC2 runtime-PM awake result](checkpoints/V038_MMC2_RUNTIME_PM_HOLD_PHYSICAL_2026-10-24.md) / [v039 original MZ600 firmware result](checkpoints/V039_ORIGINAL_MZ600_FW_PHYSICAL_2026-10-24.md) — two additional controlled, reversible, physically verified negative F2 results and exact generic firmware rollback.
 
 - [BCM4329 supply transient / buffering research](research/MZ600_BCM4329_STARTUP_RAIL_DROOP_AUDIT_2026-10-24.md) — distinguish real 3.3 V, CPCAP VWLAN1 and internal 1.25 V from DTS regulators, plan scoped transient measurement before choosing decoupling additions; no physical experiment yet.
+
+- [v040/v041 CM3 and SDPCM shared-header physical test](checkpoints/V040_V041_CM3_NVRAM_SHARED_STRUCTURE_PHYSICAL_2026-10-24.md) — firmware runs far enough to publish a version-3 shared header and console pointer, while F2 still times out.
