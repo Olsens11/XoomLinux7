@@ -86,3 +86,5 @@ When a new record is added, link it here and from its local index; update status
 - [v036 BCM4329B1 PMU resource physical checkpoint](checkpoints/V036_BCM4329_PMU_RESOURCE_CLOCK_PHYSICAL_2026-10-24.md) — OEM-specific resource-state decoding confirms ALP/HT and regulator/PLL resource votes, no pending, yet F2 remains -62 in two trials.
 
 - [v037 SDPCM mailbox verified before persistent F2 timeout](checkpoints/V037_SDPCM_MAILBOX_WRITE_PHYSICAL_2026-10-24.md) — v4 firmware mailbox SDIO write rc=0, now focus on internal WLAN CPU firmware readiness and RAM handoff.
+
+- [v038 on-chip ARM release and NVRAM token physically proven](checkpoints/V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md); [v039 2011 Motorola firmware single-variable physical test](checkpoints/V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) also fails F2 and verified generic firmware rollback. Research branch only.
