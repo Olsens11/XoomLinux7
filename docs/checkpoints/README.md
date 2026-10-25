@@ -95,3 +95,5 @@ See [v015 raw USB transport qualification](V015_RAW_USB_LAB_2026-10-24.md).
 - [Android-preserving native OS OFFLINE rebuild](ANDROID_PRESERVING_NATIVE_OS_OFFLINE_REBUILD_2026-10-24.md) — new `root=PARTLABEL=xoom-linux` target, banned Android root labels, archive of rejected old image, 768MiB standalone Linux root, new SHA hashes; no install.
 
 - [Android 3.1 stock-kernel touchscreen comparison and OEM restore-media audit](ANDROID_3_1_TOUCHSCREEN_COMPARISON_2026-10-24.md) — qtouch I²C NACK at 0x5b and 0x35 under both TWRP/Android; HRI39/HRI66 stock images already privately archived; no disk writes.
+
+- [2026-10-25 native OS installation preflight — actual replacement MZ600 recovery storage, same-unit Android boot/system/TWRP backups, TegraPT gate](NATIVE_OS_INSTALL_RECOVERY_PREFLIGHT_2026-10-25.md). **No eMMC install or partition formatting performed**; microSD or explicitly approved userdata decision remains.
