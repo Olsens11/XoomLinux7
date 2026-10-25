@@ -59,3 +59,12 @@ Other previously validated criteria also rechecked: full zImage+USB0 UDC DTB byt
 6. Continue graphics/touch/Bluetooth coexistence, cold/warm boot and stability tests after normal OS root access is proven.
 
 This update complements [comprehensive BCM4329 breakthrough milestone](BCM4329_BREAKTHROUGH_AND_NATIVE_OS_MILESTONE_2026-10-24.md). No maintainer contact has yet occurred.
+## Final operator-safe artifact naming adjustment
+
+The independent Linux root image was **renamed in the current artifacts directory**, byte-for-byte preserving its SHA256, to `xoom-linux-root.ext4`. The builder and verifier now use that name; the prior `xoom-linux-system.ext4` filename appears only in the **rejected, archived** original system-targeting build. This removes the ambiguity with Android's `system` partition.
+
+The **currently accepted OFFLINE pair** is:
+- `os-build/artifacts/xoom-linux-boot.img`: SHA256 `40e32a9806183482b3e440ce493e505d9fa32b6f4c9dde9364f528b1b55c6756`
+- `os-build/artifacts/xoom-linux-root.ext4`: 768 MiB; SHA256 `0aafdddccf58c5259007f272fb7878c417006629f5cb678c6d5e0f361ef8376e`
+
+Updated `SHA256SUMS` is generated, and the read-only verifier was **rerun and PASSED after the rename**. This image remains uninstalled; a safe independent GPT partition labeled `xoom-linux` **does not yet exist as a verified target**.
