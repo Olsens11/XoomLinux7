@@ -80,7 +80,7 @@ static void diag_snapshot_ring(unsigned long secs){
  long n=sc6(SYS_syslog,3,(long)kern,sizeof(kern),0,0,0);
  if(n<=0){echo("xoom-diag: syslog failed\n");return;}
  long fd=sc6(SYS_open,(long)diag_snapshot[diag_num&1],
-   O_WRONLY|DIAG_O_CREAT|DIAG_O_TRUNC,0600,0,0);
+   O_WRONLY|DIAG_O_CREAT|DIAG_O_TRUNC,0600,0,0,0);
  if(fd<0){echo("xoom-diag: write failed; external SD only\n");diag_failed=1;return;}
  const char head[]="XOOM CLEAN LINUX 7 v05 EXTERNAL SD BREADCRUMB\n";
  const char phase[]="KERNEL RING SNAPSHOT (private; contains hardware IDs)\n";
