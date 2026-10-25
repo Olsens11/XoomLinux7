@@ -3,7 +3,6 @@
 > **CURRENT — October 25, 2026:** Replacement MZ600 runs **verified v06.3** (19:25 EDT read-only COM9 PONG). BCM4329B1 HCD firmware path/HCI up/down and subsequent Wi-Fi/wlan0 initialization and cleanup **physically PASS**. **No Wi-Fi RF scan or Bluetooth keyboard pairing yet; no real on-screen terminal.** Mandatory NEXT functional deliverable is [v06.4 build specification](docs/plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md), using the [comprehensive handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). Earlier Oct24 F2 -62 and v015/v020 guidance is *historical*, not the current clean v06.3 state.
 
 
-> **Current Oct 25, 2026 handoff (newer than the Oct 24 baselines below):** [Full XoomLinux7 / BCM4329 next-session handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). Exact v06.2 physical Wi-Fi **wlan0** and Bluetooth **hci0** lifecycle PASS, sequential BT→Wi-Fi PASS; v06.3 HCD and Debian ARMHF iw remain OFFLINE only. The old F2 -62 / v015-v020 entries in this page are historical experiments, not current clean Linux status. Read the handoff and newest checkpoint files before operating the device.
 
 This is the **session handoff**, not a historical narrative. Begin with [AGENTS.md](AGENTS.md).
 
