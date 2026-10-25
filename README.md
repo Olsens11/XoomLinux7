@@ -1,5 +1,7 @@
 # XoomLinux7 — Motorola Xoom native Linux
 
+> **LATEST HARDWARE AUTHORITY — October 25, 2026:** [Comprehensive handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). On the replacement MZ600, temporary clean Linux **v06.2** physically boots and initializes onboard BCM4329 Wi-Fi **wlan0** and Bluetooth **hci0** separately, including clean unload and sequential BT→Wi-Fi restart. **Network scanning, Bluetooth keyboard pairing, simultaneous operation and full power-off remain unverified.** **v06.3** private HCD image and Debian ARMHF **iw** are offline staged, not physically tested. Older v018–v041 F2 -62 reports below are historical, not current v06.2 behavior.
+
 **Experimental, upstream-first ARMv7 Linux bring-up for the Motorola Xoom (MZ600 Stingray / MZ604 Wingray).**
 
 This repository is the **canonical integration and engineering record** for our Linux 7.0 development. It builds on [xoom-linux/linux](https://github.com/xoom-linux/linux), not a replacement or an unattributed copy of that kernel. The original working kernel snapshot was commit `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3` (2026-06-12).
