@@ -41,7 +41,12 @@ truncate -s 768M "$OUT/xoom-linux-system.ext4"
 mkfs.ext4 -F -L xoom-root -b 4096 -d "$ROOT" "$OUT/xoom-linux-system.ext4" > "$OUT/mkfs.log" 2>&1
 
 : > "$OUT/empty-ramdisk"
-CMDLINE='androidboot.modelno=MZ600 product_type=cw console=tty0 loglevel=4 root=PARTLABEL=system rootfstype=ext4 rootwait rw init=/sbin/init'
+# The selected root partition MUST be a new Linux-only GPT partition.
+# Existing Android system, userdata, cache and recovery are never accepted.
+ROOT_PARTLABEL="${XOOM_LINUX_ROOT_PARTLABEL:-xoom-linux}"
+[[ "$ROOT_PARTLABEL" =~ ^[a-zA-Z0-9_-]{1,32}$ ]] || { echo 'Invalid Linux GPT label' >&2; exit 1; }
+case "${ROOT_PARTLABEL,,}" in system|userdata|data|cache|boot|recovery|misc) echo 'Refusing Android partition as native Linux root' >&2; exit 1;; esac
+CMDLINE="androidboot.modelno=MZ600 product_type=cw console=tty0 loglevel=4 root=PARTLABEL=$ROOT_PARTLABEL rootfstype=ext4 rootwait rw init=/sbin/init"
 python3 "$MK" \
     --kernel "$OUT/zImage-stingray-with-dtb" \
     --ramdisk "$OUT/empty-ramdisk" \
@@ -61,15 +66,15 @@ sha256sum "$OUT/xoom-linux-system.ext4" "$OUT/xoom-linux-boot.img" \
 
 cat > "$OUT/NOT_INSTALLED.txt" <<'EOF'
 These are OFFLINE, UNINSTALLED candidate OS images.
-The Android 'system' (p8) and 'boot' partitions are NOT modified.
+Android system, userdata, boot, recovery partitions are NOT modified.
 STOP before installation:
- - Confirm actual replacement Xoom and exact GPT partition GUIDs/sizes.
- - Back up original Android system/boot and verify backups off-device.
+ - Confirm actual replacement Xoom, Linux-only partition label, GPT GUID, size and backing-device availability.
+ - Preserve Android system/userdata entirely; back up original Android boot and any to-be-modified partition off-device.
  - Provision a unique owner login and test USB serial-getty path.
  - Verify Motorola ATAG factory MAC is present and works during normal OS boot.
- - Obtain explicit user authorization for the exact named persistent writes.
+ - Obtain explicit user authorization for the exact, verified new Linux-root and boot writes.
  - Keep original TWRP recovery, data and protected first Xoom untouched.
 No hardware mods, scans, RF association, or flashing in this build.
 EOF
-echo "OFFLINE_OS_PACKAGE_PASS release=$REL target=PARTLABEL:system rootfs=768MiB"
+echo "OFFLINE_OS_PACKAGE_PASS release=$REL target=PARTLABEL:$ROOT_PARTLABEL rootfs=768MiB"
 echo "NO PARTITIONS MODIFIED; inspect $OUT/SHA256SUMS"
