@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **Newest OFFLINE v06.4 work:** [2026-10-25 ARMHF userspace closure, image budget and missing package preflight](MZ600_V064_ARMHF_PACKAGING_PREFLIGHT_OFFLINE_2026-10-25.md), `OFFLINE PREFLIGHT PASS`, **NO NEW IMAGE OR HARDWARE TEST**. The most recent physical result remains v06.3 HCD/HCI then sequential Wi-Fi PASS.
+
+
 > **Newest physical qualification (Oct 25, 2026, 19:13 EDT):** [Exact v06.3 RAM boot and BCM4329B1 HCD/HCI followed by Wi-Fi PHYSICAL PASS](MZ600_V063_PHYSICAL_PASS_HCD_HCI_AND_BLUETOOTH_TO_WIFI_2026-10-25.md). Earlier same-image [no PONG/red-LED attempt](MZ600_V063_INITIAL_RAM_BOOT_NO_PONG_RED_LED_RECURRENCE_2026-10-25.md) remains historical and unexplained. For next work see [v06.4 functional iw scan, terminal and keyboard implementation contract](../plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md) and [full handoff](../handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). The old v01–v041 table below is a **chronological history**, not the current clean v06.3 capability list.
 
 
