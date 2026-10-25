@@ -118,8 +118,9 @@ with log.open("w") as f:
 k=original_z.read_bytes()
 dt=(BLD/"arch/arm/boot/dts/nvidia/tegra20-motorola-stingray-clean-usb.dtb").read_bytes()
 assert sha(dt)==sha((WORK/"artifacts"/"zImage-with-stingray-wifi-bt.dtb").read_bytes()[-len(dt):])
-embedded_usr=BLD/"usr/initramfs_data.cpio.gz"
+embedded_usr=BLD/"usr/initramfs_inc_data"
 assert embedded_usr.is_file(), "no generated built-in initramfs"
+assert embedded_usr.read_bytes()==embsrc.read_bytes(), "kernel incbin does not match source CPIO"
 c=embedded_usr.read_bytes()
 assert c.startswith(b"\x1f\x8b")
 assert len(gzip.decompress(c))>1000000
