@@ -35,3 +35,21 @@ Recovery `/proc/partitions` exposed ten eMMC partitions. Old vendor/Android 2.6 
 1. Power Android off normally (ADB `reboot -p` if no touch), disconnect USB/dock/charger, allow a real shutdown, then turn on by button and recheck touch input and `qtouch` probe. This is a **proposal**, not an action performed in this checkpoint.
 2. If still absent, audit exact touch regulator/reset source and passive I²C signals/driver bindings; avoid guessing chip address/firmware. Preserve diagnostic logs before any further reset.
 3. Treat factory restore as *available potential rollback media*, not permission to flash Android or replace/repartition eMMC. Keep historical exact image archives and validations in the private Pi.
+
+## RESOLVED — cold power cycle restored touchscreen (October 25, 2026)
+
+**Subsequent user-reported physical action:** User fully powered the replacement MZ600 off and back on. They reported the touchscreen **working normally** on Android.
+
+**Independent read-only confirmation over the same Surface ADB connection:** Android `sys.boot_completed=1`, `ro.product.device=stingray`. The Android input-device inventory **now contains `qtouch-touchscreen` at `/dev/input/event6`**, unlike the previous boot when no touchscreen input device existed. Kernel messages show:
+
+```text
+qtouch_ts_probe: FW version is 0x10 Build 0xFF
+qtouch_ts_probe: Chip type matched
+qtouch_ts_probe: Reflash not needed
+input: qtouch-touchscreen as /devices/virtual/input/input6
+qtouch_ts_probe: request_irq [362] success
+```
+
+**Engineering interpretation:** Following failed I²C probe/NACK at 0x5b and 0x35 under both TWRP and Android, the successful genuine power-down and startup makes a retained controller power/reset state or transient latch-up a strong possibility. It **does not prove the electrical root cause**, identify a specific rail/GPIO, or rule out intermittent physical connectivity. No firmware flash, Android reinstall, controller reprogramming, added hardware, or storage modification was required. **Close the immediate touchscreen outage as RESOLVED / MONITOR ONLY**. If it recurs, first compare previous/warm boot vs cold boot, record I²C status and input enumeration, and preserve logs without invasive steps.
+
+**Supersession:** The earlier next-step recommendation to *try* a cold power cycle **has been performed successfully**; do not present it as a pending action. Android remains bootable with its original installed data.
