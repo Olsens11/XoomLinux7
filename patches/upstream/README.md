@@ -29,6 +29,8 @@ The formatted RFC patch is the **exact intended logic** of the WIP source patch 
 
 The v06.2 fix remains a **laboratory userspace patch**, not an upstream Linux C patch, at `patches/lab/0001-v062-broadcom-wcc-unload-order.patch`. Do not submit it as a kernel change. Potential Broadcom shared-rail/reset work remains **hypothesis only** until evidence supports a separate focused kernel patch.
 
+**New power-state baseline caveat (Oct 25):** Motorola's original Xoom manual defines Power + Volume Up as a **forced reboot**. On the project MZ600, Power alone produced a blinking red indicator even after TWRP Shut Down, while that forced-reboot combination restored the boot menu/recovery. The TWRP kernel exposed no recoverable pstore or last_kmsg; battery reported about 82%. This is an observed boot/power-on phenomenon, **not evidence of a complete electrical cold start, a v06.2 image defect, or a proven BCM4329 reset defect**. Source, private log inventory, and A/B plan: [power-on/reset phenotype checkpoint](../../docs/checkpoints/MZ600_TWRP_SHUTDOWN_POWER_BUTTON_FORCED_REBOOT_PHENOTYPE_2026-10-25.md). Keep any eventual PMIC/BCM patch in a *separate evidence-gated series*.
+
 ## Not yet candidate Linux patches
 
 1. **Stingray board DTS split from Wingray**: working USB0 UDC/peripheral and hardware identity are created by the isolated build generator. For proper upstream submission make a stand-alone `arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts` (+ DTS Makefile) series. Validate binding compatibility, UART/BT clock, board PMIC, pinmux and mode-specific nodes rather than forwarding a lab file named `*-clean-usb.dts`. The generic `motorola,stingray` compatible is already used by lab builds; inspect potential binding changes separately.
