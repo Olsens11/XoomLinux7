@@ -65,7 +65,7 @@ static void xoom_v036_sdio_snapshot(struct brcmf_sdio *bus, const char *phase)
             pu = brcmf_sdiod_readl(sdiod, CORE_CC_REG(cc->base, gpiopullup), &u);
             pd = brcmf_sdiod_readl(sdiod, CORE_CC_REG(cc->base, gpiopulldown), &d);
         }
-        pr_info("XOOM_V036_RES t_ns=%llu phase=%s ccrev=%u pmurev=%u stat=%08x/%d res=%08x/%d pend=%08x/%d pu=%08x/%d pd=%08x/%d\\n",
+        pr_info("XOOM_V036_RES t_ns=%llu phase=%s ccrev=%u pmurev=%u stat=%08x/%d res=%08x/%d pend=%08x/%d pu=%08x/%d pd=%08x/%d\n",
                 (unsigned long long)ktime_get_ns(), phase, cc ? cc->rev : 0, bus->ci->pmurev,
                 stat, a, res, b, pend, c, pu, u, pd, d);
     }
