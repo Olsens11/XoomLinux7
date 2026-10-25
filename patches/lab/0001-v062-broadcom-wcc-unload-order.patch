@@ -1,0 +1,26 @@
+--- a/artifacts/v06-dashboard-bt-wifi-usb-init.c
++++ b/artifacts/v06-dashboard-bt-wifi-usb-init.c
+@@ -785,11 +785,21 @@
+ }
+ static void wifi_stop(void){
+  if(upl_fd>=0){usb_send("STOP DENIED DURING UPLOAD\r\n");return;}
++ /* brcmfmac_wcc holds a reference to brcmfmac, which holds brcmutil.
++  * Delete in exact reverse dependency order. Do not report success if any
++  * module remains busy: kernel delete_module(O_NONBLOCK) returns -EAGAIN.
++  */
++ long w=sc6(SYS_delete_module,(long)"brcmfmac_wcc",O_NONBLOCK,0,0,0,0);
++ usb_send("WCC_STOP rc ");send_int((int32_t)w);usb_send("\r\n");
++ if(w<0 && w!=-2){usb_send("WIFI_STOP ABORTED: WCC MODULE BUSY\r\n");return;}
+  long a=sc6(SYS_delete_module,(long)"brcmfmac",O_NONBLOCK,0,0,0,0);
++ usb_send("WIFI_STOP brcmfmac_rc ");send_int((int32_t)a);usb_send("\r\n");
++ if(a<0 && a!=-2){usb_send("WIFI_STOP PARTIAL: BRCMFMAC BUSY\r\n");return;}
+  long b=sc6(SYS_delete_module,(long)"brcmutil",O_NONBLOCK,0,0,0,0);
+- usb_send("WIFI_STOP brcmfmac_rc ");send_int((int32_t)a);
+- usb_send(" brcmutil_rc ");send_int((int32_t)b);usb_send("\r\n");
++ usb_send("WIFI_STOP brcmutil_rc ");send_int((int32_t)b);usb_send("\r\n");
++ if(b<0 && b!=-2){usb_send("WIFI_STOP PARTIAL: BRCMUTIL BUSY\r\n");return;}
+  wifi_on=0;
++ usb_send("WIFI_STOP ORDERED UNLOAD COMPLETE (CHECK WIFI_STATUS)\r\n");
+ }
+ static void wifi_start(void){
+  if(upl_fd>=0){usb_send("START DENIED DURING UPLOAD\r\n");return;}
