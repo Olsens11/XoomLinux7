@@ -1,5 +1,7 @@
 # Documentation router
 
+> **Read the newest dated [October 25, 2026 comprehensive Linux 7 / BCM4329 handoff](handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) before the historical index below.** Its v06.2 Wi-Fi and Bluetooth hardware checks supersede old v015/v020 F2 status; v06.3 HCD and iw are offline only. Keep raw private logs/firmware off GitHub.
+
 **Canonical current authority:** [status.md](status.md) + [../runtime/PROJECT_STATE.env](../runtime/PROJECT_STATE.env). Historical records remain immutable and may describe older states.
 
 ## Project and decisions
