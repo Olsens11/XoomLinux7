@@ -1,0 +1,13 @@
+[Unit]
+Description=Motorola MZ600 native Broadcom Wi-Fi (factory MAC validated)
+Documentation=man:modprobe(8)
+After=systemd-udev-trigger.service systemd-modules-load.service
+ConditionPathExists=/sys/firmware/devicetree/base/mmc@c8000200/wifi@1/local-mac-address
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/xoom-check-factory-wlan-mac
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
