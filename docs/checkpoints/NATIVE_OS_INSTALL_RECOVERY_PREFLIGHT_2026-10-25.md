@@ -24,9 +24,9 @@ For user-authorized Linux installation preflight, issued `adb reboot recovery`. 
 | p7 | boot | 102400 | 16384 | 8 MiB |
 | p8 | system | 118784 | 524288 | 256 MiB |
 | p9 | cache | 643072 | 346112 | 169 MiB |
-| p10 | userdata | 989184 | 61522944 | 29,? MiB |
+| p10 | userdata | 989184 | 61522944 | 30,040.5 MiB |
 
-p10 physical nominal size = 30,761,472 KiB = 29,? GiB. `df -k /data`: 30,278,164 KiB filesystem size, **298,184 KiB used (~291.2 MiB)**, 29,979,980 KiB available (~28.59 GiB); ext4 mounted at `/data` and `/emmc` by TWRP read-write **automatically**, no install script changed it. `/system` was **not mounted**. `/external_sd` was **not mounted**; no detected microSD block device (`/sys/block` displayed only mmcblk0 in Android; no reader/card connected to Surface or desktop).
+p10 physical nominal size = 30,761,472 KiB = 30,040.5 MiB ≈ 29.34 GiB. `df -k /data`: 30,278,164 KiB filesystem size, **298,184 KiB used (~291.2 MiB)**, 29,979,980 KiB available (~28.59 GiB); ext4 mounted at `/data` and `/emmc` by TWRP read-write **automatically**, no install script changed it. `/system` was **not mounted**. `/external_sd` was **not mounted**; no detected microSD block device (`/sys/block` displayed only mmcblk0 in Android; no reader/card connected to Surface or desktop).
 
 - No unallocated eMMC partition or free ~768 MiB disk extent was demonstrated. The 25 MiB region before p1 is **vendor-reserved metadata/boot material**, not a normal available space for Linux and must not be repurposed.
 - TWRP fstab: `/external_sd vfat /dev/block/platform/sdhci-tegra.2/mmcblk0p1` historical device naming, USB/gadget and kernel enumeration may differ on Linux 7.
