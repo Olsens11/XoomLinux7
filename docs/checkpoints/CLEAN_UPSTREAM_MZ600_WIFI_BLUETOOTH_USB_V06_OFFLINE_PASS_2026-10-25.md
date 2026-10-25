@@ -45,3 +45,9 @@ Because currently running v04 USB PID1 is **read-only**, it cannot load ELF/modu
 5. Stop modules and retain reversible test image, quantify repeated stability, eventually address entire chip shared power and optional FM once physically supported.
 
 **Status:** source/tool/firmware-and-module CPIO packaged and independently verified; physical v06 Wi-Fi/Bluetooth *UNTESTED*. The prior no-SD v04 image remains preserved as last physical successful fallback; no Android p7/p8, TWRP p6, user data or SD changes.
+
+## Guarded first-boot launcher prepared (not executed)
+
+Surface local file `C:\\Users\\olsen\\xoom-linux-rom\\captures\\Xoom-V06-Clean-WiFi-BT-USB-Once.ps1` exists and passed PowerShell parser syntax check. It checks candidate image exact hash/size; if stock Android is booted, confirms hardware/boot-completed then reboots to bootloader; if already in fastboot, confirms unlocked `xoom-cdma`. It invokes **only fastboot boot** (RAM-only, not flash), watches COM9 75 seconds, attempts USB PING/PONG and read-only BT_STATUS. It deliberately **never invokes WIFI_START or BT_START**, does not reset automatically, and writes private timestamped logs only on Surface. **It is not yet run** because the active stable no-SD v04 lacks a USB reboot command; requires the user physically to return to Android or fastboot first.
+
+Final host check: v04 original still COM9 present and answers `PONG XOOM-LINUX V04` on a multi-second receive window. No need to intervene in that working session until physical one-shot test is desired. Reinsert no microSD for v06 first-boot A/B.
