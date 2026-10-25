@@ -45,3 +45,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v035 physical PMU/CM3/F2 state-retention result](../checkpoints/V035_BCM4329_PMU_CM3_F2_PHYSICAL_2026-10-24.md) — measured 3-trial register/timing trace from the [v035 reversible observer builder](../../scripts/experiments/v035-build-readonly-pmu-cm3.py). This is new evidence after the v5 pre-test plan, not a Wi-Fi fix.
 
 - [v036 Motorola-specific PMU resource decoding](../checkpoints/V036_BCM4329_PMU_RESOURCE_CLOCK_PHYSICAL_2026-10-24.md) — physical ChipCommon 29 / PMU 6 and resource mask 003FE63E decoded via OEM sbchipc.h. [Source-guarded v036 observer](../../scripts/experiments/v036-build-pmu-status-readonly.py); [source writer / clock audit](MZ600_V036_PMU_CLOCK_WRITER_SOURCE_AUDIT.md).
+
+- [v037 firmware mailbox/write acknowledgment checkpoint](../checkpoints/V037_SDPCM_MAILBOX_WRITE_PHYSICAL_2026-10-24.md) — original OEM and Linux 7 both advertise SDPCM v4, live mailbox SDIO write rc=0. [v037 reversible source builder](../../scripts/experiments/v037-build-sdpcm-mailbox-status.py).
