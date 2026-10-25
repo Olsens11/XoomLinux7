@@ -10,8 +10,13 @@ REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 EXPECTED_FW_SHA=d61983946b1e733e4c75dbe6841ac0f1250ebed2e3ee9058cdfdbbba3ba37c93
 [[ -f "$ROOT/etc/debian_version" && -e "$ROOT/sbin/init" ]] || { echo "Not a completed Debian root filesystem" >&2; exit 1; }
 [[ "$(sha256sum "$FW" | cut -d' ' -f1)" == "$EXPECTED_FW_SHA" ]] || { echo "Wi-Fi firmware SHA mismatch" >&2; exit 1; }
-NVRAM="$REPO/configs/brcmfmac4329-sdio.xoom-board-no-mac.txt"
+NVRAM="$REPO/configs/os/brcmfmac4329-sdio.stingray-calibration-no-identity.txt"
 [[ -f "$NVRAM" ]] || exit 1
+[[ "$(stat -c %s "$NVRAM")" -eq 1550 ]] || { echo "Unverified board calibration length" >&2; exit 1; }
+EXPECTED_CAL_SHA=a8715bb1ebe3c6e69c40781d58207326b71721dea4594acb8d37e935acef76cb
+[[ "$(sha256sum "$NVRAM" | cut -d' ' -f1)" == "$EXPECTED_CAL_SHA" ]] || {
+    echo "Board calibration differs from physically qualified 1550-byte reference" >&2; exit 1;
+}
 if grep -Eqi '^[[:space:]]*(macaddr|ccode|regrev)[[:space:]]*=' "$NVRAM"; then
     echo "Refusing public shared-MAC/regulatory NVRAM" >&2
     exit 1
