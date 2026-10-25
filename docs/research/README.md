@@ -43,3 +43,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 - [v5 original MZ600 firmware / PMU / Cortex-M3 evidence gates](MZ600_BCM4329_V5_FIRMWARE_PMU_CM3_EVIDENCE_PLAN.md) — January 2011 vs May 2012 firmware versions, private NVRAM structural comparison, live passive USB status and six-event read-only register capture design. [Privacy-preserving offline comparison utility](../../tools/forensics/compare_mz600_oem_firmware_private.py).
 
 - [v035 physical PMU/CM3/F2 state-retention result](../checkpoints/V035_BCM4329_PMU_CM3_F2_PHYSICAL_2026-10-24.md) — measured 3-trial register/timing trace from the [v035 reversible observer builder](../../scripts/experiments/v035-build-readonly-pmu-cm3.py). This is new evidence after the v5 pre-test plan, not a Wi-Fi fix.
+
+- [v036 Motorola-specific PMU resource decoding](../checkpoints/V036_BCM4329_PMU_RESOURCE_CLOCK_PHYSICAL_2026-10-24.md) — physical ChipCommon 29 / PMU 6 and resource mask 003FE63E decoded via OEM sbchipc.h. [Source-guarded v036 observer](../../scripts/experiments/v036-build-pmu-status-readonly.py); [source writer / clock audit](MZ600_V036_PMU_CLOCK_WRITER_SOURCE_AUDIT.md).
