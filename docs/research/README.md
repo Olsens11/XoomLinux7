@@ -50,3 +50,5 @@ Do not call an experimental patch a fix until the claimed function works repeate
 
 - [v038 CM3/NVRAM token physical investigation](../checkpoints/V038_BCM4329_CM3_NVRAM_HANDOFF_PHYSICAL_2026-10-24.md) and [reversible v038 builder](../../scripts/experiments/v038-build-cm3-nvram-handoff.py) — verified 288KiB RAM/CM3 core-up and end-of-RAM token, source-vs-runtime NVRAM provenance.
 - [v039 one-variable original OEM 2011 firmware physical comparison](../checkpoints/V039_ORIGINAL_MZ600_FIRMWARE_PHYSICAL_2026-10-24.md) — both firmware images fail F2, baseline restored, remaining device-identity/regulatory provenance audit.
+
+- [v040 Motorola default MAC bootstrap requirement, ATAG/OTP provenance and NVRAM safety gate](V040_MOTOROLA_MAC_BOOTSTRAP_ATAG_PROVENANCE.md) — actual OEM `dhd_common.c` requires a default MAC from OTP/NVRAM for firmware bring-up; later unit-specific ATAG callback confirmed in original binary; temporary test upload **rejected before device write** by existing identity/regulatory guard.
