@@ -29,6 +29,6 @@ for patch in "${files[@]}"; do
    echo "CHECKPATCH_NOT_CLEAN: review errors; unsigned RFC requires real DCO"
  fi
  echo "Suggested maintainers (recheck at submission time):"
- perl "$upstream/scripts/get_maintainer.pl" --no-rolestats --no-git --no-git-fallback "$patch"
+ (cd "$upstream" && perl scripts/get_maintainer.pl --no-rolestats --no-git --no-git-fallback "$patch")
 done
 echo "AUDIT_COMPLETE_NO_PATCH_APPLIED_NO_DEVICE_ACCESS"
