@@ -80,3 +80,5 @@ When a new record is added, link it here and from its local index; update status
 - [Original MZ600 HRI39/HRI66 Wi-Fi driver and OEM-to-Linux 7 F2 audit](research/MZ600_BCM4329_OEM_VS_LINUX7_F2_STARTUP_AUDIT_V4.md) — matching-generation 2.6.36 OEM source compared against pinned Linux 7 CM3/PMU/clock/F2 startup; 27/27 offline source and ELF checks, no hardware modification.
 
 - [BCM4329 OEM v5 firmware/PMU evidence](research/MZ600_BCM4329_V5_FIRMWARE_PMU_CM3_EVIDENCE_PLAN.md): tested read-only firmware version metadata, protected calibration differences, current USB state and next Cortex-M3/PMU observation gates.
+
+- [v035 BCM4329 PMU/CM3/F2 read-only physical test](checkpoints/V035_BCM4329_PMU_CM3_F2_PHYSICAL_2026-10-24.md): 3 RAM-module trials established a chip PMUControl transition after CM3 release on first load and stable retained PMUControl on warm driver reloads; F2 remains -62.
