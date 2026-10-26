@@ -58,6 +58,12 @@ Owner confirms original Android associated to a 5GHz AP on this same board. Linu
 
 ## Immediate development priority
 
+### OEM SDIO quirk cannot be evaluated in isolation
+
+The [cross-layer Motorola OEM workaround audit](../research/MZ600_BCM4329_MOTOROLA_OEM_WORKAROUND_CROSS_LAYER_SYSTEM_AUDIT_2026-10-26.md) identifies the 6-field embedded SDIO override as a real workaround, but physical v018 proves it alone altered host high-speed timing while still failing F2. Earlier v044 and v045 proved additional firmware bootstrap identity and WCC packaging dependencies. **Own-use/preview gate:** record matching OEM 2.6.36 firmware+calibration+platform compile conditions, board U4/U2/I7/LPO state, carddetect, PMU and pulls, SDIO six fields, F2, actual country and 5GHz bandlist. Test scoped CCCR changes versus current reference in an A/B with one independently measurable variable, then BT/SDIO coexistence and multiple device types before a candidate quirk may join the upstream series. Full-chip provider, MMC quirk and firmware-userland assets remain separate changes.
+
+
+
 ### New firmware-bandlist gate grounded by physical 5GHz diagnosis
 
 On reference MZ600 Debian Linux7 p8, the RAM-only diagnostic physically measured **firmware `GET_BANDLIST count=1, band=2G`; `chanspecs total=11, 2G=11, 5G=0`** while Android previously connected to 5GHz with this same hardware. See [actual Xoom checkpoint](../checkpoints/MZ600_V064_BRCMFMAC_FIRMWARE_5GHZ_BANDLIST_CHANSPEC_PHYSICAL_PROOF_2026-10-26.md). **Do not credit this as 5GHz working or as a whole-chip kernel patch pass.** A device-appropriate 5GHz restoration must show a genuine firmware-provided band/channel list, legal regulatory and verified per-unit calibration, PHY advertisement, passive scan, and correct unload, first on MZ600 and independently per eligible MZ602/MZ604 unit. Preserve known-good 2G baseline and do not inject synthetic channels, wrong factory calibration or arbitrary country codes. Diagnostic source kept separate from upstream candidate power sequencing patches.
