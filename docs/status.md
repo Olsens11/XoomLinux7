@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — Photo pinpoints Stage-C at kernel root PARTUUID wait
+
+Owner-provided photograph shows relocated GPT and BigPart **fully enumerate p1..p10 and 1GiB p8**, but kernel prints **`Waiting for root device PARTUUID=<private p8 GUID>...`** at ~1.875 sec, continues later unrelated messages through ~73 sec, never mounts internal root. **This is an early kernel root-device lookup problem, not a systemd or module-load failure.** Cause of PARTUUID mismatch remains unknown. **Stage-C temp fastboot boot only** had been used, no persistent flash; COM9 present but unresponsive, p7 Stage-B persistent Debian SD rescue remains intact. Offline SHA-pinned Stage-D diagnostic image uses direct `root=/dev/mmcblk0p8`. Owner's repaired Power/Volume controls can manually enter fastboot; next **temporary** Stage-D boot, then inspect resulting framebuffer/console and recover known-good p7 SD root if necessary. [Photo evidence and procedure](checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).
+
+
 **Prepared offline Stage-D diagnostic (not executed):** New root=/dev/mmcblk0p8 temporary-boot candidate SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8` (6,645,760B), source verified Stage-B with only boot header cmdline changed, **not booted or flashed**. On Surface downloads; builder in `scripts/experiments/stage-v064-bigpart-p8-devnode-diagnostic-boot-20261026.py`. After physically rescuing p7 Debian SD-root and reaching fastboot, candidate tests direct-device root instead of stalled Stage-C p8 PARTUUID. Exact cause not yet known. [Checkpoint](checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).
 
 
