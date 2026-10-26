@@ -1,5 +1,12 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## LATEST 2026-10-26: Stable Debian preserved; ABI matching module package complete; exclusive COM9 blocker
+
+Read [full recovery and offline module QA checkpoint](../checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md). After chat connection interruption, both authorized Surface and Desktop reconnected. Modules were rebuilt (114) with exact Stage-D kernel 7.0.0-next-20260422+ config and toolchain, installed OFFLINE to a staging directory with depmod, and 1,901,356-byte tar.xz SHA256 50d821138f0fe04f79855d8996a61652fa7788e48457a9ebf97409b527db11c6 was copied and SHA-verified on Surface. All 114 loadable modules now pass read-only verifier; libkmod hid vermagic for 18 modules but readelf shows exact ELF metadata. The uploaded Python/CMD launchers exist on Surface and validate archive locally; RAM-only transfer never started because existing user's Xoom USB console still holds COM9 (Windows Access denied). Need owner press **Ctrl+]** in the existing console to release serial port, Xoom keeps running. Then use existing guarded Surface uploader to stage archive ONLY in /run RAM, require same SHA on Xoom. No p8 module installation, wifi module loading, or radio tests happened. Permanent Stage-D p7 and Debian internal p8 root remain intact.
+
+---
+
+
 ## 2026-10-26 — FINAL PERSISTENT INTERNAL DEBIAN 12.15 PHYSICAL P7 SHA VERIFIED — MILESTONE COMPLETE
 
 **Newest authoritative evidence: [FULLY VERIFIED PERSISTENT INTERNAL DEBIAN checkpoint](../checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md).** This supersedes all prior "p7 physical readback pending" notes. Owner has now explicitly supplied **root@xoom-mz600** live Debian outputs: `id -u=0`, `findmnt -n -o SOURCE,FSTYPE / = /dev/mmcblk0p8 ext4`, `/sys/class/block/mmcblk0p7/size=16384` sectors (8MiB). **Actual read-only eMMC p7 readback `head -c 6645760 /dev/mmcblk0p7 | sha256sum` = `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`, EXACT match to verified Stage-D boot image SHA256 and length.** **Actual full 8MiB p7 `sha256sum /dev/mmcblk0p7` = `901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`.** Different full vs prefix hashes are expected because image 6,645,760B versus p7 8,388,608B. Physical readback fully PASSED and is NO LONGER pending.
