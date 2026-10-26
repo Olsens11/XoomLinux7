@@ -1,5 +1,8 @@
 # Documentation router
 
+> **2026-10-26 milestone:** [Persistent p7 Stage-B Linux7 Debian microSD boot successfully flashes and boots with normal fastboot reboot, normal Debian USB console](checkpoints/MZ600_V064_PERSISTENT_SD_DEBIAN_BOOT_PHYSICAL_PASS_2026-10-26.md). Current Debian on inserted SD. Independent read-after-write hash of p7 needs owner's local `sudo -s`; do not erase p8 before confirming and testing recovery.
+
+
 > **SAFETY HOLD (2026-10-26):** [Independent Linux-to-fastboot reboot did not work; first persistent p7 boot flash status is unknown after native stderr/PowerShell interruption](checkpoints/MZ600_LINUX7_RESCUE_BOOTLOADER_AND_P7_FLASH_AMBIGUITY_2026-10-26.md). Xoom safely temporarily rebooted into Debian from SD. First verify raw p7 read-only SHA before any retry or p8 formatting.
 
 
