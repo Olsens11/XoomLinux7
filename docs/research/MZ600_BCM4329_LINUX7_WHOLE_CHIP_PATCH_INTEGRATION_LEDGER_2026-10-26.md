@@ -62,6 +62,11 @@ Capture a small, private **timestamped physical test transcript**, then update t
 - `docs/research/MZ600_BCM4329_REGULATORY_OEM_LINUX7_AUDIT_2026-10-25.md`
 - `docs/checkpoints/MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md`
 
+
+## Oct 26 follow-up — actual installed WLAN service audit: missing reverse lifecycle
+
+Read-only physical COM9 audit of `/usr/local/libexec/xoom-check-factory-wlan-mac` and `mz600-wlan.service` confirms robust per-device FDT identity guard followed by `modprobe brcmfmac-wcc` and `modprobe brcmfmac`. Exact ABI `modprobe -n -v brcmfmac-wcc` resolves `brcmutil`→`brcmfmac`→`WCC`. **WLAN service has no `ExecStop` and is one-shot `RemainAfterExit=yes`**: stopping that unit alone cannot serve as proven driver/resource teardown. This is a **Debian integration/lab lifecycle gap**, not automatically a kernel source defect; implement a reversible bounded diagnostic with explicit WCC→brcmfmac→brcmutil unload, preserve USB root console and test postcondition. Record U4/I7/U0/U2/pwrseq ownership independently; unloading does not prove chip POR. Wi-Fi was **not loaded** during inspection.
+
 ## Oct 26, 2026 — owner's multi-device qualification decision and physical D-Bus progress
 
 Owner requires **rigorous physical testing of the whole-chip patch series on multiple additional Xooms before any community review**. We are optimizing own-use reproducibility, safe deploy/rollback, and a useful understandable patch set first. [Multi-device source/build/physical validation gates](../plans/MZ600_BCM4329_LINUX7_MULTIDEVICE_PATCH_SERIES_RELEASE_GATES_2026-10-26.md), [machine-readable stage manifest](../../configs/patch-series/bcm4329-whole-chip-qualification-v1.json), and [offline fail-closed checker](../../tools/forensics/check_bcm4329_patch_series_gates.py) are now tracked. Initially `review_ready=false`: no other unit yet validated with the whole-chip provider; MZ617 compatibility must be separately proven. Formal source gate currently contains a single unsent MAC-ATAG RFC, not a completed shared-chip series.
