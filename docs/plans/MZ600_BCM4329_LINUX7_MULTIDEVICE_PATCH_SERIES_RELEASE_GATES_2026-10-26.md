@@ -58,6 +58,12 @@ Owner confirms original Android associated to a 5GHz AP on this same board. Linu
 
 ## Immediate development priority
 
+### Original OEM compiled-branch and full-lifecycle acceptance
+
+Reproducible [Motorola early 2.6.36 source+ELF lifecycle auditor](../../tools/forensics/audit_mz600_oem_system_lifecycle.py) is now **42/42 PASS** with exact original HRI39 binary. [Evidence](../checkpoints/MZ600_OEM_2A65EDC_CROSSLAYER_SOURCE_BINARY_CONDITIONAL_AUDIT_42_PASS_2026-10-26.md). New mandatory comparisons: platform control (CUSTOMER_HW2 and CONFIG_WIFI_CONTROL_FUNC compiled), **no artificial second generic U4 vote**, staged Wi-Fi power/carddetect and reverse order on remove, early suspend firmware settings vs no-op platform PM, runtime dongle reset, OEM SDMMC2 tap=6 already in Linux7 DTS, per-unit regulatory calibration, and Bluetooth/source-generation uncertainty. A source check is not physical acceptance. Any final 5GHz fix and full-chip pwrseq implementation require independent multi-unit WLAN/BT plus suspend/recovery tests; preserve later 2011 vs original 2a65edc vendor provenance boundaries.
+
+
+
 ### OEM SDIO quirk cannot be evaluated in isolation
 
 The [cross-layer Motorola OEM workaround audit](../research/MZ600_BCM4329_MOTOROLA_OEM_WORKAROUND_CROSS_LAYER_SYSTEM_AUDIT_2026-10-26.md) identifies the 6-field embedded SDIO override as a real workaround, but physical v018 proves it alone altered host high-speed timing while still failing F2. Earlier v044 and v045 proved additional firmware bootstrap identity and WCC packaging dependencies. **Own-use/preview gate:** record matching OEM 2.6.36 firmware+calibration+platform compile conditions, board U4/U2/I7/LPO state, carddetect, PMU and pulls, SDIO six fields, F2, actual country and 5GHz bandlist. Test scoped CCCR changes versus current reference in an A/B with one independently measurable variable, then BT/SDIO coexistence and multiple device types before a candidate quirk may join the upstream series. Full-chip provider, MMC quirk and firmware-userland assets remain separate changes.
