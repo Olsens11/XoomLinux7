@@ -29,6 +29,9 @@ FILES = {
     "board-stingray.c": (
         "arch/arm/mach-tegra/board-stingray.c",
         "916df985cbba4d5abc855772388042dd6d0f9f99418dcbd6e452fbb35d0b63e7"),
+    "board-stingray-bluetooth.c": (
+        "arch/arm/mach-tegra/board-stingray-bluetooth.c",
+        "e2cf7582371d5a9a59ac6c237a8d7a6436410025009f57cce15dfecdc93f9fef"),
     "dhd_sdio.c": (
         "drivers/net/wireless/bcm4329/dhd_sdio.c",
         "e8ad9ef7bac25f6ba82140e1b44387ce537bd484bfbfe38289b923eadba2d016"),
@@ -80,6 +83,7 @@ def main():
     mk, gpio, dhd = (texts[k] for k in ("Makefile", "dhd_custom_gpio.c", "dhd_linux.c"))
     board = texts["board-stingray-wifi.c"]
     system = texts["board-stingray.c"]
+    bt = texts["board-stingray-bluetooth.c"]
     sdio, si = texts["dhd_sdio.c"], texts["siutils.c"]
     symbols = set()
     elf_ok = args.oem_module.is_file() and hashfile(args.oem_module) == ELF_SHA
@@ -163,6 +167,52 @@ def main():
     check("shared_power_only_turns_u4_off_when_zero",
           "if (!brcm_4329_enable_count)" in shared
           and "gpio_set_value(TEGRA_GPIO_PU4, enable)" in shared, "source")
+    check("oem_bluetooth_gpio_pins_i7_u0_u1_u6",
+          all(k in bt for k in ("BT_SHUTDOWN_GPIO TEGRA_GPIO_PI7",
+              "BT_RESET_GPIO TEGRA_GPIO_PU0",
+              "BT_WAKE_GPIO TEGRA_GPIO_PU1",
+              "BT_HOST_WAKE_GPIO TEGRA_GPIO_PU6")), "source")
+    rfkill = extract(bt, "static int bcm4329_bt_rfkill_set_power(",
+                     "static const struct rfkill_ops bcm4329_bt_rfkill_ops")
+    on = extract(rfkill, "if (!blocked)", "} else {")
+    off = extract(rfkill, "} else {", "return 0;")
+    check("oem_bt_unblock_u4_vote_then_u0_reset_release_i7_low",
+          on.find("change_power_brcm_4329(true)") >= 0
+          and on.find("gpio_direction_output(BT_RESET_GPIO, 1)") > on.find("change_power_brcm_4329(true)")
+          and on.find("gpio_direction_output(BT_SHUTDOWN_GPIO, 0)") > on.find("gpio_direction_output(BT_RESET_GPIO, 1)"),
+          "source")
+    check("oem_bt_block_releases_u4_before_i7_low_u0_reset",
+          off.find("change_power_brcm_4329(false)") >= 0
+          and off.find("gpio_direction_output(BT_SHUTDOWN_GPIO, 0)") > off.find("change_power_brcm_4329(false)")
+          and off.find("gpio_direction_output(BT_RESET_GPIO, 0)") > off.find("gpio_direction_output(BT_SHUTDOWN_GPIO, 0)"),
+          "source")
+    btprobe = extract(bt, "static int bcm4329_bluetooth_probe(",
+                      "static int bcm4329_bluetooth_remove(")
+    check("oem_bt_probe_initial_block_before_rfkill_alloc",
+          btprobe.find("bcm4329_bt_rfkill_set_power(NULL, true)") >= 0
+          and btprobe.find("rfkill_alloc(") > btprobe.find("bcm4329_bt_rfkill_set_power(NULL, true)"),
+          "source", "Possible cross-consumer decrement of untyped U4 counter; runtime ordering not established")
+    check("oem_bt_probe_gpio_requests_reset_and_shutdown",
+          "gpio_request(BT_RESET_GPIO" in btprobe
+          and "gpio_request(BT_SHUTDOWN_GPIO" in btprobe, "source")
+    check("oem_bt_lpm_gpio_irq_and_timer",
+          "gpio_direction_output(BT_WAKE_GPIO, 0)" in bt
+          and "gpio_direction_input(BT_HOST_WAKE_GPIO)" in bt
+          and "request_irq(irq, host_wake_isr" in bt
+          and "hrtimer_start(&bt_lpm.enter_lpm_timer" in bt, "source")
+    btremove = extract(bt, "static int bcm4329_bluetooth_remove(",
+                       "static struct platform_driver bcm4329_bluetooth_platform_driver")
+    check("oem_bt_remove_has_no_explicit_shared_vote_release",
+          "rfkill_unregister(bt_rfkill)" in btremove
+          and "gpio_free(BT_RESET_GPIO)" in btremove
+          and "gpio_free(BT_SHUTDOWN_GPIO)" in btremove
+          and "change_power_brcm_4329" not in btremove, "source",
+          "Absence of explicit call does not establish whether rfkill_unregister invokes a callback")
+    check("board_registers_bt_platform_before_wlan_board_init",
+          0 <= system.find("&bcm4329_bluetooth_device")
+          and 0 <= system.find("platform_add_devices(stingray_devices, ARRAY_SIZE(stingray_devices))")
+          < system.find("stingray_wlan_init();"), "source",
+          "Platform-device registration order is not Bluetooth-driver probe time")
     check("firmware_arm_reset_and_nvram_download",
           "dhdsdio_download_firmware" in sdio
           and "dhdsdio_download_state" in sdio, "source")
