@@ -103,12 +103,24 @@ mounted=1
 [[ $(findmnt -n -o SOURCE --target "$MOUNT") == "$TARGET" ]] ||
     fail 'mounted filesystem is not intended p8'
 printf 'DEBIAN_SYSTEM_FILE_COPY_BEGIN\n'
-# --one-file-system excludes the SD's /dev,/proc,/sys,/run and destination p8.
-# Preserve owners/modes, hardlinks, symlinks, ACLs and xattrs. Avoid transient
-# /tmp contents; keep mountpoint directory names but not mounted content.
+# --one-file-system is NOT sufficient for volatile mountpoint metadata:
+# physical first attempt failed because './sys' changed while read.
+# Exclude all live kernel/virtual mount trees and create empty mountpoints on
+# destination. Avoid transient logs and the destination nested under /mnt.
+# Preserve owners/modes, hardlinks, symlinks, ACLs, xattrs for REAL files.
 tar -C / --one-file-system --acls --xattrs --numeric-owner --sparse \
-    --exclude='./tmp/*' --exclude='./mnt/xoom-system-install/*' -cpf - . |
+    --exclude='./dev' --exclude='./dev/*' \
+    --exclude='./proc' --exclude='./proc/*' \
+    --exclude='./sys' --exclude='./sys/*' \
+    --exclude='./run' --exclude='./run/*' \
+    --exclude='./tmp/*' \
+    --exclude='./mnt/xoom-system-install' \
+    --exclude='./mnt/xoom-system-install/*' \
+    --exclude='./home/xoom/mz600-bigpart-p8-install-*.log' \
+    -cpf - . |
     tar -C "$MOUNT" --acls --xattrs --numeric-owner -xpf -
+mkdir -p "$MOUNT"/{dev,proc,sys,run,tmp,mnt,media}
+chmod 1777 "$MOUNT/tmp"
 [[ -x "$MOUNT/sbin/init" && -r "$MOUNT/etc/debian_version" ]] ||
     fail 'Installed Debian root missing essential systemd files'
 cmp /etc/debian_version "$MOUNT/etc/debian_version" ||
