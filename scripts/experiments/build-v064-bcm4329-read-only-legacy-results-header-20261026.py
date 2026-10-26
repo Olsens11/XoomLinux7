@@ -17,7 +17,7 @@ v05 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v05)
 
 builder = v05.builder
-builder.WORK = builder.BASE / "v064-readonly-legacy-results-header-v6-20261026"
+builder.WORK = builder.BASE / "v064-readonly-legacy-results-header-v6b-20261026"
 builder.TARGET = builder.WORK / "brcmfmac-readonly-legacy-results-header.ko"
 builder.PATCH_PATH = builder.WORK / "0006-brcmfmac-readonly-legacy-results-header-in-noir-lab.patch"
 builder.REPORT = builder.WORK / "offline-build-result.json"
