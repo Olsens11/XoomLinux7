@@ -1,0 +1,35 @@
+# BCM4329 legacy scan: upstream-compatible protocol and patch plan
+
+2026-10-26. **Research and offline safety tests, not a physical legacy scan or released kernel patch.** Owner requires one logical change per commit, bisectability, no regression on modern firmware, and cross-device testing before any community review. This keeps the whole-chip power/BT/SDIO patches separate from driver protocol compatibility.
+
+## Grounded firmware history and the next compatibility obstacle
+
+- Physically verified: original Motorola 4.218.248.20 firmware returned BOTH 2.4/5 GHz bands and 20 valid channels (11+9) through legacy ioctl **WLC_GET_VALID_CHANNELS = 217**. Lab v05 exposed all nine 5 GHz wiphy channels as NO_IR, created wlan0, but modern firmware **escan** command failed with -EBADE (-52). No successful passive scan has occurred.
+- The published Broadcom [Froyo BCM4329 protocol header](https://android.googlesource.com/platform/hardware/broadcom/wlan/+/froyo/bcm4329/src/include/wlioctl.h) declares **WL_BSS_INFO_VERSION = 108**, scan-results envelope with **buflen, version, count, BSS records**, a 12-byte fixed header, old passive-scan params, and scan-result statuses. **This is original-era source evidence, not a real HRI39 scan-results version readback.**
+- The exact running Linux7 brcmfmac firmware-types header declares **BRCMF_BSS_INFO_VERSION = 109**. Its brcmf_inform_bss() rejects non-109 results and its BSS reporting code does not fully validate every external offset and IE length. Never globally substitute version 108 for 109.
+- A [September 25 2026 proposed wireless patch](https://lists.openwall.net/linux-kernel/2026/09/25/1158) separately adds support for newer BSS versions 109–112. The proposal's **merge status is unverified**. We must rebase against whichever version handling exists in the actual maintainer tree rather than overwrite that work.
+- Current fwil.h already defines older commands **BRCMF_C_SCAN = 50** and **BRCMF_C_SCAN_RESULTS = 51**, but support on the physical HRI39 firmware and its scan-completion event/response format still require direct validation. The v05 Linux scan path uses iovar "escan" even when it downgrades its parameter structure to v1; **v1 escan is not the same as legacy WLC_SCAN**.
+
+## Exact existing cfg80211 lifecycle to preserve
+
+The modern cfg80211 .scan callback checks VIF, busy/abort/suppressed/connecting status, stores scan_request and sets busy, configures management IEs/P2P, invokes escan, and arms the timeout. Escan event handler accumulates partial BSS records; brcmf_inform_bss reports them to cfg80211; brcmf_notify_escan_complete clears scan_request *before* calling cfg80211_scan_done, guarding against duplicate completion. Timer, abort and interface removal converge on the completion mechanism. New legacy behavior must preserve **exactly-once completion, request ownership, timeout, cancellation, and no completion when .scan itself fails before returning success**.
+
+## One logical change per patch; provisional series design
+
+**A. Decode legacy scan-result envelopes and prove compatibility.** Bounded input-size, little-endian header, record count, per-record length, overflow-safe iteration, BSS version and physical record-layout offsets, SSID ≤32, IE offset+IE length within the record, valid channel and known wiphy membership. Extend into KUnit and prove real firmware result version before trusting the modern BSS layout. If this helper cannot stand independently with no callers and no compiler warning, fold it into the coherent scanner patch instead; every intermediate commit must build and bisect.
+
+**B. Clean and scope legacy channel enumeration.** Rework verified v05 lab fallback into a chip+firmware capability decision using existing brcmfmac feature/quirk infrastructure. Only use firmware-supplied channel numbers; never fabricate channels or override regulatory constraints. No IR and 20 MHz-only for passive lab operation; modern firmware retains native chanspecs. Remove diagnostics and fix checkpatch violations.
+
+**C. Complete legacy scan request, result parsing, cancellation and timeout.** This is ONE cohesive change across files if necessary. Send passive-only WLC_SCAN, do not emit directed probe requests, constrain channels to safe firmware+cfg80211 allowed subset, use firmware's completion event or bounded polling as actually observed, query bounded WLC_SCAN_RESULTS and validate BSS+IE layout before reporting to cfg80211. Handle failures, disconnect/teardown, late events, watchdog and double callbacks; do not leave an intermediate commit with a scan that never finishes. Do not assume P2P/scheduled scans exist in old firmware; refuse unsupported requests.
+
+**D. Tests and regressions.** Add focused in-tree KUnit/parser and lifecycle cases as logically appropriate, real HRI39 passive scan evidence, modern 4.220.48 regression, multiple Xoom variants, Bluetooth co-operation, cold/warm initialization. Promote to upstream series only after real device evidence, full source/diff review, current MAINTAINERS routing, checkpatch and sparse, human owner DCO/authorization.
+
+## First finished artifact: 22 synthetic safety tests
+
+[Host-only model source](../../tools/forensics/test_bcm4329_legacy_scan_contract.py) passes **22/22** tests on the Desktop WSL kernel development host. It validates v108/v109 synthetic envelopes; absent/truncated/oversized headers; record count and per-record bounds; version mismatch; overlapping/extra data; failed scan start returning no completion; exactly-once normal, timeout and abort completion; concurrent scan refusal and late-event suppression. **These are NOT KUnit and do not prove real firmware BSS layout or kernel concurrency.** The model intentionally verifies just headers and record boundaries: the C implementation must still validate full field layouts and IE offsets before passing external data into cfg80211.
+
+## Review rules
+
+Use the [official kernel submitting-patches documentation](https://docs.kernel.org/process/submitting-patches.html) and [submission checklist](https://docs.kernel.org/process/submit-checklist.html): one logical change per patch, bisectable compile/runtime, include coherent commit problem justification, route through current wireless maintainers, use checkpatch, sparse and in-tree unit tests, do not fake Signed-off-by or claim hardware qualification where only model tests ran. The OEM chip U4/I7/U0/U2/LPO/pwrseq and Motorola six-field SDIO workaround are **separate changes**, not part of this legacy scan protocol patch.
+
+**Next protocol proof:** collect only *bounded, sanitized count/version/status* of actual OEM WLC_SCAN_RESULTS and identify legacy scan completion behavior, preferably in a single RAM-only proof. Do not log network SSIDs/BSSIDs or force transmit to obtain data. Then implement a reviewable kernel patch with real version-specific parsing and lifecycle tests.
