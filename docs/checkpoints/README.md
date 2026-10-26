@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST 2026-10-26:** [Stage-E live-GPT-PARTUUID internal-root temporary fastboot boot accepted but Debian login NOT observed, COM9 serial timeouts. Prior Stage-D direct /dev/mmcblk0p8 internal-root PHYSICAL PASS remains valid; firmware rescue preserved, root GUID issue still unresolved](MZ600_V064_STAGE_E_LIVE_GUID_TEMPBOOT_UNRESPONSIVE_2026-10-26.md).
+
+
 > **LATEST 2026-10-26:** [Internal Debian p8 `/etc/fstab` root PARTUUID repaired to **live kernel-reported p8 GPT GUID**, exact saved backup + unchanged-other-lines proof and original permissions preserved. Stage-D p8 boot still running; Stage-E corrected-GUID TEMP boot image prepared, NOT BOOTED or FLASHED](MZ600_V064_STAGE_E_FSTAB_LIVE_P8_GUID_CORRECTED_2026-10-26.md).
 
 
