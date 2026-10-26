@@ -52,5 +52,10 @@ Add a new checkpoint, update [whole-chip integration ledger](../research/MZ600_B
 The actual MZ600 factory-MAC guarded `mz600-wlan.service` contains `ExecStart` with WCC then brcmfmac load, `RemainAfterExit=yes`, **no `ExecStop`**. A one-shot unit stop is **not** proof of modules unloaded or shared chip reset. Before G3 field tests, build an independently supervised **reversible WLAN start/stop diagnostic**, explicitly unload WCC→brcmfmac→brcmutil, preserve serial and the ability to recover from power-state hangs; test only with operator near device or a separately qualified recovery method. Continue to isolate changes to Debian service scripts from upstream kernel patches.
 
 ## Immediate development priority
+### 2026-10-26 newly proved own-use installed WLAN reference
+
+Current reference MZ600 Debian p8 Linux 7 has now physically completed a one-shot standard-driver WCC→`wlan0`→passive 2.4GHz scan with **19 BSS**→reverse-order full driver unload, **no reboot or lost COM9**. Unexpected 2442 MHz BSS metadata despite channels 1/6/11 filter is a future diagnostics gate (must test cache/reporting versus actual scan; don't assume prohibited scan). [Physical baseline](../checkpoints/MZ600_V064_PERSISTENT_DEBIAN_BCM4329_WLAN0_PASSIVE_SCAN_AND_ORDERED_TEARDOWN_PHYSICAL_PASS_2026-10-26.md). **Keep this separate from G3/G5 whole-chip provider series qualification**, which remains pending independent ARM build, binding, hardware trace and multi-device tests. Reuse the guarded start/scan/unload protocol for future *validated* patch A/B; avoid unnecessary repeat of this same no-patch success.
+
+
 
 Continue current **MZ600** without touching verified p7/GPT: validate D-Bus daemon package deficiency and eventually restore signed Debian packages; conduct guarded module lifecycle test only after stable USB/recovery gate, then use **actual** Xoom live results to refine shared-chip kernel source. Start an independent hardware inventory worksheet for MZ602/MZ604 **before** proposing a universal DTS or regulator/pin configuration. Keep a comprehensible `patches/upstream/rfc/series` and change log of tested versus merely compiled patches.
