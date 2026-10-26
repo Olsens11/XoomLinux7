@@ -1,5 +1,8 @@
 # v06.4 (v064) — executable next-conversation build instructions: Wi-Fi scan, real terminal, Bluetooth keyboard
 
+> **STORAGE IMPLEMENTATION UPDATE, 2026-10-25 late evening:** Current user-approved direction is **original Xoom Classic BigPart virtual 1GiB p8 system as Debian Linux root**; p10 as root was rejected, userdata can be erased. Read [BigPart MZ600 implementation plan](MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md). Existing 768MiB root image fits under the 1GiB mapped system extent. The old RAM/SD-only and p10-root alternatives below remain historical fallbacks, NOT the selected installation target. Wi-Fi iw scan, genuine local terminal/USB fallback, and paired Motorola BT keyboard are still the acceptance criteria. No partition write has occurred.
+
+
 > **NEW storage-path expansion (2026-10-25 evening EDT):** User permits an internal eMMC installation replacing Android on the replacement MZ600, and optional BigPart if needed. The 256MiB factory p8 cannot hold Debian, but existing p10 userdata has ~29.34GiB and is the preferred future normal ext4 root **without repartitioning**. See [new internal root and safety implementation plan](MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). Earlier no-eMMC/no-SD RAM-only restrictions in this pre-existing plan describe the *proven baseline* and still apply to the current v06.3 image; they do not prohibit the separately gated new user-approved architecture. **Do not execute p10/p7 writes until Linux7 partition mapping, full userdata backup and independent recovery have passed.** v06.4 still must pass standard iw scan, real on-screen terminal and Motorola keyboard typing. No v06.4 image or internal installation exists yet.
 
 
