@@ -1,4 +1,6 @@
 # XoomLinux7 — Full continuity / next-chat engineering handoff
+
+> **2026-10-26 next-chat host resumption VERIFIED, no tablet writes:** SURFACE-BOOK-2 safe gzip (2,798,775B, SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409) and uploader .py/.cmd hashes all still match; Desktop WSL checkout clean and repository validator 501 entries/0 errors. COM9 is enumerated but existing owner's USB console remains active; the new gzip-upload success log is absent. **No new gzip upload or matching-module install is verified.** Next owner action remains Ctrl+] in the console, followed by pinned RAM-only uploader. See [resumption checkpoint](../checkpoints/MZ600_V064_NEXTCHAT_SURFACE_REVALIDATION_SAFE_GZIP_COM9_STILL_HELD_2026-10-26.md). The rest of this document's exact-stopping-point guidance remains in force.
 **Snapshot:** Monday 2026-10-26, near 06:16 EDT and following the interrupted gzip-packaging workflow.  
 **Primary project:** Native upstream-based Linux 7 + Debian 12.15 on an *experimental replacement* Motorola Xoom MZ600 (Verizon CDMA).  
 **Repository:** https://github.com/Olsens11/XoomLinux7, branch `wip/clean-wifi-bt-usb-20261025`.  
