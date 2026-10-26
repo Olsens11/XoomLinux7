@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **HARDWARE CORRECTION 2026-10-26:** [Owner repaired BOTH replacement MZ600 DC charging jack AND volume button; manual fastboot/TWRP recovery works, outdated broken-button assumption must not block internal Debian installation](MZ600_REPLACEMENT_HARDWARE_REPAIR_VERIFIED_BY_OWNER_2026-10-26.md).
+
+
 > **NEWEST PHYSICAL PROOF 2026-10-26 02:55 EDT:** [Persistent Linux7 Debian SD p7 ordinary boot AND raw on-device p7 first-6,645,760B SHA EXACTLY MATCHES known Stage-B image; full 8MiB hash and all safety guards recorded](MZ600_V064_PERSISTENT_P7_PHYSICAL_READBACK_SHA_PASS_2026-10-26.md). p8 unchanged, no destructive install; independent bootloader rescue not yet proven.
 
 
