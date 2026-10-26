@@ -1,5 +1,7 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **2026-10-26 install script STAGED, not run:** [Guarded ABI-114 gzip on-device installer passes offline Bash syntax and awaits user-owned root console; transfer to RAM is already SHA-verified](MZ600_V064_GZIP_MODULE_INSTALLER_OFFLINE_STAGED_OWNER_CONSOLE_PENDING_2026-10-26.md).
+
 > **2026-10-26 PHYSICAL SUCCESS:** [SAFE gzip 114-matching-module archive uploaded to Xoom RAM, SHA256 verified ON the device, sender exit0; no module install yet](MZ600_V064_SAFE_GZIP_RAM_UPLOAD_PHYSICAL_SHA_PASS_2026-10-26.md). This supersedes prior COM9-busy transfer blockers; next step is guarded p8 module tree install after owner-console verification.
 
 > **2026-10-26 resumed continuation:** [New host revalidation checkpoint: exact SAFE gzip and uploader hashes PASS, 501-entry repo validator PASS, COM9 still held, new gzip upload/install NOT VERIFIED](MZ600_V064_NEXTCHAT_SURFACE_REVALIDATION_SAFE_GZIP_COM9_STILL_HELD_2026-10-26.md). The next physical action remains owner Ctrl+] in Surface USB console (no reboot), then guarded RAM-only upload and post-upload p8 module install.
