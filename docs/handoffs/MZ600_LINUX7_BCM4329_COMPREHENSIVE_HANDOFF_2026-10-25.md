@@ -1,5 +1,11 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-26: Verified 114-module bundle transferred to Xoom RAM (no installation)
+
+After owner released COM9, Surface uploader completed in 32 seconds. Xoom root preflight passed (running kernel 7.0.0-next-20260422+, internal /dev/mmcblk0p8 ext4), all 2476 base64 lines transferred, and Xoom decoded and SHA-verified /run/mz600-v064-stageD-matched-modules.tar.xz: 1901356 bytes, SHA256 50d821138f0fe04f79855d8996a61652fa7788e48457a9ebf97409b527db11c6. No modules installed or loaded, and Wi-Fi remains untested. A subsequent remote preinstall script was blocked by connection safety checks; continue through owner-operated local USB console rather than bypassing controls. See checkpoint docs/checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md for build and transfer details. The p7 boot image was not changed.
+
+---
+
 ## LATEST 2026-10-26: Stable Debian preserved; ABI matching module package complete; exclusive COM9 blocker
 
 Read [full recovery and offline module QA checkpoint](../checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md). After chat connection interruption, both authorized Surface and Desktop reconnected. Modules were rebuilt (114) with exact Stage-D kernel 7.0.0-next-20260422+ config and toolchain, installed OFFLINE to a staging directory with depmod, and 1,901,356-byte tar.xz SHA256 50d821138f0fe04f79855d8996a61652fa7788e48457a9ebf97409b527db11c6 was copied and SHA-verified on Surface. All 114 loadable modules now pass read-only verifier; libkmod hid vermagic for 18 modules but readelf shows exact ELF metadata. The uploaded Python/CMD launchers exist on Surface and validate archive locally; RAM-only transfer never started because existing user's Xoom USB console still holds COM9 (Windows Access denied). Need owner press **Ctrl+]** in the existing console to release serial port, Xoom keeps running. Then use existing guarded Surface uploader to stage archive ONLY in /run RAM, require same SHA on Xoom. No p8 module installation, wifi module loading, or radio tests happened. Permanent Stage-D p7 and Debian internal p8 root remain intact.
