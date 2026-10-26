@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **NEWEST 2026-10-26 Stage-D BREAKTHROUGH:** [Native Debian 12.15 **PHYSICALLY BOOTS FROM INTERNAL p8** with `root=/dev/mmcblk0p8`, USB login & `findmnt /` PASS. Earlier PARTUUID saved was wrong vs ALL current kernel partition GUIDs; current installed fstab mismatches p8. Correct live-GUID Stage-E image staged OFFLINE, no flash](MZ600_V064_STAGE_D_INTERNAL_P8_DEVNODE_BOOT_PHYSICAL_PASS_2026-10-26.md).
+
+
 > **LATEST SCREENSHOT PHYSICAL DIAGNOSIS 2026-10-26:** [Stage-C kernel prints `Waiting for root device PARTUUID=...` while showing BigPart p8 and p1–p10 detected; evidence points to kernel root identifier resolution, Stage-D direct p8 block-device boot queued TEMP only](MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).
 
 
