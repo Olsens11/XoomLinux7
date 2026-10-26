@@ -1,5 +1,18 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 late evening EDT — FINAL STORAGE CHOICE: ORIGINAL CLASSIC BIGPART, DEBIAN ROOT ON P8 /SYSTEM (NO PHYSICAL WRITES)
+
+**USER OVERRIDES EARLIER P10 ROOT PLAN:** user explicitly directs **original Xoom BigPart** and standard `system` partition for Linux root (`/`), rather than p10. User explicitly states **no userdata files need preserving**; data wipe is accepted. This supersedes the immediately preceding p10 Debian root design, not the protection of original MZ600 or evidence requirements. There is **no reason to create a 29GiB userdata backup**. Existing exact p6/p7/p8 and reserved boot-sector private backups remain preserved/reverified.
+
+**ORIGINAL BIGPART SOURCE FOUND:** [Schischu 2013 original BigPart kernel commit](https://github.com/Schischu/android_kernel_moto_wingray/commit/6b3d70fff905b7395fd15992c3779b27d1b6c101) changes **in-memory kernel GPT partition extents only**, not the disk GPT. Its Wingray start-sector triplet `0x1d000/0x9d000/0xf1800` matches **exactly** this replacement **MZ600 Stingray CDMA** p8/p9/p10 snapshot. Standard BigPart remap: system p8 **1GiB** start 118784; cache p9 **512MiB** start 2215936; userdata p10 **28929.5MiB** start 3264512, retains original p10 end; p1..p7 including boot+TWRP unaffected. Existing 768MiB Debian ext4 image fits enlarged 1GiB system. This is a known Xoom in-memory compatibility scheme, NOT authorization to run `sgdisk` or an unverified Wi-Fi Wingray recovery ZIP.
+
+New read-only host auditor [classic BigPart extent proof](../../scripts/experiments/audit-mz600-classic-bigpart-layout-20261025.py) executed on Desktop: `CLASSIC_BIGPART_OFFLINE_AUDIT_PASS`, no device contact or write; JSON in Desktop `artifacts-embedded-v064-preflight/MZ600-CLASSIC-BIGPART-OFFLINE.json`. It mathematically validates all ten partitions, non-overlap, unchanged p1..p7, unchanged p10 end, device geometry and 768MiB image fit. **Next real blocker:** confirm original Xoom BigPart recovery/kernel is physically compatible with this MZ600, and ensure Linux7 can identify the relocated Tegra GPT and adopt original BigPart virtual mapping *before* formatting p8; current Linux7 has normal EFI/GPT parser but no original BigPart adaptation. Original TWRP 3.1.1-0 must not format under 256MiB stock partition map. Prior broken Volume Down + red-LED startup requires independent recovery before persistent writes. Keep Wi-Fi `iw`, shell, BT keyboard v06.4 acceptance unchanged.
+
+**READ [NEW AUTHORITATIVE p8 BigPart install plan](../plans/MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md) FIRST.** The older [p10-root plan](../plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md) is superseded. All BigPart changes today are research + host-only proof + documentation. **No v06.4 BigPart kernel/image, hardware test or eMMC write was performed.** The last live physical baseline remains v06.3 PONG checked 19:25 EDT.
+
+---
+
+
 ## 2026-10-25 evening EDT — USER EXPANDS AUTHORIZED DESIGN SCOPE TO INTERNAL DEBIAN / OPTIONAL BIGPART (NO EMMC WRITES)
 
 **NEW USER DECISION:** It is acceptable to remove the *replacement experiment MZ600's* Android installation if necessary to build a real, functional Linux OS, and acceptable to perform a BigPart-style resize **if genuinely required**. The protected original MZ600 remains excluded. This supersedes the prior absolute Android-preservation *design preference*, not the procedural per-partition write checks. **No destructive action, reboot or radio activation was performed in this phase.**
