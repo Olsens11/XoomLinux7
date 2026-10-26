@@ -1,5 +1,7 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **CURRENT USERSpace MILESTONE 2026-10-26:** [Six Debian Bookworm D-Bus packages hash-matched, RAM-only USB transferred, physically dpkg-installed, systemd D-Bus socket/daemon active and real ListNames RPC PASS; WLAN/WPA still failed and not restarted](MZ600_V064_DEBIAN_DBUS_OFFLINE_SIX_PACKAGE_INSTALL_SYSTEM_BUS_PHYSICAL_PASS_2026-10-26.md). BCM4329 patch series tracked separately in [whole-chip integration ledger](../research/MZ600_BCM4329_LINUX7_WHOLE_CHIP_PATCH_INTEGRATION_LEDGER_2026-10-26.md) and [multi-device release gate plan](../plans/MZ600_BCM4329_LINUX7_MULTIDEVICE_PATCH_SERIES_RELEASE_GATES_2026-10-26.md).
+
 > **2026-10-26 POST-INSTALL PHYSICAL READ-ONLY:** [SDIO 3 functions, onboard Wi-Fi firmware and six-byte factory FDT MAC verified; PID1 systemd degraded, WLAN unit previously failed missing WCC, WPA failed missing system D-Bus socket; no radio activation](MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md).
 
 > **CURRENT 2026-10-26 PHYSICAL INSTALL PASS:** [114 ABI-matched `.ko` modules safely extracted to new versioned Debian p8 module tree; atomic move, depmod and `modprobe -n` dry-runs PASS; independent Xoom re-count verifies 114 and legacy tree intact](MZ600_V064_114_ABI_MODULES_INTERNAL_P8_ATOMIC_INSTALL_PHYSICAL_PASS_2026-10-26.md). No radio load, scan or association yet; earlier install-pending statements are historical.
