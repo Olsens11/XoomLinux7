@@ -21,8 +21,8 @@ spec = importlib.util.spec_from_file_location("mz600_v12a_builder", P)
 v12a = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v12a)
 builder = v12a.builder
-builder.WORK = builder.BASE / "v064-legacy-event26-rx-gates-v12b-20261026"
-builder.TARGET = builder.WORK / "brcmfmac-legacy-event26-rx-gates-v12b.ko"
+builder.WORK = builder.BASE / "v064-legacy-event26-rx-gates-v12b-r1-20261026"
+builder.TARGET = builder.WORK / "brcmfmac-legacy-event26-rx-gates-v12b-r1.ko"
 builder.PATCH_PATH = builder.WORK / "0012b-lab-only-bcm4329-event26-rx-stages.patch"
 builder.REPORT = builder.WORK / "offline-build-result.json"
 PREV_PATCH = builder.make_patch
@@ -142,7 +142,7 @@ void brcmf_v12b_event_report(struct brcmf_pub *drvr, const char *phase)
         atomic_read(&mz600_v12b_event_counts[MZ600_RX_HANDLER26]));
 }
 """
-    c = builder.exactly_one(c, marker, marker + impl, "V12B_IMPLEMENT_SANITIZED_COUNTS")
+    c = builder.exactly_one(c, marker, marker + '#include "brcm_hw_ids.h"\n' + impl, "V12B_IMPLEMENT_SANITIZED_COUNTS")
     a = '\tfwevt_idx = get_unaligned_be32(&event_packet->msg.event_type);\n'
     c = builder.exactly_one(c, a, a +
         '\tif (fwevt_idx == BRCMF_E_SCAN_COMPLETE)\n'
