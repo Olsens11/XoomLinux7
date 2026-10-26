@@ -191,10 +191,33 @@ class IscanWireContract(unittest.TestCase):
         self.assertEqual(raw[:8], bytes([1, 0, 0, 0, 2, 0, 0, 0]))
         self.assertEqual(len(b"iscan" + bytes([0]) + raw), 78)
 
+    def test_historical_brcmfmac_abort_72_byte_host_encoding(self):
+        # Source: Linux 3.4 brcmfmac wl_cfg80211.c brcmf_term_iscan:
+        #   memset(&ssid, 0, sizeof(ssid));
+        #   brcmf_run_iscan(iscan, &ssid, WL_SCAN_ACTION_ABORT)
+        # Helper only adds SSID bytes if ssid->SSID_len > 0, so this
+        # unconditionally sends BASE 72 bytes (firmware acceptance untested).
+        p = IscanParams()
+        p.version = ISCAN_REQ_VERSION
+        p.action = WL_SCAN_ACTION_ABORT
+        p.scan_duration = 0
+        raw = C.string_at(C.byref(p), historical_iscan_payload_length())
+        self.assertEqual(len(raw), 72)
+        self.assertEqual(raw[:8], bytes([1, 0, 0, 0, 3, 0, 0, 0]))
+        self.assertEqual(len(b"iscan" + bytes([0]) + raw), 78)
+
+    def test_iscanresults_get_buffer_has_requested_length(self):
+        # Original brcmf_get_iscan_results initializes the GET request's
+        # nested results.buflen before issuing the GET_VAR iovar command.
+        # The external suggested worker omitted this step.
+        maxlen = 8192  # synthetic bounded response space, not FW max proof
+        raw = bytearray(maxlen)
+        struct.pack_into("<I", raw, 4, maxlen)
+        self.assertEqual(struct.unpack_from("<I", raw, 4)[0], maxlen)
+        self.assertEqual(struct.unpack_from("<I", raw, 0)[0], 0)
+
     def test_abort_payload_length_remains_unverified(self):
-        # ABORT is defined as action 3, but the specific 2.6.39
-        # wl_cfg80211.c source never calls wl_run_iscan(..., ABORT).
-        # Neither a 72- nor 76-byte HRI39 ABORT request is validated.
+        # No ABORT call was found in one older bcmdhd wl_cfg80211.c, but\n        # a separate historical brcmfmac DOES send a 72-byte ABORT.\n        # This test retains the HRI39 acceptance caveat.
         self.assertEqual(WL_SCAN_ACTION_ABORT, 3)
         self.assertEqual(IscanParams.action.offset, 4)
         self.assertEqual(historical_iscan_payload_length(), 72)
