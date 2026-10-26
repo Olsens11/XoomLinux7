@@ -57,8 +57,17 @@ grep -Eq '^[^#[:space:]][^[:space:]]*[[:space:]]+/[[:space:]]+ext4([[:space:]]|$
 P8_ID=$(sed -n 's/^PARTUUID=//p' /sys/class/block/mmcblk0p8/uevent)
 [[ "$P8_ID" =~ ^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$ ]] ||
     fail 'BigPart system GPT PARTUUID missing/invalid'
-[[ $(readlink -f /dev/disk/by-partuuid/"$P8_ID") == "$TARGET" ]] ||
-    fail 'GPT PARTUUID does not point to expected p8 device'
+# Kernel PARTUUID/partition name are authoritative for root=PARTUUID.
+# Minimal Debian /dev may contain only the SD udev symlink; a missing
+# by-partuuid symlink is not evidence the kernel lacks the GPT PARTUUID.
+grep -Fxq 'PARTNAME=system' /sys/class/block/mmcblk0p8/uevent ||
+    fail 'kernel does not label p8 as system'
+if [[ -e /dev/disk/by-partuuid/"$P8_ID" ]]; then
+    [[ $(readlink -f /dev/disk/by-partuuid/"$P8_ID") == "$TARGET" ]] ||
+        fail 'existing p8 userspace symlink targets a different block device'
+else
+    printf 'INFO_P8_UDEV_SYMLINK_MISSING_KERNEL_GPT_UUID_VERIFIED\n'
+fi
 SRC_KIB=$(df -Pk / | awk 'NR==2 {print $3}') # avoid false failure on unprivileged dry-run
 [[ "$SRC_KIB" =~ ^[0-9]+$ && "$SRC_KIB" -lt 800000 ]] ||
     fail 'SD OS footprint too large for safe 1GiB /system'
