@@ -1,5 +1,8 @@
 # Documentation router
 
+> **CURRENT SAFETY HOLD 2026-10-26:** [Stage-C internal BigPart p8 root temporary boot accepted by fastboot but did not reach usable Debian login; COM9 became unresponsive](checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md). Persistent p7 Debian microSD rescue remains flashed and verified; owner can recover by physical reset and normal boot with card inserted. Do not permanently flash Stage-C until root mount verified.
+
+
 > **2026-10-26 NEW INTERNAL DEBIAN MILESTONE:** [BigPart internal p8 1GiB Debian root installed from microSD with correct internal fstab, ext4 offline fsck exit0; **internal root has NOT yet booted**](checkpoints/MZ600_V064_BIGPART_INTERNAL_DEBIAN_P8_FILESYSTEM_INSTALLED_FSCK_PASS_2026-10-26.md). Owner-repaired physical volume button permits fastboot/recovery. Next test Stage-C by temporary `fastboot boot`, and separately repair kernel/modules release/vermagic mismatch. Keep verified p7 microSD recovery boot.
 
 
