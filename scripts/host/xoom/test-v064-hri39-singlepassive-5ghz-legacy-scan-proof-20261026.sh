@@ -64,9 +64,6 @@ cleanup() {
     say 'MZ600_PASSIVE_V7_RESTORE_INCOMPLETE_STOP'
   fi
 }
-trap cleanup EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM
 say 'MZ600_PASSIVE_V7_PREFLIGHT_BEGIN'
 [[ "$(id -u)" == 0 && "$(uname -r)" == "$K" ]] || exit 1
 [[ "$(findmnt -n -o SOURCE,FSTYPE /)" == '/dev/mmcblk0p8 ext4' ]] || exit 1
@@ -90,6 +87,9 @@ awk 'NR == 71 { print "ccode=US"; print "regrev=69" } { print }' "$N" > "$V"
   say 'REFUSE_VARIANT_SHA'; exit 1;
 }
 say 'MZ600_PASSIVE_V7_CALIBRATION_RECONSTRUCTION_SHA_PASS'
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 : > "$ONCE"
 before="$(dmesg | grep -c 'MZ600_LEGACY_SCAN_LAB_RESULT51' || true)"
 STATE=OVERLAY
