@@ -1,5 +1,7 @@
 # Verified project state — imported 2026-10-24
 
+**Additional post-module-install read-only boot-integrity PASS:** physical p7 SHA256 first 6,645,760 bytes and full 8MiB match the exact preinstall verified Stage-D image/partition; p8 ext4 filesystem UUID still matches `/etc/fstab`. [Evidence appended to the post-install checkpoint](checkpoints/MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md). No reboot or partition modifications occurred.
+
 ## 2026-10-26 — passive SDIO and systemd tests after module install
 
 [Physical postinstall passive forensics](checkpoints/MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md): on-device 114 correct ABI modules and `modules.dep` remain verified. BCM4329 SDIO functions 1/2/3, firmware and per-device six-byte factory DT MAC present. Debian PID1 systemd runs but is `degraded`. WLAN service failed **earlier this boot** when WCC module had not yet been installed; no postinstall restart yet. WPA service failed because system D-Bus socket `/run/dbus/system_bus_socket` is absent; D-Bus remains unresolved. Neither `wlan0` nor live Broadcom drivers yet; no scan, radio activation or association. Next: bounded driver lifecycle with recovery safeguards, signed regulatory qualification, and independent D-Bus dependency recovery; preserve boot image and no repeat installs.
