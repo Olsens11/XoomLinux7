@@ -1,3 +1,7 @@
+## 2026-10-26 physical update — v108 now PROVED in actual HRI39 firmware
+
+The prior phrase "BSS v108 is period-correct source, not actual firmware readback" has now been superseded by the [new on-Xoom read-only firmware measurement](../checkpoints/MZ600_V064_MOTOROLA_HRI39_LEGACY_SCAN_RESULTS_VERSION108_READONLY_PHYSICAL_PASS_2026-10-26.md). Original HRI39 4.218.248.20 actually accepted ioctl **WLC_SCAN_RESULTS(51)** and returned a **12-byte v108 scan result envelope** with rc=0, count=0 when no scan was started, while wlan0 and both firmware bands were active. All original images and installed kernel/module restored and independently verified. No BSS records were returned, so exact populated per-BSS v108 offsets, IE semantics and scan completion remain UNPROVEN. This is a physical proof of GET command and wire header only, not of legacy scan support. Use this specific version to design decoder with modern 109+ compatibility; do not broaden parsing without recorded payload, bounds checks and KUnit. Keep full-chip and SDIO kernel series separate.
+
 # BCM4329 legacy scan: upstream-compatible protocol and patch plan
 
 2026-10-26. **Research and offline safety tests, not a physical legacy scan or released kernel patch.** Owner requires one logical change per commit, bisectability, no regression on modern firmware, and cross-device testing before any community review. This keeps the whole-chip power/BT/SDIO patches separate from driver protocol compatibility.
