@@ -1,5 +1,8 @@
 # START HERE — XoomLinux7
 
+> **Latest user decision — CLASSIC BIGPART on replacement MZ600**: enlarge traditional p8 `system` to **1GiB kernel-visible** as Debian Linux `/`, *not* use p10 as root. Data on p10 is disposable. [Active BigPart implementation plan](docs/plans/MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md) supersedes previous p10 root proposal. Original BigPart manipulates the **kernel's in-memory GPT view**; do not blindly repartition eMMC with generic tools. Offline layout proof PASS; no actual partition write.
+
+
 > **2026-10-25 new authorized storage direction:** [v06.4 internal Debian p10 root / optional BigPart plan](docs/plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). User accepts replacing Android on the **replacement** MZ600 and optional BigPart if necessary. No partition changes have occurred; current v06.3 physical baseline remains. Read handoff and the plan before proposing persistent writes.
 
 
