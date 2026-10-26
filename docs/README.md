@@ -1,5 +1,8 @@
 # Documentation router
 
+> **2026-10-26 confirmed milestone:** [Persistent Linux7 Debian SD-root boot accepted, ordinary boot tested, then on-device p7 readback SHA verified exact Stage-B image match](checkpoints/MZ600_V064_PERSISTENT_P7_PHYSICAL_READBACK_SHA_PASS_2026-10-26.md). Current replacement tablet running persistent Debian from SD; p8 BigPart 1GiB still unformatted. Next: verify Android-independent recovery before destructive internal install.
+
+
 > **2026-10-26 milestone:** [Persistent p7 Stage-B Linux7 Debian microSD boot successfully flashes and boots with normal fastboot reboot, normal Debian USB console](checkpoints/MZ600_V064_PERSISTENT_SD_DEBIAN_BOOT_PHYSICAL_PASS_2026-10-26.md). Current Debian on inserted SD. Independent read-after-write hash of p7 needs owner's local `sudo -s`; do not erase p8 before confirming and testing recovery.
 
 
