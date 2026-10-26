@@ -52,7 +52,7 @@ command -v tar >/dev/null || fail 'GNU tar missing'
 tar --help | grep -q -- '--one-file-system' || fail 'GNU tar does not support FS boundaries'
 tar --help | grep -q -- '--xattrs' || fail 'GNU tar does not preserve xattrs'
 tar --help | grep -q -- '--acls' || fail 'GNU tar does not preserve ACLs'
-grep -q '^[[:alnum:]][[:alnum:]-]*[[:space:]]\+/[[:space:]]\+ext4' /etc/fstab ||
+grep -Eq '^[^#[:space:]][^[:space:]]*[[:space:]]+/[[:space:]]+ext4([[:space:]]|$)' /etc/fstab ||
     fail 'expected current /etc/fstab root entry missing'
 P8_ID=$(sed -n 's/^PARTUUID=//p' /sys/class/block/mmcblk0p8/uevent)
 [[ "$P8_ID" =~ ^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$ ]] ||
