@@ -1,5 +1,11 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — D-Bus restored and BCM4329 multi-device review gates formalized
+
+**Debian D-Bus actual physical PASS:** [official six-package SHA-pinned offline install](checkpoints/MZ600_V064_DEBIAN_DBUS_OFFLINE_SIX_PACKAGE_INSTALL_SYSTEM_BUS_PHYSICAL_PASS_2026-10-26.md) configured all six Bookworm armhf/all dependencies. systemd `dbus.socket` and `dbus.service` **active**, `/run/dbus/system_bus_socket` exists, actual `dbus-send ListNames` RPC returned valid reply. Historical `mz600-wlan.service` and `wpa_supplicant.service` remain failed; **not restarted**; `wlan0` absent, zero Broadcom modules loaded, no scan. Temporary package postinst `messagebus` warning resolved by normal sysusers creation; postinstall user/group exist. Boot p7 left unchanged.
+
+**Owner's primary deliverable:** reliable, maintainable, multi-device-tested [BCM4329 Linux 7 full-chip patch series](research/MZ600_BCM4329_LINUX7_WHOLE_CHIP_PATCH_INTEGRATION_LEDGER_2026-10-26.md) before any upstream review. [Device test matrix and acceptance policy](plans/MZ600_BCM4329_LINUX7_MULTIDEVICE_PATCH_SERIES_RELEASE_GATES_2026-10-26.md) includes separate MZ600, MZ602 and MZ604 independent physical A/B; MZ617 out of scope pending inventory. Existing 20/20 shared PMU model tests, 149-page/36-requirement reference audit PASS offline; [machine gate checker](../tools/forensics/check_bcm4329_patch_series_gates.py) says `review_ready=false` and is not an upstream submitter. Today's userspace D-Bus fixes must not be turned into kernel patches; track U4/I7/U0/U2 shared owner, LPO, SDIO, firmware and per-device identity separately. **No upstream submission authorized.**
+
 **Additional post-module-install read-only boot-integrity PASS:** physical p7 SHA256 first 6,645,760 bytes and full 8MiB match the exact preinstall verified Stage-D image/partition; p8 ext4 filesystem UUID still matches `/etc/fstab`. [Evidence appended to the post-install checkpoint](checkpoints/MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md). No reboot or partition modifications occurred.
 
 ## 2026-10-26 — passive SDIO and systemd tests after module install
