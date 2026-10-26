@@ -1,0 +1,168 @@
+# XoomLinux7 — Full continuity / next-chat engineering handoff
+**Snapshot:** Monday 2026-10-26, near 06:16 EDT and following the interrupted gzip-packaging workflow.  
+**Primary project:** Native upstream-based Linux 7 + Debian 12.15 on an *experimental replacement* Motorola Xoom MZ600 (Verizon CDMA).  
+**Repository:** https://github.com/Olsens11/XoomLinux7, branch `wip/clean-wifi-bt-usb-20261025`.  
+**Golden rule:** read this file and the latest linked checkpoints **before touching hardware**. Newer verified evidence takes precedence over historical “pending” passages elsewhere. Never touch the owner's protected original Xoom.
+
+## 0. One-minute state / EXACT STOPPING POINT
+
+**Persistent Debian installation is DONE, PHYSICALLY VERIFIED, and should not be reflashed.** A normal hardware boot from internal eMMC p7 loads kernel `7.0.0-next-20260422+` and Debian **12.15** with `/dev/mmcblk0p8 ext4 /` as root. The owner physically read back p7: the first 6,645,760 bytes SHA-256 **`fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`**, exactly the boot image; full 8 MiB p7 SHA-256 **`901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`**. `/etc/fstab` is fixed to the stable ext4 UUID `c2fb0167-7143-4186-b284-c86d6c09ea64`. **Neither boot nor p8 need repartitioning or reflashing.**
+
+**Current task:** install 114 loadable modules ABI-matched to the running `7.0.0-next-20260422+` kernel, then investigate Wi-Fi BCM4329 and systemd. All 114 modules are built and have passed offline ELF vermagic+modversions checks. First `.tar.xz` bundle was transported to tablet RAM and SHA-verified, but owner’s guarded install stopped when on-device tar reported **`xz: Cannot exec: No such file or directory`**. The script had `set -euo pipefail`, so **the final new `/lib/modules/7.0.0-next-20260422+` directory was NOT installed; `depmod` and module loading did NOT run.** A residual hidden `/lib/modules/.stage-v064-XXXXXXXX` directory **may exist**. Inspect before removing.
+
+The tablet has `gzip` but not `xz` or Python 3. A **second, SAFE gzip package** now exists on the **Surface**. It contains the same 114 ABI-correct modules, with a development-host-only `build` symlink stripped. Exact file:
+`C:\Users\olsen\xoom-linux-rom\downloads\MZ600-v064-Linux7-7.0.0-next-20260422plus-matching-modules-SAFE-OFFLINE.tar.gz`
+**2,798,775 bytes; SHA256 `5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409`; 189 safe tar entries, 114 `.ko` files, no symlinks.** Its dedicated verified Surface USB uploader has **NOT** yet transferred it to Xoom because the user’s live USB terminal held COM9 (`PermissionError(13): Access is denied`). There is **NO safe gzip upload success log** and **NO module install**. Do not mistake the original `.tar.xz` in RAM for the new safe `.tar.gz`. The portable tar is ready on Surface; next physical step is to release COM9 cleanly with **Ctrl+]** in the existing Surface Xoom USB console, without reboot. Then run the dedicated safe gzip RAM-only uploader, verify the new remote SHA, inspect any failed hidden staging dir, install only the new ABI directory with an atomic guarded move, run `depmod`, and perform a **dry-run** dependency check. Do **not** turn Wi-Fi on until those gates pass.
+
+**Last observed:** Desktop Commander Surface and Desktop online; COM9 enumerated. Latest code/repo state on Desktop was `d6fc449` (“runtime xz missing … safe gzip … COM9 needs release, no modules installed”); update it after any new work. There may have been further host file processing during the chat interruption: **read current physical files/logs** before running scripts.
+
+## 1. Owner's goals, design constraints and why this route
+
+- Bring a real Motorola Xoom MZ600 back to useful life with standard, portable **native upstream Linux 7** and **standard Debian armhf 12.15**, not an Android skin or emulated userspace. Restore Wi-Fi, Bluetooth, USB console, touchscreen, display, charging/battery instrumentation, audio, input and an eventual usable GUI/terminal. Broader future experimentation includes Windows 95 emulation inside Linux.
+- Build on and credit the upstream `xoom-linux/linux` work; upstream Linux source commit **`2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`**. Keep common functionality upstream-compatible; MZ600-specific board DTS/GPIO/PMIC sequences as well-scoped changes and proposals, and laboratory diagnostic initramfs behavior in separate patches.
+- Use **experimental replacement Xoom only**. An older original Xoom with custom TWRP package toolkit is protected as an independent reference. Never send generic fastboot writes without checking product/serial; never erase or alter p6 TWRP, GPT or p8 Debian casually.
+- Preserve recovery/rollback images, hashes, raw logs and comprehensive handoff **at every milestone**. Distinguish **built**, **host verified**, **physically booted**, **Linux driver initialized**, **wlan0**, **scanned**, **associated**, **network connected**, **Bluetooth HCI up**, **paired/keyboard usable**, **permanently installed**. No speculative “success” statements.
+- Prefer standard packaging (`/lib/modules/$(uname -r)`, real `depmod`, Debian systemd, firmware under `/lib/firmware`) over one-off hacks like renaming incompatible `.ko` trees or kernel release strings. Use minimal, bounded physical tests with USB logging and checkpoints; avoid unnecessary reboots because of historical red-LED power-state problems.
+- Retain hardware-unique factory WLAN MAC via bootloader-provided data/device tree. Do not invent MACs, publish private identifiers, or commit proprietary HCD and firmware bytes. WLAN+BT share a BCM4329 combination chip and supply/clock/reset controls; avoid assuming unused BT pins have harmless defaults.
+
+## 2. Trusted information hierarchy / links to read at start
+
+Read in this order:
+1. **THIS handoff**; it represents the current continuation, not the older 2025-era lab-state conclusion.
+2. `docs/status.md` and `runtime/CURRENT_LINUX7_STATE.env`, reading their **latest named snapshot fields**. They are append-heavy and contain historical contradictory “pending” statements; latest verified checkpoint wins.
+3. [Safe gzip / missing xz latest checkpoint](../checkpoints/MZ600_V064_MATCHED_MODULES_XZ_UNAVAILABLE_GZIP_SAFE_READY_COM9_BUSY_2026-10-26.md) — exact problem and safe uploader.
+4. [Matching module build, verifier, physical .xz RAM upload and owner preinstall check](../checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md).
+5. [Permanent Debian/internal-root physical SHA final milestone](../checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md).
+6. [Physical cross-boot GPT UUID instability proof](../checkpoints/MZ600_V064_STAGE_D_RETEST_P8_GPT_PARTUUID_CHANGES_ACROSS_BOOTS_2026-10-26.md) and [fstab fix](../checkpoints/MZ600_V064_INTERNAL_P8_FSTAB_STABLE_EXT4_UUID_FIX_VERIFIED_2026-10-26.md).
+7. [Preflash & postflash history](../checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md), interpreted in chronology.
+8. [Full historical upstream, Wi-Fi/BT, hardware/power and v06.4 decisions](MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md) — over 120k characters of foundational details; **its final historical paragraphs may say eMMC is not installed, which is obsolete**. Related [v06.2 Wi-Fi WCC unload PASS](../checkpoints/MZ600_V062_WIFI_WCC_ORDERED_UNLOAD_PHYSICAL_PASS_2026-10-25.md), [v06.2 Bluetooth HCI lifecycle PASS](../checkpoints/MZ600_V062_BCM4329B1_BLUETOOTH_HCI_LIFECYCLE_PHYSICAL_PASS_2026-10-25.md), `docs/checkpoints/README.md` and `patches/upstream/README.md`.
+9. Re-run repo validator, check actual files and device logs as required; never assume a README label is current without verifying.
+
+Public GitHub branch URL: https://github.com/Olsens11/XoomLinux7/tree/wip/clean-wifi-bt-usb-20261025 .
+
+## 3. Devices, connections and operator workflow
+
+**Hardware.** Motorola Xoom MZ600 Verizon CDMA, ARMv7 Tegra 2, unlocked fastboot product `xoom-cdma`. Authorized replacement unit's device-specific fastboot serial was `170061c243805617`, checked before every permanent write. Volume/Power controls and dock/DC charging interface were physically repaired. Original USB charge jack had problems; dock charging worked. 32GB microSD with Debian SD-root recovery is normally kept inserted; do not assume it is the current root. USB gadget serial on Surface is **COM9**, Xoom console is `ttyGS0`, user `xoom`. Only owner supplies password privately via their Surface terminal when `sudo -s` is required. **Do not read clipboard, password files or expose password in logs/ChatGPT.**
+
+**Authorized host IDs (Desktop Commander may change/disappear; call list_devices):**
+- `SURFACE-BOOK-2` ID `bf441b48-041b-4940-b629-8b441339e80a`, Windows, paths under `C:\Users\olsen\xoom-linux-rom`. Holds fastboot, COM9, backup images, UART tools, packages, captures and private credential workflows.
+- `DESKTOP-R16QJD4` ID `2fc5f6ea-20da-436f-8ad8-c5cd59f44870`, Windows + WSL Ubuntu-22.04 user `xoomdev`. Holds ARM toolchain, Linux source/build, offline Debian root and Git checkout.
+- Sometimes `ps-to-vnc-dev` also online; irrelevant unless explicitly needed.
+
+**Tool use.** Through `functions.exec`, discover `mcp__Remote_Desktop_Commander__*` / `mcp__GitHub__*` in `ALL_TOOLS` and invoke precise functions. Use `start_process` + `read_process_output` for processes exceeding 3 seconds, and `read_file` / `write_file` / `edit_block` for authorized host files. Do not treat “process started” as exit 0. Many PowerShell 5.1 commands on Surface **lack** `[SHA256]::HashData` / `[Convert]::ToHexString`; `Get-FileHash` works. Windows PowerShell may block `.ps1` execution policy; native `.cmd` files were used where appropriate, never bypass remote safety checks. GitHub supports `fetch_file` with blob SHA followed by `update_file` or `create_file` for new documents. Each milestone should update checkpoint, handoff, status, runtime state, then Desktop WSL `git pull --ff-only` and `python3 tools/check_repository.py`. Prior validator baseline passed **499 files, 0 errors**; recheck latest count after new docs.
+
+**Console exclusivity.** A running Surface Xoom USB console exclusively holds COM9. The user should press **Ctrl+]** *inside that console* to release without rebooting; this keeps Xoom's root shell alive. USB receiver scripts verify exact Xoom UID0/kernel/root and send 1,024-character base64 lines with 16-line ACKs. Remote serial commands may be rejected before reaching Linux by connected-tool policy; use the user's direct console, do not circumvent safeguards or kill the owner's terminal. Text pasted rapidly can be visually interleaved, so rely on each returned command result, not prompt echo order.
+
+**Direct recommended read-only identity test in Linux root console:**
+```bash
+id -u
+uname -r
+cat /etc/debian_version
+findmnt -n -o SOURCE,FSTYPE,TARGET /
+df -h /
+cat /sys/class/block/mmcblk0p7/size
+```
+Expected as last verified: UID0 in root shell, `7.0.0-next-20260422+`, Debian `12.15`, `/dev/mmcblk0p8 ext4 /`, p7 sectors `16384`. An ordinary user shell may show UID1000. If COM9 is busy, do not start a second reader.
+
+## 4. Hardware/partition/boot design, why BigPart was necessary
+
+The old Motorola GPT layout was not directly suited to installed Linux. Source `block/partitions/efi.c` has an MZ600-specific **RAM-side BigPart** partition map translation for the exact original 10-partition device. It probes OEM relocated **alternate GPT at physical LBA `62513151`** when primary GPT is rejected, verifies factory geometry and translates partition extents presented by Linux (not blindly rewriting disk GPT). Kernel enumerates `mmcblk0: p1...p10`.
+
+Known Linux view: p7 boot starts sector **102400**, size **16384** sectors (8MiB). p8 `system` starts sector **118784**, size **2097152** sectors (1GiB), ext4 native Debian root. p9 cache **512MiB** virtual; p10 userdata ~**28.9GiB** virtual. p6 is existing TWRP and must be preserved. Standard TWRP 3.1.1-0 **is not BigPart aware**; never format/repartition p8 from that recovery. Physical eMMC GPT backup layout remains special. Do not write GPT, change BigPart layouts or run mkfs merely to handle driver problems.
+
+A serious unresolved anomaly: the **kernel-reported p8 GPT PARTUUID changes between boots**, proven by repeated Stage-D direct-device root boots and host-private comparisons. Stage-C and Stage-E `root=PARTUUID=...` images stalled at `Waiting for root device PARTUUID=...` even though p8 enumerated. Stage-D `root=/dev/mmcblk0p8 rootfstype=ext4 rootwait rw init=/sbin/init` works reliably; p8 `/etc/fstab` uses separate **stable filesystem UUID** `c2fb0167-7143-4186-b284-c86d6c09ea64`, with backup `/etc/fstab.before-stable-ext4-uuid-20261026` and independent byte-level verification of all other fstab fields. Do **not** conflate filesystem UUID with GPT unique partition GUID. Need future read-only physical alternate GPT entry/header comparison across boots before saying whether disk contents change, parser/endianness errors exist, or bootloader affects metadata. Do not expose raw private GUIDs.
+
+## 5. Permanent Linux installation milestone / immutable backups
+
+**Exact Stage-D permanent boot image** Surface:
+`C:\Users\olsen\xoom-linux-rom\downloads\MZ600-V064-BIGPART-INTERNAL-P8-DEVNODE-TEMPBOOT-OFFLINE-UNTESTED.img`, historical basename still “UNTESTED” but this image booted successfully multiple times and is now permanently installed. **6,645,760 bytes; SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`**.
+- Owner expressly approved the p7 conversion and ran one-shot verified Windows CMD `captures\MZ600-V064-Persist-StageD-InternalP8-Boot-ONCE-20261026.cmd flash`. It verified correct serial, `xoom-cdma`, unlocked, four exact source/backups. Fastboot `Sending 'boot' OKAY` + `Writing 'boot' OKAY` exit0. Nonfatal Android AVB-footer warning was from legacy format.
+- A separate ordinary `fastboot reboot` (NOT `fastboot boot`) reached real `Debian GNU/Linux 12 xoom-mz600 ttyGS0`. Authenticated account returned Debian 12.15, `uname -r=7.0.0-next-20260422+`, and `findmnt /=/dev/mmcblk0p8 ext4`. This proves persistent normal boot.
+- Owner's on-device privileged raw p7 readback `head -c 6645760 /dev/mmcblk0p7 | sha256sum` matched the above Stage-D image exactly, and `sha256sum /dev/mmcblk0p7` over entire 8MiB returned `901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`. **Final install validation COMPLETE.** Difference between prefix and full hash expected due to trailing 1,742,848B.
+- Live internal p8 Debian root ~974MiB filesystem, last measured **464MiB used, 485MiB available (49%)**. `/etc/fstab` root selector is ext4 UUID stable as above. As of latest failed extraction, new modules not installed.
+
+**Rollback and backup assets on Surface:**
+- Factory Android p7 full **8,388,608-byte** backup `private-backups\replacement-mz600-2026-10-25\android-HMJ37-boot-p7.img` SHA `4da4c9f1486374bb66f31c96389cd1ee3067a447e8a72aea33b2fc24ac3985e3`.
+- TWRP p6 full **12,582,912-byte** backup `...\twrp-recovery-p6.img` SHA `ebe3f1c16ce9d79962433a60b0e63ec6e9f1d6392813601c264204d58b8bbeec`.
+- Proven Stage-B `root=/dev/mmcblk1p1` removable microSD rescue boot image `downloads\MZ600-V064-BIGPART-DEBIAN-MICROSD-ROOT-TEMPBOOT-NOT-ON_DEVICE.img`, **6,645,760 bytes**, SHA `b9667187ffe0ff74a6d0f801f300a78012d8242c2e45e34bd35e39c59fc657ba`. This rescue is **NOT** the default p7 image now; use manually verified temporary fastboot boot if necessary, never unintentionally overwrite the normal internal-root p7. MicroSD contains separate Debian 12.15 and is retained.
+- TWRP p6/Android recovery, GPT, radio firmware backups remain independent. Revalidate all hashes and identity before any future write. Root-user installation on p8 does **not** justify flashing p7 again.
+
+## 6. Full module development chronology and evidence
+
+Initially Debian shipped `/lib/modules/7.0.0-next-20260422` without the trailing `+`, but live `uname -r` was `7.0.0-next-20260422+`; mixing directories or renaming older modules is unsound with `CONFIG_MODVERSIONS=y`. This prevented standard `modprobe brcmfmac`. Exact Stage-D BigPart source/kernel output was located on Desktop:
+- Linux source `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-bigpart-linux`.
+- Build output `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-bigpart-debian-sdroot-build`.
+- ARM GNU toolchain `/home/xoomdev/xoom-linux-rom/toolchains/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-`.
+- `make -C <source> O=<build> ARCH=arm CROSS_COMPILE=<prefix> -j8 modules` **completed** and matched release `7.0.0-next-20260422+`, `SMP mod_unload modversions ARMv7 p2v8`; all **114** modules, including `brcmutil.ko`, `brcmfmac.ko`, `brcmfmac-wcc.ko`, Bluetooth `btbcm.ko`, `hci_uart.ko` and `bluetooth.ko`. Offline `make modules_install INSTALL_MOD_PATH=<staging>`, `depmod`, `modules.dep` etc. passed. `modprobe -d <offline-root> -S 7.0.0-next-20260422+ --show-depends brcmfmac` showed `brcmutil` before `brcmfmac`. Unchanged kernel build hashes: `arch/arm/boot/zImage` SHA `d0ada47734cd7686f780cb37f9abb95e354a80d333840c7979b756053fe6a9d1`; `vmlinux` SHA `02fe5350955156bdfa0020f6eefa4628c73cf7cacff50ba9058420ad22745dae`.
+- Offline read-only validator in repository `scripts/verify-v064-stageD-matching-modules-20261026.py` passed all 114. Host `modinfo -F vermagic` erroneously prints empty for 18 modules with empty `depends=`; physical ELF `readelf -p .modinfo` confirms correct release and checksum, so verifier uses readelf fallback for only those. Do not flag invalid ABI solely due to host modinfo display issue.
+
+**Original xz bundle** Desktop & Surface `MZ600-v064-Linux7-7.0.0-next-20260422plus-matching-modules-OFFLINE-UNDEPLOYED.tar.xz`, **1,901,356B**, SHA `50d821138f0fe04f79855d8996a61652fa7788e48457a9ebf97409b527db11c6`. Surface RAM-only Python/CMD uploader sent 2,476 framed base64 lines to Xoom, checked Xoom UID0/kernel/root, and Xoom confirmed SHA to `/run/mz600-v064-stageD-matched-modules.tar.xz`, exit0, no install/driver load. Owner's separate actual root-shell installation tried guarded `tar -xJf "$A" -C "$STAGE" --strip-components=3`; SHA reported OK but tar said **`xz: Cannot exec`**. Due to `set -euo pipefail`, script stopped before the `mv` and `depmod`. Staging directory may be empty/left over. The original `.tar.xz` remains in Xoom RAM **until reboot**, but is unusable with existing tar helper. Do not try to resolve by reformatting or changing Linux kernel.
+
+**Initial gzip** repackage from module staging had **2,810,684B**, SHA `cb20ecdeac3f37d865a60aa2408ecb33c00fbcd873708206a34fe48e96395ab9`. Although it contained 114 modules, it accidentally included a development-only host path symlink `lib/modules/7.0.0-next-20260422+/build`. Strict safe-uploader validation correctly rejected this and Surface sanitizer made a distinct, symlink-free archive. **Do NOT transfer/install this initial gzip**. The final safe variant below supersedes it.
+
+**FINAL SAFE gzip to use next:** `MZ600-v064-Linux7-7.0.0-next-20260422plus-matching-modules-SAFE-OFFLINE.tar.gz` (Surface Downloads), **2,798,775B**, SHA **`5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409`**, 189 safe members, 114 modules, no symbolic/hard links or traversal. Exact Surface Python `MZ600-StageD-matching-modules-GZIP-SAFE-USB-RAM-upload-20261026.py` SHA **`14f71ffd67ea17c75976e827ad5d2956b514d868f58d49c6c5109729aecfeef1`**; matching native `.cmd` wrapper SHA **`d692b11fba7656a0b637561976a9015df810600552e7b4adada8cb1bf367ea8b`**. Both physically verified on Surface. Uploader prevalidates SHA/member safety/kernel/root and sends **3,645** base64 lines, target `/run/mz600-v064-stageD-matched-modules-gzip-safe.tar.gz` and full on-Xoom digest; **RAM-only, not an installer**. Latest first run validated offline archive but failed opening busy COM9, so no device-side safe gzip archive verified yet. Success-log expected `C:\Users\olsen\xoom-linux-rom\downloads\MZ600-StageD-modules-GZIP-SAFE-RAM-upload-20261026-verified.json` **ABSENT last checked**. Avoid mistaking original xz uploader's older successful JSON for safe gzip transfer completion.
+
+## 7. Precise next-chat runbook: no redundant build/reflash
+
+1. First **confirm exact device and latest state**, read above checkpoint and current Surface files/logs. Last owner interaction ended in an authenticated root Xoom USB terminal after tar's missing-xz error. This console likely **holds COM9**.
+2. Ask user to press **Ctrl+] in existing Surface Xoom USB console** to free the Windows COM9 handle **without rebooting**. Only when it is released execute:
+   ```cmd
+   "C:\Users\olsen\xoom-linux-rom\downloads\MZ600-StageD-matching-modules-GZIP-SAFE-USB-RAM-upload-20261026.cmd"
+   ```
+   On Surface via authorized Desktop Commander once or the user's local Command Prompt. The uploader validates exact safe archive SHA and 114 modules, prechecks Xoom UID0, kernel release, internal p8 root, distinct unused RAM path, then transfers and verifies SHA. **Require actual `GZIP_SAFE_RAM_UPLOAD_SHA_VERIFIED_ON_XOOM` with uploader exit 0 and new success log before continuing.** If uploader refuses COM9, close the existing terminal cleanly; if it refuses unused RAM path, investigate instead of overwriting. Never use failed xz/unsafe gzip bundles.
+3. Reconnect Xoom USB terminal and reauthenticate root privately if needed. Verify `id -u=0`, `uname -r=7.0.0-next-20260422+`, `findmnt /` internal p8 ext4, `df -h /` sufficient space, and:
+   ```bash
+   sha256sum /run/mz600-v064-stageD-matched-modules-gzip-safe.tar.gz
+   stat -c %s /run/mz600-v064-stageD-matched-modules-gzip-safe.tar.gz
+   ls -la /lib/modules
+   command -v depmod
+   command -v gzip
+   ```
+   Require SHA `5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409` and bytes 2798775. New target `/lib/modules/7.0.0-next-20260422+` should NOT exist yet; if it does, inspect thoroughly and do not overwrite. Existing legacy `7.0.0-next-20260422` must remain untouched. Determine whether orphan `.stage-v064-XXXXXXXX` exists from failed xz extraction; do not blindly `rm -rf` or delete anything uninspected.
+4. Plan and execute with user awareness a **guarded, one-shot, scoped filesystem install** only after above checks, with `set -euo pipefail`: create an exclusive hidden staging dir under `/lib/modules`; extract safe gzip `tar -xzf "$A" -C "$STAGE" --strip-components=3` (verified offline to extract 114 modules and `modules.dep` at root); check exact 114 `.ko` and `brcmfmac.ko`, `brcmutil.ko`, `brcmfmac-wcc.ko`, metadata and no links; then atomic `mv -T` to **only** `/lib/modules/7.0.0-next-20260422+`; `depmod -a 7.0.0-next-20260422+`; `sync` and `modprobe -n -v brcmfmac` dry run only. Catch errors with rollback of staging path if safe. Preserve old folder and verified boot p7.
+5. After install, physically verify `find /lib/modules/7.0.0-next-20260422+ -name '*.ko'` count114, `modinfo`/`readelf` as appropriate, `modprobe -n -v brcmfmac` dependencies, `ls /sys/bus/sdio/devices`, existing NVRAM/firmware, and `dmesg` read-only. **Do not immediately call `modprobe brcmfmac` or activate network** without a bounded plan; prior experimental diagnostic brings up Wi-Fi but installed Debian service/driver path remains unproven.
+6. Then targeted BCM4329 Wi-Fi service test and PID1/systemd diagnostics; preserve firmware provenance, factory MAC. Record actual `wlan0` or absence and any kernel errno, RF scans only with proper regulatory context. If unclear failure, stop and document; don't experiment on GPT/boot.
+7. Update GitHub checkpoint (new, dated physical transfer/install milestone), this handoff, `docs/status.md`, `runtime/CURRENT_LINUX7_STATE.env`, and run repo validator. Maintain private logs off public GitHub.
+
+**NEVER CLAIM:** new safe gzip uploaded until target SHA returned, new modules installed until p8 tree verified, Wi-Fi functional until actual wlan0 + RF evidence, or D-Bus fixed until physically checked.
+
+## 8. Wi-Fi, Bluetooth and systemd: actual proof vs unknown
+
+**BCM4329 Wi-Fi**: The native Linux 7 `v06.2` *temporary diagnostic initramfs* physically brought up Wi-Fi module stack and produced `wlan0` with BCM4329/3 firmware, then `brcmfmac_wcc` → `brcmfmac` → `brcmutil` orderly unload completed rc0 with USB still alive. This proves in a previous **different userspace/boot image** that the driver/device tree/firmware combo can work, **NOT** that current installed Debian already has Wi-Fi. Optional `clm_blob`/`txcap_blob` missing warnings did not prevent old initialization; do not infer regulatory scan qualification. MAC provenance is protected per-device in device tree; do not publish value or generate fallback identity. On Debian reference rootfs firmware files exist as `lib/firmware/brcm/brcmfmac4329-sdio.bin` and `brcmfmac4329-sdio.txt`; reverify they actually exist on live p8. WLAN service `/etc/systemd/system/mz600-wlan.service` (offline root reference) checks for valid six-byte Device Tree factory WLAN MAC and runs `/usr/local/libexec/xoom-check-factory-wlan-mac`, which then loads `brcmfmac-wcc` before `brcmfmac`. This auto-start logic is **not yet proven to run on current system**. Avoid enabling automatic radio power before bounded test.
+
+**Bluetooth**: Previous temporary diagnostic v06.2 physically identified `hci0` as `BCM4329B1`, `BT_ON` HCI up rc0 and `BT_OFF` HCI down rc0; all six dependent modules unloaded cleanly. Earlier controller logged missing patchram HCD but HCI registration passed. Candidate private `BCM4329B1.hcd` **17,332B**, SHA `7fbab01012c909b9b2de0fda3a76c43fa1c5c150e08642d7d1dbaf4d5ebf887c`, offline parsed 98 vendor commands, previously stored in private desktop firmware tree; **do not commit firmware bytes**. v06.3 and v06.4 plans and user's Motorola keyboard requirements are documented in the older comprehensive handoff. Later desired: BlueZ/D-Bus pairing agent, secure passkey handling, HIDP/evdev and real framebuffer terminal with keyboard. Separate temporary lab success ≠ production Linux Debian pairing/keyboard success; test them one at a time and preserve USB serial fallback.
+
+**Systemd**: Standard Debian `/sbin/init -> /lib/systemd/systemd` verified in offline Debian root. Live `systemctl` previously said “Failed to connect to bus: No such file or directory”; no definitive live PID1/process/cgroup/socket forensic diagnosis yet. After matching modules installed, independently inspect `ps -p 1 -o pid,comm,args`, `readlink /proc/1/exe`, `ls -ld /run/systemd/system`, `ls -l /run/dbus/system_bus_socket`, `journalctl -b` as available, service links and permissions; do not assume Wi-Fi failure solely due to module version or that systemd is healthy because serial getty runs. Do not mass-enable services before understanding PID1.
+
+## 9. Power, USB, device integrity and known hazards
+
+Original v06.x RAM diagnostic USB host was sensitive to power states: blank display/red LED after certain shutdowns or cable changes; unplugging USB AND external power and physically restarting sometimes recovered. Hardware buttons/jack now repaired; firmware boot path still quirky. Do not make many unnecessary power cycles, and never rely on a fragile USB-only console with no rollback.
+
+BCM4329 chip is a Wi-Fi/Bluetooth shared silicon assembly with important `WL_REG_ON`, `BT_REG_ON`, shared supplies/clocks and reset sequencing. Chip datasheet `CYW4329HKUBGT.pdf` (including later copies) and Motorola OEM Android kernel/TWRP Wi-Fi runtime are important engineering references. Combined chip power behavior, HCI patchram timing, SDIO signal levels and coexistence remain open. User has FNIRSI 1014D oscilloscope for controlled physical SDIO/clock observation, but no measurement is currently required to install .ko files.
+
+Factory Android may be restored only with verified boot/partition backups and explicit user's choice; Linux root p8 is already working. Do not use TWRP's normal formatting tools on BigPart. No route for persistent GPT/root changes should be inferred from module issues.
+
+## 10. Git/GitHub conventions and where files are
+
+**Desktop WSL repo:** `/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project`, branch `wip/clean-wifi-bt-usb-20261025`. Call:
+```bash
+cd /home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project
+git pull --ff-only
+python3 tools/check_repository.py
+git status --short
+git log -1 --oneline
+```
+No force-push, don't edit main, don't lose real diffs. GitHub `fetch_file`/`update_file` requires matching blob SHA and sequential commit updates; new checkpoint `create_file`. Source worktree distinct from Git doc repo; record commit/toolchain/build provenance, do not silently substitute another kernel source/config.
+
+**Desktop WSL offline modules dir:** `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/artifacts-v064-debian-p8-matching-modules-20261026`. The old xz archive and first unsafe gzip tar exist there; **the final sanitized SAFE gzip resides on Surface** and is the correct upcoming transfer source. Surface earlier duplicated 3,660 lines/created unsafe tar, then sanitization produced safe separate artifact. Do not use an older file by similar name.
+
+**Surface backups:** `C:\Users\olsen\xoom-linux-rom\private-backups\replacement-mz600-2026-10-25`; boot images in `downloads`; USB tools in `downloads`; transcripts in `captures`; private GPT samples not to be copied publicly. A complete previous OEM/USB/TWRP work history, chipset datasheet index, project design rationales and lab milestones are in the older comprehensive handoff and checkpoint index; this file provides the **accurate latest continuation**.
+
+## 11. “Message to next ChatGPT” / immediate execution brief
+
+> We already have **persistent, byte-verified** Linux 7 + Debian 12.15 booting normally from replacement MZ600 p7 to internal p8. DO NOT flash p7 or touch GPT. Latest live `uname -r=7.0.0-next-20260422+`, internal ext4 root p8. We built/ABI-validated 114 matching modules on Desktop. Original .tar.xz arrived in RAM with matching SHA, but GNU tar cannot extract it: no xz utility. Guarded install stopped before `mv/depmod`. Surface already has exact **SAFE no-symlink gzip** tar.gz: 2,798,775B SHA `5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409`, plus SHA-pinned native CMD and Python RAM-only uploader. Latest physical owner console still held COM9; separate uploader got Access Denied and did not transfer. First release COM9 with user Ctrl+] without reboot, then run safe gzip uploader, demand Xoom target SHA confirmation, reconnect console, inspect old hidden staging directory, verify root/kernel/fs/space, install only versioned `/lib/modules/7.0.0-next-20260422+` atomically with `tar -xzf`, `depmod`, `modprobe -n` dry run. Preserve legacy modules and p7. Then controlled Wi-Fi driver tests and systemd diagnosis, updating GitHub each turn. Read this file, newer checkpoint, full historical handoff and private/host manifests first. Never expose credentials or assume installed/loaded until physically verified.
+
+**Do not ask owner to repeat already answered device/history questions or unnecessary rebuilds.** Ask only for concrete physical actions (e.g. Ctrl+] or owner password entry) that cannot be done over authorized interface.
+
+---
+**Snapshot conclusion:** eMMC Debian permanent boot **COMPLETE**; ABI-matched 114-module build and strict offline verification **COMPLETE**; original .xz RAM transfer **COMPLETE** but extraction **BLOCKED BY MISSING XZ**; replacement **SAFE gzip built/verified on Surface**; gzip RAM transfer **NOT YET COMPLETE (COM9 held)**; installed matching modules **NOT YET**; current Debian Wi-Fi scan/connection **NOT YET**; systemd/D-Bus issue **UNRESOLVED**.
