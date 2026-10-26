@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST 2026-10-26:** [Stage-D repeat temporary fastboot boot PASS: Debian 12.15 runs from internal p8, but the kernel-reported p8 GPT PARTUUID differs from previous Stage-D and failed Stage-E image. Internal root fstab now stale again; stable ext4 UUID available. No persistent flash](checkpoints/MZ600_V064_STAGE_D_RETEST_P8_GPT_PARTUUID_CHANGES_ACROSS_BOOTS_2026-10-26.md).
+
+
 > **NEW PHOTO 2026-10-26:** [Stage-E framebuffer directly confirms `Waiting for root device PARTUUID` at ~1.008sec after BigPart p8 enumeration, not a Debian userspace issue; repeatable PARTUUID lookup failure vs working `root=/dev/mmcblk0p8` Stage-D](MZ600_V064_STAGE_E_LIVE_GUID_TEMPBOOT_UNRESPONSIVE_2026-10-26.md). Next: fresh Stage-D temp boot, inspect p8 GPT GUID for cross-boot stability.
 
 
