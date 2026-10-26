@@ -114,22 +114,26 @@ for i in $(seq 1 30); do
   [[ -e /sys/class/net/wlan0 ]] && break
   sleep .35
 done
-[[ -e /sys/class/net/wlan0 ]] || { say 'MZ600_HRI39_PAIR_NO_WLAN0'; exit 2; }
-say 'MZ600_HRI39_PAIR_WLAN0_PRESENT'
-phy="$(iw dev wlan0 info | awk '$1=="wiphy" {print $2; exit}')"
-if [[ "$phy" =~ ^[0-9]+$ ]]; then
-  say "MZ600_HRI39_PAIR_DYNAMIC_PHY=$phy"
-  iw phy "phy$phy" info | awk '/MHz \[/ {if (($2+0)>=5000 && ($2+0)<6000) n++} END {printf "MZ600_HRI39_PAIR_PHY_5GHZ_FREQ_COUNT=%d\n",n+0}'
+if [[ -e /sys/class/net/wlan0 ]]; then
+  say 'MZ600_HRI39_PAIR_WLAN0_PRESENT'
+  phy="$(iw dev wlan0 info | awk '$1=="wiphy" {print $2; exit}')"
+  if [[ "$phy" =~ ^[0-9]+$ ]]; then
+    say "MZ600_HRI39_PAIR_DYNAMIC_PHY=$phy"
+    iw phy "phy$phy" info | awk '/MHz \[/ {if (($2+0)>=5000 && ($2+0)<6000) n++} END {printf "MZ600_HRI39_PAIR_PHY_5GHZ_FREQ_COUNT=%d\n",n+0}'
+  fi
+else
+  say 'MZ600_HRI39_PAIR_WLAN0_NOT_CREATED'
 fi
 sleep 1
 after="$(dmesg | grep -c 'MZ600_5G_DIAG_COUNTRY_READ' || true)"
 say "MZ600_HRI39_PAIR_COUNTRY_LOGS_BEFORE=$before AFTER=$after"
 if (( after <= before )); then
   say "MZ600_HRI39_PAIR_FIRMWARE_COUNTRY_LOG_NOT_REACHED"
+else
+  say 'MZ600_HRI39_PAIR_FIRMWARE_DIAGNOSTICS_BEGIN'
+  dmesg | grep -E 'MZ600_5G_DIAG_(COUNTRY_READ|BANDLIST|CHANSPECS|WIPHY)' | tail -4
+  say 'MZ600_HRI39_PAIR_FIRMWARE_DIAGNOSTICS_END'
 fi
-say 'MZ600_HRI39_PAIR_FIRMWARE_DIAGNOSTICS_BEGIN'
-dmesg | grep -E 'MZ600_5G_DIAG_(COUNTRY_READ|BANDLIST|CHANSPECS|WIPHY)' | tail -4
-say 'MZ600_HRI39_PAIR_FIRMWARE_DIAGNOSTICS_END'
 say 'MZ600_HRI39_PAIR_RELEVANT_INIT_LOGS_BEGIN'
 dmesg | grep -Ei 'brcmf.*(firmware|f2|sdio|timeout|failed|chip|version)' | tail -9 | sed -E 's/([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}/[redacted]/g' || true
 say 'MZ600_HRI39_PAIR_RELEVANT_INIT_LOGS_END'
