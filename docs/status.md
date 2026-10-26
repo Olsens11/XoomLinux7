@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-25 evening EDT — internal Debian p10 root preferred; optional BigPart accepted, NOT executed
+
+User now permits removing Android on the **replacement MZ600** and BigPart if actually necessary. Same-device measured factory p8 `system` is only **256MiB**, but p10 `userdata` is **~29.34GiB**; therefore the approved next architectural candidate is p10 as normal Debian ext4 root **without repartitioning**, while p6 TWRP and p8 OEM system remain untouched initially. Prior Debian **microSD** boot with tty1/systemd/USB console/wlan0 was PHYSICAL PASS; do not conflate that with an internal eMMC boot. Surface private backups of p6/p7/p8/reserved 25MiB were rehashed and match expected values. **Full p10 backup missing**, Linux7 native TegraPT partition enumeration not proven, boot-independent recovery test pending, no p10/p7 write approved for execution yet. See [internal root/BigPart safety plan](plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). No new v06.4 image, no reboot/flash/format.
+
+
 ## 2026-10-25 evening EDT — v06.4 OFFLINE PREFLIGHT PASS; NO IMAGE BUILT
 
 The Desktop ARMHF dependency/boot-size audit was executed and committed, with results documented in [v06.4 ARMHF dependency and packaging OFFLINE preflight](checkpoints/MZ600_V064_ARMHF_PACKAGING_PREFLIGHT_OFFLINE_2026-10-25.md). Verified **v06.3 SHA256** and **1,826,816-byte image headroom**. ARMHF shell/iw/ip/getty dependency closures resolved individually, but the inspected Debian ARMHF rootfs lacks BlueZ/D-Bus daemon and client, BusyBox and signed regulatory files. Existing VT/fbcon config is present and kernel HIDP module has been built but not packaged. **No new v06.4 image was produced; no target device accessed or RF used.** Live device state remains the separately observed 19:25 v06.3 PONG. Next action: source/verify missing ARMHF userspace, measure combined compression, then build an isolated genuine shell + scan + Bluetooth candidate without weakening chip safety.
