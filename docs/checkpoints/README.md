@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **Latest 2026-10-26:** [Post-interruption host recovery and Stage-D 114 matching-module offline QA PASS; verified Surface transfer, COM9 exclusive serial console blocks RAM upload; no Xoom modules installed or loaded](MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md). Press Ctrl+] in Surface Xoom terminal to release COM9 before next USB transfer.
+
+
 > **LATEST 2026-10-26 — COMPLETE:** [Permanent Stage-D Debian 12.15 internal eMMC boot NORMAL restart PASS and actual p7 6,645,760-byte image readback SHA256 **exactly matches** `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`; full 8MiB p7 SHA256 `901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`; `/dev/mmcblk0p8 ext4 /` physically verified. **NO p7 SHA readback pending.**](MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md).
 
 
