@@ -35,3 +35,36 @@ SHA256 **`35b6761327b902a03d4cc63ec6a9716720412292a865d899a66dd387d3a6a32d`**, P
 ## 2026-10-26 — Flash attempt stopped before execution
 
 Owner reported fastboot up. Surface confirmed the expected serial and the unchanged staged script SHA256. The script did not run because local PowerShell script execution was disabled, and subsequent remote commands could not be completed. The one-shot flash log was verified absent. **No p7 flash or reboot occurred in this turn.** Stage-D remains a temporary-boot-verified candidate; p7 remains the previously verified Stage-B SD-root image. Next action: obtain a permitted local execution path and confirm the target device and original safeguards before any write. Do not mark the persistent conversion as complete.
+
+## Subsequent owner-executed native .CMD flash SUCCESS, normal internal Debian boot PHYSICAL PASS
+
+On Monday, October 26, 2026, owner ran the prepared one-shot native Surface CMD file in Command Prompt (not through the blocked remote safety control). Actual user-provided CMD output after hash-checking original Android p7 boot backup, p6 TWRP backup, Stage-B rescue image and Stage-D internal-root image:
+
+```text
+MZ600_STAGE_D_CHECK_MODE=flash
+HASH_SIZE_PASS: android-HMJ37-boot-p7.img
+HASH_SIZE_PASS: twrp-recovery-p6.img
+HASH_SIZE_PASS: MZ600-V064-BIGPART-DEBIAN-MICROSD-ROOT-TEMPBOOT-NOT-ON_DEVICE.img
+HASH_SIZE_PASS: MZ600-V064-BIGPART-INTERNAL-P8-DEVNODE-TEMPBOOT-OFFLINE-UNTESTED.img
+PREWRITE_CHECK_PASS: correct unlocked xoom-cdma; four image/backups exact size and sha256.
+TARGET=p7 BOOT ONLY; p6 recovery, p8 Debian, GPT, p9/p10 and SD excluded.
+FLASHING_P7_ONCE_NO_REBOOT...
+Warning: skip copying boot image avb footer (boot partition size: 0, boot image size: 6645760).
+Sending 'boot' (6490 KB) OKAY [1.188s]
+Writing 'boot' OKAY [1.782s]
+Finished. Total time: 8.656s
+STAGE_D_P7_FLASH_ACK_VERIFIED_SUCCESS
+NOT_REBOOTED_YET_REQUIRE_SEPARATE_NORMAL_REBOOT_AND_P7_READBACK
+```
+
+The AVB footer warning is routine for the legacy Xoom boot partition using modern fastboot tooling; Sending and Writing both succeeded. Surface independently inspected the script's physical local evidence files after execution: flash log exists, fastboot output exists, and recorded `FASTBOOT_NATIVE_EXIT_CODE=0` plus `FLASH_NATIVE_EXIT_0_SENDING_AND_WRITING_OKAY` confirms the actual one-shot write. At that point fastboot still showed exact experimental serial `170061c243805617`, USB COM9 absent.
+
+Then assistant invoked one normal `fastboot reboot` (no `fastboot boot`), and independent Surface observation confirmed fastboot disappeared and USB COM9 returned. COM9 displayed the real banner `Debian GNU/Linux 12 xoom-mz600 ttyGS0` and login prompt. Existing approved private Surface login workflow authenticated user `xoom`. **Most important post-flash normal persistent-boot proof**:
+
+```text
+uname -r                             7.0.0-next-20260422+
+cat /etc/debian_version               12.15
+findmnt -n -o SOURCE,FSTYPE,TARGET /   /dev/mmcblk0p8 ext4 /
+```
+
+So Linux7 Debian 12.15 **NOW PHYSICALLY BOOTS PERSISTENTLY FROM INTERNAL eMMC p8** after the flash to p7. The launch did NOT use temporary fastboot boot. The internal root copied fstab entry still points to ext4 `UUID=c2fb0167-7143-4186-b284-c86d6c09ea64`. The p7 flash is confirmed at the bootloader protocol level and normal boot is proven; **a privileged on-device raw postflash p7 SHA256 READBACK IS STILL PENDING**, and must not be falsely marked done. Owner needs to reopen Surface USB console, `sudo -s` and supply Debian password locally (not in chat), then Ctrl+] to release COM9; assistant can run the read-only exact 6,645,760-byte p7 `head -c ... | sha256sum`, compare with Stage-D image hash `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`, and record full 8MiB p7 hash. The authenticated user shell `id -u=1000`, `sudo -n` exit 1 means privilege elevation is NOT available without owner interaction. Preserve existing p6 TWRP and SD Stage-B rescue image backups. Physical root internal p8 boot PASS, kernel modules mismatch and Wi-Fi still unresolved.
