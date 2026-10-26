@@ -167,6 +167,12 @@ Owner confirms Android negotiated 5GHz on this exact Motorola Xoom. Later Linux7
 
 ## Fast reference by subsystem
 
+### 2026-10-26 verified firmware-reporting boundary for Linux5GHz
+
+The user's 149-page indexed Broadcom datasheet remains authoritative for physical RF: pp42–46 PHY/calibration, p110–111 5GHz receiver, p114 transmitter, pp47/62–63 chip FW/SDIO interface, pp64–70 power, pp132–134 shared reset. A minimal count-only kernel instrumentation has now confirmed actual Motorola MZ600 Debian firmware reports **only 2.4GHz via `BRCMF_C_GET_BANDLIST`** and 11 2GHz `chanspecs` (zero 5GHz) despite same unit's Android 5GHz success. [Actual firmware-enumeration checkpoint](../checkpoints/MZ600_V064_BRCMFMAC_FIRMWARE_5GHZ_BANDLIST_CHANSPEC_PHYSICAL_PROOF_2026-10-26.md). The physical specification confirms silicon capabilities, but **does not itself identify current firmware country/board-calibration cause**. Compare OEM vs generic firmware/NVRAM read-only before any experimental flash or forced RF setting.
+
+
+
 - **Startup blocking path:** pp. **47–52**, **62–70**, **81–89**, **116–119**, **132–134**.
 - **Shared Bluetooth/WLAN interactions:** pp. **18, 24, 29–31, 48, 64–66, 70, 81, 84–89, 121, 132–134**.
 - **SDIO mode/clock/pin wiring:** pp. **49–52, 76–87**, plus SPI contrast **53–61**; *do not transfer SPI-only boot commands to SDIO*.
