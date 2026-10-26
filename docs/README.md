@@ -1,5 +1,8 @@
 # Documentation router
 
+> **Latest 2026-10-26 — FULL VERIFIED INSTALLATION:** [Persistent internal Debian 12.15 boots normally on replacement MZ600, p7 flash confirmed byte-for-byte by physical 6,645,760B SHA and complete 8MiB SHA, running root is `/dev/mmcblk0p8 ext4 /`](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md). All persistent-boot verification gates PASS; remaining Wi-Fi/modules and systemd work is separate.
+
+
 > **LATEST 2026-10-26:** [Persistent internal Debian achieved: native CMD Stage-D flash boot p7 passed and normal reboot started Debian 12.15 from eMMC `/dev/mmcblk0p8 ext4 /`](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md). Postflash p7 raw SHA verification awaits owner local sudo; microSD Stage-B image and OEM/TWRP backups retained separately.
 
 
