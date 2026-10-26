@@ -1,5 +1,7 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **2026-10-26 resumed continuation:** [New host revalidation checkpoint: exact SAFE gzip and uploader hashes PASS, 501-entry repo validator PASS, COM9 still held, new gzip upload/install NOT VERIFIED](MZ600_V064_NEXTCHAT_SURFACE_REVALIDATION_SAFE_GZIP_COM9_STILL_HELD_2026-10-26.md). The next physical action remains owner Ctrl+] in Surface USB console (no reboot), then guarded RAM-only upload and post-upload p8 module install.
+
 > **NEXT-CHAT START:** [Master October 26 full continuity handoff](../handoffs/MZ600_LINUX7_FULL_TRANSITION_HANDOFF_2026-10-26.md) integrates persistent eMMC boot, Wi-Fi/BT experiments, exact module build and the missing xz / SAFE gzip ready checkpoint. Follow the new master handoff before using any older “pending” statements.
 
 
