@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **NEWEST PHYSICAL (Oct25 20:47 EDT):** [Verified OEM relocated GPT at LBA 62,513,151 with 64-bit ARM O_RDONLY probe while in TWRP, original partition geometry intact](MZ600_BIGPART_TWRP_PHYSICAL_GPT_LLSEEK_PROOF_2026-10-25.md). Device presently in **TWRP 3.1.1-0 ADB root**, not v06.3 Linux. BigPart read-only kernel stage-A is being compiled offline; no partition formatted or flashed.
+
+
 > **LATEST OFFLINE Classic BigPart MZ600 evidence (Oct25 late evening):** [Original Xoom BigPart layout matches exact replacement MZ600 factory p8/p9/p10; 1GiB p8 Debian root selected](MZ600_V064_ORIGINAL_BIGPART_LAYOUT_MATCH_OFFLINE_2026-10-25.md). Original kernel patch and host geometry-check PASS; **no new on-device kernel, BigPart recovery, partition-format or Linux install**. This supersedes the p10-root plan; v06.3 is still last checked physical kernel.
 
 
