@@ -1,5 +1,8 @@
 # Documentation router
 
+**LATEST offline candidate:** [BigPart-aware Debian microSD-root stage-B boot image hash-verified across Desktop and Surface](checkpoints/MZ600_V064_BIGPART_DEBIAN_MICROSD_INSTALLER_STAGE_B_OFFLINE_2026-10-25.md). Needs reinserted same 32GB installed Debian microSD for physical normal shell test; no format or flash.
+
+
 **LATEST:** [Physical v064 original Xoom BigPart geometry PASS](checkpoints/MZ600_V064_CLASSIC_BIGPART_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md), replacement MZ600 now runs temporary BigPart-aware Linux7; stock TWRP remains 256MiB system view. No persistent writes yet.
 
 
