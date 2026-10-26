@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **NEXT-CHAT START:** [Master October 26 full continuity handoff](../handoffs/MZ600_LINUX7_FULL_TRANSITION_HANDOFF_2026-10-26.md) integrates persistent eMMC boot, Wi-Fi/BT experiments, exact module build and the missing xz / SAFE gzip ready checkpoint. Follow the new master handoff before using any older “pending” statements.
+
+
 > **Latest 2026-10-26:** [Post-interruption host recovery and Stage-D 114 matching-module offline QA PASS; verified Surface transfer, COM9 exclusive serial console blocks RAM upload; no Xoom modules installed or loaded](MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md). Press Ctrl+] in Surface Xoom terminal to release COM9 before next USB transfer.
 
 
