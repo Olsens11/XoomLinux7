@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST SCREENSHOT PHYSICAL DIAGNOSIS 2026-10-26:** [Stage-C kernel prints `Waiting for root device PARTUUID=...` while showing BigPart p8 and p1–p10 detected; evidence points to kernel root identifier resolution, Stage-D direct p8 block-device boot queued TEMP only](MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).
+
+
 > **LATEST PHYSICAL 2026-10-26 ~03:42 EDT:** [Stage-C internal p8 root temporary fastboot boot ACK, but USB COM9 never yielded Debian login (105 sec), write timeout; stage C NOT verified, p7 rescue unchanged](MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md). Need owner to reset and normal-boot from persistent p7 with SD inserted before diagnostics.
 
 
