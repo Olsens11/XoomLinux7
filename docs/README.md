@@ -1,5 +1,8 @@
 # Documentation router
 
+> **2026-10-26 HARDWARE UPDATE:** [Experimental replacement MZ600 charging jack and volume button have been repaired; physical fastboot and recovery access confirmed by owner](checkpoints/MZ600_REPLACEMENT_HARDWARE_REPAIR_VERIFIED_BY_OWNER_2026-10-26.md). Historical notes saying the buttons are broken are obsolete. Independent software `reboot bootloader` still needs separate work; persistent Debian-on-SD boot and p7 readback pass remain valid.
+
+
 > **2026-10-26 confirmed milestone:** [Persistent Linux7 Debian SD-root boot accepted, ordinary boot tested, then on-device p7 readback SHA verified exact Stage-B image match](checkpoints/MZ600_V064_PERSISTENT_P7_PHYSICAL_READBACK_SHA_PASS_2026-10-26.md). Current replacement tablet running persistent Debian from SD; p8 BigPart 1GiB still unformatted. Next: verify Android-independent recovery before destructive internal install.
 
 
