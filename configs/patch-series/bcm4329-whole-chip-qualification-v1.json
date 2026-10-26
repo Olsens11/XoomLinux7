@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "project": "XoomLinux7 Motorola Stingray BCM4329 shared-chip resource management",
+  "baseline_commit": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "development_branch": "wip/clean-wifi-bt-usb-20261025",
+  "release_state": "development_not_for_submission",
+  "submission_authorized": false,
+  "exact_series_file": "patches/upstream/rfc/series",
+  "expected_upstream_rfc_prefix": "patches/upstream/rfc/",
+  "provider_candidate": "src/chip/stingray-bcm4329-pwrseq.c",
+  "physical_whole_chip_series_verified": false,
+  "kernel_abi_matching_modules_baseline_verified": true,
+  "review_requires": [
+    "source_cleansed",
+    "build_reproducible",
+    "bindings_pass",
+    "unique_regulator_and_gpio_ownership_proven",
+    "full_chip_wlan_bt_consumer_integration",
+    "signed_regulatory_compliance_verified",
+    "runtime_wifi_individual",
+    "runtime_bt_individual",
+    "runtime_wifi_bt_concurrent",
+    "runtime_shared_power_reset_bounded",
+    "runtime_clean_shutdown_and_recovery",
+    "multiple_physical_devices_tested",
+    "variant_specific_firmware_and_calibration_checked",
+    "rollback_and_install_guides_tested",
+    "actual_author_dco_confirmed",
+    "owner_explicit_submission_approval"
+  ],
+  "validated_device_entries": [
+    {
+      "label": "MZ600 engineering reference (replacement)",
+      "model": "MZ600",
+      "whole_chip_patch_series_result": "not_tested",
+      "evidence": [],
+      "physical_unit_id": "unassigned_private"
+    },
+    {
+      "label": "MZ602 cross-variant candidate",
+      "model": "MZ602",
+      "whole_chip_patch_series_result": "not_tested",
+      "evidence": [],
+      "physical_unit_id": "unassigned_private"
+    },
+    {
+      "label": "MZ604 cross-variant candidate",
+      "model": "MZ604",
+      "whole_chip_patch_series_result": "not_tested",
+      "evidence": [],
+      "physical_unit_id": "unassigned_private"
+    }
+  ],
+  "excluded_until_identity_verified": [
+    "MZ617 Xyboard"
+  ],
+  "test_gates": {
+    "source_cleansed": false,
+    "build_reproducible": false,
+    "bindings_pass": false,
+    "unique_regulator_and_gpio_ownership_proven": false,
+    "full_chip_wlan_bt_consumer_integration": false,
+    "signed_regulatory_compliance_verified": false,
+    "runtime_wifi_individual": false,
+    "runtime_bt_individual": false,
+    "runtime_wifi_bt_concurrent": false,
+    "runtime_shared_power_reset_bounded": false,
+    "runtime_clean_shutdown_and_recovery": false,
+    "multiple_physical_devices_tested": false,
+    "variant_specific_firmware_and_calibration_checked": false,
+    "rollback_and_install_guides_tested": false,
+    "actual_author_dco_confirmed": false,
+    "owner_explicit_submission_approval": false
+  },
+  "remarks": "All false flags apply to the NEW whole-chip patch series, not to the separately verified p8 Debian root, MAC RFC or v06.x Wi-Fi/BT diagnostic successes. Never store real MAC/IMEI/serial or private HCD in this JSON."
+}
