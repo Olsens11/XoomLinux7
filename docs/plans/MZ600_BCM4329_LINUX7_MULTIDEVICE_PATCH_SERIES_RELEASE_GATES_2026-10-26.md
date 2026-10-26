@@ -51,6 +51,11 @@ Add a new checkpoint, update [whole-chip integration ledger](../research/MZ600_B
 
 The actual MZ600 factory-MAC guarded `mz600-wlan.service` contains `ExecStart` with WCC then brcmfmac load, `RemainAfterExit=yes`, **no `ExecStop`**. A one-shot unit stop is **not** proof of modules unloaded or shared chip reset. Before G3 field tests, build an independently supervised **reversible WLAN start/stop diagnostic**, explicitly unload WCC→brcmfmac→brcmutil, preserve serial and the ability to recover from power-state hangs; test only with operator near device or a separately qualified recovery method. Continue to isolate changes to Debian service scripts from upstream kernel patches.
 
+
+### 5GHz must pass before self-use multi-variant release
+
+Owner confirms original Android associated to a 5GHz AP on this same board. Linux7 current generic BCM4329 firmware/NVRAM advertises **zero 5GHz channels**, though `aa5g=1` and 5GHz PA keys exist in the NVRAM and 2.4GHz scanning works. [Physical negative checkpoint](../checkpoints/MZ600_V064_5GHZ_BAND_NOT_ADVERTISED_PASSIVE_SCAN_BLOCKED_PHYSICAL_2026-10-26.md) records clean safe unload and no 5GHz RF scan. **Added future G4 acceptance:** proof of actual per-unit firmware `BRCMF_C_GET_BANDLIST` 5GHz presence, valid supported low channels/regulatory constraints, successful passive scan and reversible teardown. Follow OEM firmware/NVRAM compatibility and kernel bandlist/chanspecs logic, not a DT or regdb hack. Repeat once MZ602/MZ604 capabilities independently inventoried; do not assume 5GHz on every hardware variant or use MZ600 calibration on others.
+
 ## Immediate development priority
 ### 2026-10-26 newly proved own-use installed WLAN reference
 
