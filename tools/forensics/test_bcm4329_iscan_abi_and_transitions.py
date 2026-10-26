@@ -80,6 +80,21 @@ def passive_one_channel_start():
     return C.string_at(C.byref(p), C.sizeof(p))
 
 
+
+def historical_iscan_payload_length(channel_count=None, ssid_count=0):
+    """Model wl_run_iscan's 2.6.39 host buffer sizing, NOT HRI39 acceptance.
+
+    When request == NULL (CONTINUE), historical wl_run_iscan sends base 72.
+    When request != NULL, it adds a padded channel-list region and SSIDs.
+    """
+    fixed = WL_SCAN_PARAMS_FIXED_SIZE + IscanParams.params.offset
+    if channel_count is None:
+        return fixed
+    if not 0 <= channel_count <= 64 or not 0 <= ssid_count <= 16:
+        raise ValueError("outside offline test bounds")
+    padded_channels = channel_count + (channel_count % 2)
+    return fixed + 2 * padded_channels + 36 * ssid_count
+
 def iscan_step(status):
     """Semantic actions, not a working Linux state-machine implementation."""
     if status == WL_ISCAN_STATUS_PENDING:
@@ -151,6 +166,39 @@ class IscanWireContract(unittest.TestCase):
         self.assertEqual(iscan_step(4), ("complete_aborted",))
         with self.assertRaises(ValueError):
             iscan_step(255)
+
+
+    def test_historical_variable_iovar_lengths(self):
+        # Historical wl_cfg80211.c wl_run_iscan(): default 64+8 = 72,
+        # one-channel START request -> 72+4 = 76, odd count padded.
+        self.assertEqual(historical_iscan_payload_length(), 72)
+        self.assertEqual(historical_iscan_payload_length(0, 0), 72)
+        self.assertEqual(historical_iscan_payload_length(1, 0), 76)
+        self.assertEqual(historical_iscan_payload_length(2, 0), 76)
+        self.assertEqual(historical_iscan_payload_length(3, 0), 80)
+        self.assertEqual(historical_iscan_payload_length(1, 1), 112)
+        self.assertNotEqual(historical_iscan_payload_length(), len(passive_one_channel_start()))
+
+    def test_continue_no_request_has_no_chanspec(self):
+        # Host code calls wl_run_iscan(iscan, NULL, CONTINUE): base 72 bytes.
+        # It does not preserve/retransmit START's original channel list.
+        p = IscanParams()
+        p.version = ISCAN_REQ_VERSION
+        p.action = WL_SCAN_ACTION_CONTINUE
+        p.scan_duration = 0
+        raw = C.string_at(C.byref(p), historical_iscan_payload_length())
+        self.assertEqual(len(raw), 72)
+        self.assertEqual(raw[:8], b"\\x01\\x00\\x00\\x00\\x02\\x00\\x00\\x00")
+        self.assertEqual(len(b"iscan\\x00" + raw), 78)
+
+    def test_abort_payload_length_remains_unverified(self):
+        # ABORT is defined as action 3, but the specific 2.6.39
+        # wl_cfg80211.c source never calls wl_run_iscan(..., ABORT).
+        # Neither a 72- nor 76-byte HRI39 ABORT request is validated.
+        self.assertEqual(WL_SCAN_ACTION_ABORT, 3)
+        self.assertEqual(IscanParams.action.offset, 4)
+        self.assertEqual(historical_iscan_payload_length(), 72)
+        self.assertEqual(historical_iscan_payload_length(1, 0), 76)
 
     def test_no_duplicate_scan_command_assumption(self):
         # The standalone iscan START command is not followed by WLC_SCAN=50.
