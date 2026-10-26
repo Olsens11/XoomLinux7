@@ -1,5 +1,8 @@
 # Documentation router
 
+> **SAFETY HOLD (2026-10-26):** [Independent Linux-to-fastboot reboot did not work; first persistent p7 boot flash status is unknown after native stderr/PowerShell interruption](checkpoints/MZ600_LINUX7_RESCUE_BOOTLOADER_AND_P7_FLASH_AMBIGUITY_2026-10-26.md). Xoom safely temporarily rebooted into Debian from SD. First verify raw p7 read-only SHA before any retry or p8 formatting.
+
+
 > **LATEST 2026-10-26:** [Real Debian 12.15 microSD-root successfully boots with Linux 7 Classic BigPart 1GiB p8 and guarded installer passes complete read-only preflight](checkpoints/MZ600_V064_BIGPART_DEBIAN_SDRoot_PHYSICAL_PASS_INSTALL_PREFLIGHT_2026-10-26.md). Current live device stage-B Debian on SD, no partition/boot flash yet. Stage C p8-root boot prepared offline but NOT booted. Next: secure owner sudo in USB console and validate recovery independent of Android before erasing p8.
 
 
