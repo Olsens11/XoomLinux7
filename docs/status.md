@@ -1,3 +1,7 @@
+
+## 2026-10-26 — 5GHz regression: Android worked, current Linux PHY only 2.4GHz (physical)
+
+The [two bounded physical PHY diagnostics](checkpoints/MZ600_V064_5GHZ_BAND_NOT_ADVERTISED_PASSIVE_SCAN_BLOCKED_PHYSICAL_2026-10-26.md) showed Linux Debian `wlan0` still loads/cleans correctly, but **all 5GHz channels absent**, no `NL80211_BAND_5GHZ` in physical dynamic `phy2` inventory; attempted 5GHz scan SKIPPED, no regulatory override or reboot. First script erroneously hardcoded `phy0`; after a clean reset of modules, corrected script discovered `phy2` and proved zero 5000–6000MHz PHY entries. Both cleanup sequences WCC→brcmfmac→brcmutil rc0, no wlan0/brcm remain, D-Bus intact. Board NVRAM has `aa5g=1` and 5GHz PA entries; user confirms Android made actual **5GHz connections with same physical MZ600**, so research software path, not unsupported hardware. **Pinned Linux `brcmf_setup_wiphy` creates 5GHz band conditional on actual `BRCMF_C_GET_BANDLIST` firmware response**, which remains unmeasured. Consult [indexed Broadcom 149-page datasheet](research/BCM4329_DATASHEET_PAGE_INDEX.md) pp42–46, 110–115; [36-row implementation audit](research/BCM4329_DATASHEET_REQUIREMENT_AUDIT.md) and Motorola original FW source. Isolate OEM-versus-generic firmware, NVRAM/regulatory and driver band-list path; DO NOT force unsupported channel or patch shared-chip PMU speculatively. No new series upstream submission.
 # Verified project state — imported 2026-10-24
 
 ## 2026-10-26 — installed Debian BCM4329 Wi-Fi wlan0, passive scan, complete clean teardown PHYSICAL PASS
