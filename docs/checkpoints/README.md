@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+**LATEST OFFLINE (2026-10-25 late evening):** [v064 BigPart-aware Debian 12 microSD-root installer boot image built and SHA-verified](MZ600_V064_BIGPART_DEBIAN_MICROSD_INSTALLER_STAGE_B_OFFLINE_2026-10-25.md). **NOT physically booted;** device remains live in previously physically validated v064 stage-A RAM-only. Reinsert previously prepared microSD before first stage-B test.
+
+
 **LATEST PHYSICAL (20:57 EDT):** [MZ600 Linux7 v064 Classic BigPart RAM temporary boot, USB PONG and exact kernel virtual p8 1GiB/p9 512MiB/p10 28,929.5MiB PASS](MZ600_V064_CLASSIC_BIGPART_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md). Current device is v064 RAM-only, not TWRP. No block writes or internal Debian install.
 
 
