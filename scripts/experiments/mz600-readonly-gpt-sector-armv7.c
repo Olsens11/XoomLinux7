@@ -7,10 +7,12 @@
  * Intended to verify whether BusyBox v1.21.1 dd's large skip gave a false read.
  *
  * Compile with ARM cross GNU GCC: -Os -ffreestanding -fno-stack-protector
- *   -nostdlib -static -Wl,-e,_start -Wl,--build-id=none -s
+ *   -nostdlib -static -Wl,-e,_start -Wl,--build-id=none -s -lgcc
  *
  * The expected eMMC device node must be separately verified on the target.
  */
+/* libgcc integer division trap fallback; numeric formatting only divides by 10. */
+int raise(int sig){(void)sig;return -1;}
 typedef unsigned int u32;
 typedef unsigned long long u64;
 #define SYS_EXIT 1
