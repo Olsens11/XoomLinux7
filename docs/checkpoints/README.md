@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST 2026-10-26:** [Owner ran native one-shot CMD and flashed p7 Stage-D: fastboot Sending+Writing OKAY native exit0; normal reboot (NOT fastboot boot) reached Debian 12.15 USB login with internal `/dev/mmcblk0p8 ext4 /`, **persistent internal root BOOT PASS**; postflash p7 raw SHA readback pending owner sudo](MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md).
+
+
 > **LATEST 2026-10-26:** [Stage-D repeat temporary fastboot boot PASS: Debian 12.15 runs from internal p8, but the kernel-reported p8 GPT PARTUUID differs from previous Stage-D and failed Stage-E image. Internal root fstab now stale again; stable ext4 UUID available. No persistent flash](checkpoints/MZ600_V064_STAGE_D_RETEST_P8_GPT_PARTUUID_CHANGES_ACROSS_BOOTS_2026-10-26.md).
 
 
