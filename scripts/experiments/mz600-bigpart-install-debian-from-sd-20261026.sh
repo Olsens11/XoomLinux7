@@ -74,7 +74,7 @@ SRC_KIB=$(df -Pk / | awk 'NR==2 {print $3}') # avoid false failure on unprivileg
 printf 'MZ600_BIGPART_PREFLIGHT_PASS\n'
 printf 'ROOT=Debian-12.15-SD-ext4 KERNEL=Linux7\n'
 printf 'TARGET=P8_BIGPART_1G P9_CACHE_512M P10_DATA_28929_5M\n'
-printf 'ALL_PROTECTED_P1_TO_P7_UNCHANGED=PASS\n'
+printf 'PROTECTED_P1_TO_P7_PARTITION_GEOMETRY_PASS_NO_WRITES\n'
 printf 'SD_ROOT_USED_KIB=%s TARGET_UNMOUNTED=PASS\n' "$SRC_KIB"
 printf 'IDENTITY_AND_PARTUUID_VERIFIED=PASS\n'
 if [[ "$MODE" == --preflight ]]; then
