@@ -1,4 +1,8 @@
 
+> **LATEST MZ600 2026-10-26 5GHz:** [Original Motorola 4.218.248.20 and guarded 217 legacy valid-channel fallback physically **created native dual-band `wlan0`**; 9 firmware-supported 5GHz channels all `NO_IR`; first passive scan exposed DIFFERENT legacy `escan=-52` unsupported; strict WCC-first teardown and original Debian rollback independently verified](MZ600_V064_HRI39_5GHZ_WLAN0_PASSIVE_CHANNELS_PASS_ESCAN_UNSUPPORTED_2026-10-26.md). Keep lab path distinct from whole-chip pwrseq patch, do not misreport scan as successful.
+
+
+
 > **2026-10-26 5GHZ PHYSICAL NEGATIVE FINDING:** [Android 5GHz supported per owner's same-unit experience, but Linux7 native BCM4329 PHY advertises only 2.4GHz; dynamic phy2 5GHz entries=0, 5GHz scan skipped; NVRAM aa5g=1, 5GHz PA entries; driver teardown and USB healthy](MZ600_V064_5GHZ_BAND_NOT_ADVERTISED_PASSIVE_SCAN_BLOCKED_PHYSICAL_2026-10-26.md). Pin source `cfg80211.c` obtains bandlist from firmware; actual bandlist **not** read yet. Use existing [149-page Broadcom index](../research/BCM4329_DATASHEET_PAGE_INDEX.md) and OEM firmware references, not forced 5GHz channels or regulatory overrides.
 # Diagnostic checkpoint ledger — v01 through v014
 
