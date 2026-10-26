@@ -99,3 +99,7 @@ This is **an important installed-userspace physical validation of the existing g
 - Next userland milestone may be selected-network association with **user-authorized credentials**, firmware country/regrev legal verification and no auto-connection guesses. Do not autostart a network manager or leave a radio on unintentionally.
 
 **Acceptance: PERSISTENT INTERNAL DEBIAN WLAN0 PASS; PASSIVE 2.4GHz SCAN PASS; 19 BSS; ORDERED MODULE UNLOAD AND USB/D-BUS PRESERVATION PASS.**
+
+## Final post-scan physical boot integrity checksum
+
+After completed scan, teardown and independent COM9 post-audit, a **separate** read-only raw-eMMC operation again returned `sha256sum /dev/mmcblk0p7 = 901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`, matching the long-preserved full 8MiB Stage-D p7 boot baseline. `blkid -s UUID /dev/mmcblk0p8` returned `c2fb0167-7143-4186-b284-c86d6c09ea64`, matching installed Debian root fstab. **No boot partition mutation or filesystem-ID drift** from Wi-Fi scanning.
