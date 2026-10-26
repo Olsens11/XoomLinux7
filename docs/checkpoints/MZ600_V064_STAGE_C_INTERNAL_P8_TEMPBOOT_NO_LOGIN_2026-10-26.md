@@ -40,3 +40,27 @@ To isolate GUID-specific root-lookup behavior from device-node-based root select
 
 **Additional hypothesis, unproven:** The p8 GPT PARTUUID exists in kernel `/sys/class/block/mmcblk0p8/uevent`, but earlier minimal SD Debian's userspace `/dev/disk/by-partuuid` link for p8 was absent. This might make an internal PARTUUID-based systemd fstab dependency stall even when kernel can find p8. Direct block-device naming Stage-D may help distinguish the issue. Do not claim cause proven and do not rewrite permanent p7 without Stage-D temporary boot validation.
 
+
+## New owner-supplied PHOTOGRAPH: Stage-C failure localized to ROOT PARTUUID resolution
+
+**2026-10-26:** Owner sent a clear photograph `PXL_20261026_075012822.jpg` of the experimental MZ600 framebuffer from the stalled Stage-C temporary boot. This is stronger evidence than the previous host-side absence of a login. The device itself explicitly prints (GUID omitted from committed documentation for privacy):
+
+```text
+[~0.945] mmcblk0: MMC32G 29.8 GiB
+[~0.957] MZ600 BigPart: probing relocated OEM GPT at sector 62513151
+[~0.958] Primary GPT is invalid, using alternate GPT.
+[~0.958] MZ600 BigPart: validated exact factory 10-partition GPT; virtual
+         system 1GiB, cache 512MiB, userdata 28929.5MiB
+[~0.958] mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10
+[~1.875] Waiting for root device PARTUUID=<actual private p8 GPT GUID>...
+[~11.35] platform sound-hdmi: deferred probe pending: asoc-simple-card: parse error
+[~31.19] vdd_led / ucsi / vrf2 / vrfref / uusb: disabling
+[~73.49] random: crng init done
+```
+
+The screenshot confirms **kernel, eMMC, relocated GPT, BigPart remap and partition enumeration ALL WORK**, and independently localizes the unbootable Stage-C to the kernel's inability to resolve its `root=PARTUUID=...` selector in early mount. It is NOT a normal Debian/systemd boot, and the failure precedes loading root filesystem; the module ABI mismatch cannot itself explain this specific pre-mount `Waiting for root device` screen. The `asoc-simple-card` sound-hdmi message is a separate pre-existing deferred-probe issue and is not shown to be causal. Do not treat mere COM9 USB enumeration as successful root mount. Kernel continues logging to screen at least through t+73.5 sec rather than producing a Debian login.
+
+**Targeted source-level rationale:** In current Linux7 `block/early-lookup.c`, `early_lookup_bdev(`PARTUUID=...`)` dispatches to `devt_from_partuuid()` and uses `struct block_device->bd_meta_info->uuid` partition metadata. The kernel exposes the verified BigPart p8 block device `mmcblk0p8`, but this message implies early root-PARTUUID lookup failed despite enumerated p8. We must inspect real `/sys/class/block/mmcblk0p8/uevent` metadata on restored Stage-B SD-root and compare the actual PARTUUID **privately** to cmdline recorded in framebuffer; determine whether enumeration-time metadata is mismatched, missing, or the root selector is malformed. Do not infer one precise underlying cause from this screenshot alone.
+
+**Plan now sharpened:** Existing **offline-only Stage-D** SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8` uses `root=/dev/mmcblk0p8` instead of PARTUUID and keeps same exact kernel+ramdisk. This will be a discriminating *temporary fastboot boot* diagnostic with no write/flash. The tablet is still in Stage-C stall with Surface COM9 present, no fastboot/ADB. Owner's repaired physical volume/power controls can reset and manually enter fastboot. **Next operator input:** have owner enter fastboot with microSD kept inserted; run exact SHA-verified Stage-D using host `fastboot boot` TEMP ONLY, photograph result if failure. On any failure, normal hardware boot uses unchanged persistent p7 Stage-B SD-root. Do not format p8 again or flash permanent boot.
+
