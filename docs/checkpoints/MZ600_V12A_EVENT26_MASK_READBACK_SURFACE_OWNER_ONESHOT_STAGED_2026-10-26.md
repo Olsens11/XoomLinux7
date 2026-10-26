@@ -1,3 +1,5 @@
+> **STATUS SUPERSEDED:** This file is the *pre-run* owner staging record. The one-shot HAS NOW EXECUTED once, returned `scan_bash_exit_rc=0`, real firmware `event_msgs` GET `rc0 len27 registered1 driver_bit1 fw_bit1 map0`, 3/3 valid legacy BSS in cfg80211/iW and clean independent rollback. Read [actual v12a PHYSICAL PASS checkpoint](MZ600_V12A_EVENT26_FIRMWARE_EVENTMSGS_BIT26_READBACK_PHYSICAL_PASS_2026-10-26.md). **Do not rerun** the v12a launcher or marker. Historical run command below is provenance only.
+
 # MZ600 v12a — owner-operated event26 mask readback prepared on Surface, NOT RUN
 
 **2026-10-26. DESKTOP/SURFACE HOST STAGING & CHECKSUMS PASS; PHYSICAL MZ600 v12a TEST NOT EXECUTED.** The last verified Xoom physical state remains [v11 four cfg80211/iW BSS and independent original firmware/module restoration PASS](MZ600_V11_HRI39_CFG80211_FOUR_BSS_CHANNEL36_PHYSICAL_PASS_2026-10-26.md). This checkpoint extends the [v12a offline exact-ABI build](MZ600_V12A_EVENT26_MASK_READBACK_EXACT_ABI_OFFLINE_BUILD_PASS_2026-10-26.md), not a second RF test.
