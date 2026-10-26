@@ -1,5 +1,8 @@
 # Documentation router
 
+> **Current approved storage target — CLASSIC XOOM BIGPART p8 `system` Linux root:** [implementation + hardware safety gates](plans/MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md). The earlier p10-root proposal is superseded; no userdata backup is required by user's explicit decision. Host layout proof PASS only; no eMMC changes or boot image yet.
+
+
 > **NEW storage design decision:** [2026-10-25 internal eMMC p10 Debian root / optional BigPart plan](plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). User accepts replacing Android on experimental replacement MZ600 if needed, but no partition has been modified. p10 is large enough without BigPart, pending backup and Linux7 native TegraPT visibility.
 
 
