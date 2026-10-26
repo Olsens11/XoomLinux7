@@ -59,6 +59,42 @@ static int brcmf_legacy_inform_bss108(struct brcmf_cfg80211_info *cfg,
 	    cfg->scan_request->channels[0] != channel)
 		return -EINVAL;
 
+	/* Preflight ALL metadata before publishing any BSS to cfg80211. */
+	{
+		u32 at = 12;
+
+		for (n = 0; n < count; n++) {
+			const u8 *record, *bssid;
+			s16 signal;
+			u32 size;
+
+			if (at > total || total - at < 124)
+				return -EINVAL;
+			record = raw + at;
+			memcpy(&le32, record, sizeof(le32));
+			if (le32_to_cpu(le32) != 108)
+				return -EINVAL;
+			memcpy(&le32, record + 4, sizeof(le32));
+			size = le32_to_cpu(le32);
+			if (size < 124 || size > total - at)
+				return -EINVAL;
+			if (record[offsetof(struct brcmf_bss_info_le, ctl_ch)] != 36)
+				return -EINVAL;
+			memcpy(&le16, record +
+			       offsetof(struct brcmf_bss_info_le, RSSI),
+			       sizeof(le16));
+			signal = (s16)le16_to_cpu(le16);
+			if (signal > 0 || signal < -127)
+				return -EINVAL;
+			bssid = record + offsetof(struct brcmf_bss_info_le, BSSID);
+			if (!is_valid_ether_addr(bssid))
+				return -EINVAL;
+			at += size;
+		}
+		if (at != total)
+			return -EINVAL;
+	}
+
 	for (n = 0; n < count; n++) {
 		const u8 *record, *bssid;
 		u8 ctl_ch, ssid_len;
