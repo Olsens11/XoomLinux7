@@ -59,7 +59,7 @@ P8_ID=$(sed -n 's/^PARTUUID=//p' /sys/class/block/mmcblk0p8/uevent)
     fail 'BigPart system GPT PARTUUID missing/invalid'
 [[ $(readlink -f /dev/disk/by-partuuid/"$P8_ID") == "$TARGET" ]] ||
     fail 'GPT PARTUUID does not point to expected p8 device'
-SRC_KIB=$(du -sxk / 2>/dev/null | awk '{print $1}')
+SRC_KIB=$(df -Pk / | awk 'NR==2 {print $3}') # avoid false failure on unprivileged dry-run
 [[ "$SRC_KIB" =~ ^[0-9]+$ && "$SRC_KIB" -lt 800000 ]] ||
     fail 'SD OS footprint too large for safe 1GiB /system'
 printf 'MZ600_BIGPART_PREFLIGHT_PASS\n'
