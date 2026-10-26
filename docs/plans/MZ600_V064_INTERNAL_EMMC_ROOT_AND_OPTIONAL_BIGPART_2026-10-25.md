@@ -1,5 +1,8 @@
 # v06.4 — Internal eMMC Debian root migration, with BigPart only if necessary
 
+> **SUPERSEDED 2026-10-25 late evening:** User *rejected* p10 as Linux root; selected original Xoom BigPart **enlarged p8 `system` 1GiB**, p10 data disposable. Active instructions: [CLASSIC BIGPART p8 system root](MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md). The rest of this file is historical context only. No change has yet been made on eMMC.
+
+
 **2026-10-25 evening EDT — design/preflight, NOT installed.** Read the [comprehensive handoff](../handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md), [v06.4 functional acceptance plan](MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md), [same-unit recovery partition measurements](../checkpoints/NATIVE_OS_INSTALL_RECOVERY_PREFLIGHT_2026-10-25.md) and [successful prior conventional Debian microSD boot](../checkpoints/NATIVE_DEBIAN_SD_BOOT_USB_WIFI_IDENTITY_PHYSICAL_PASS_2026-10-25.md).
 
 ## Updated user decision / scope
