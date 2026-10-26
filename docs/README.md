@@ -1,5 +1,8 @@
 # Documentation router
 
+> **START HERE — OCT 26 TRANSITION:** [Complete current XoomLinux7 engineering handoff](handoffs/MZ600_LINUX7_FULL_TRANSITION_HANDOFF_2026-10-26.md) with proven persistent eMMC Debian, partition/boot SHA, private backup map, upstream Wi-Fi/BT history, exact module build and safe gzip uploader, failed xz install, COM9 blocker, remaining tasks and next-chat runbook. Earlier handoff final paragraphs may be outdated.
+
+
 > **Latest 2026-10-26:** [ABI-exact 114 Linux7 Stage-D modules built and offline-verified, Surface archive SHA256 identical to Desktop; USB RAM staging awaits release of COM9 from the existing console](checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md). Persistent internal Debian remains byte-verified; no modules deployed yet.
 
 
