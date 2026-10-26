@@ -1,3 +1,7 @@
+## Oct 26 — newer scan BSS format and safe compatibility work, NOT full-chip power series
+
+[Upstream-shaped BCM4329 legacy scan research](MZ600_BCM4329_LEGACY_SCAN_UPSTREAM_PROTOCOL_IMPLEMENTATION_2026-10-26.md) identifies a second historical compatibility layer beyond firmware channels: period Broadcom firmware protocol source BSS version108, Linux7 brcmfmac requires109, and a September 2026 upstream *proposal* adds 109–112 (merge status unknown). Do NOT infer HRI39 firmware's runtime record version without reading it. Modern brcmfmac only uses "escan" in its main .scan path, regardless of v1/v2 scan parameter form; firmware 4.218.248.20 rejects that iovar. Existing Linux cfg80211 scan ownership/cancel/timeout must be preserved in a full WLC_SCAN(50)/SCAN_RESULTS(51) path. [New 22-case synthetic model](../../tools/forensics/test_bcm4329_legacy_scan_contract.py) verifies only bounded envelope and exactly-once lifecycle expectations offline; KUnit and physical scan still open. This is a **distinct brcmfmac firmware compatibility series**: do not mix radio country overrides, shared U4/I7/U0/U2/LPO or BT serial GPIO ownership into it. Maintain one logical and bisectable change per patch, no DCO/submit authorization.
+
 
 ## 2026-10-26 LAB LEGACY WLAN5GHZ ENUMERATION PASSED, ESCAN NOT SUPPORTED — KEEP PATCH TRACKS SEPARATE
 
