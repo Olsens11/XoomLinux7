@@ -1,5 +1,7 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **Latest remote attempt, 2026-10-26:** [Unattended installation not executed: COM9 held by existing owner console, second serial client rejected, unmanaged console cannot accept Desktop Commander input](MZ600_V064_UNATTENDED_INSTALL_COM9_CONSOLE_EXCLUSIVE_2026-10-26.md). No new tablet writes; prior SAFE gzip RAM receipt still PASS.
+
 > **2026-10-26 install script STAGED, not run:** [Guarded ABI-114 gzip on-device installer passes offline Bash syntax and awaits user-owned root console; transfer to RAM is already SHA-verified](MZ600_V064_GZIP_MODULE_INSTALLER_OFFLINE_STAGED_OWNER_CONSOLE_PENDING_2026-10-26.md).
 
 > **2026-10-26 PHYSICAL SUCCESS:** [SAFE gzip 114-matching-module archive uploaded to Xoom RAM, SHA256 verified ON the device, sender exit0; no module install yet](MZ600_V064_SAFE_GZIP_RAM_UPLOAD_PHYSICAL_SHA_PASS_2026-10-26.md). This supersedes prior COM9-busy transfer blockers; next step is guarded p8 module tree install after owner-console verification.
