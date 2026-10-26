@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — xz unavailable on Xoom; gzip-safe replacement verified on Surface, COM9 busy
+
+Owner's sha256 of original RAM tar.xz passed, but GNU tar failed because xz executable is absent. Guarded install exited before final module directory move, depmod, or radio loading. Same 114 correct-release modules were repacked to a safe gzip archive, excluding one WSL-only build symlink. Surface verified 2,798,775B gzip archive SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409. New gzip-safe Surface serial RAM uploader passed all offline checks; its first COM9 open failed Access Denied because owner's USB console currently holds the port. NO new RAM gzip transfer or p8 module install. Next owner must press Ctrl+] in the existing console and assistant can rerun the guarded RAM-only gzip uploader. See checkpoint docs/checkpoints/MZ600_V064_MATCHED_MODULES_XZ_UNAVAILABLE_GZIP_SAFE_READY_COM9_BUSY_2026-10-26.md.
+
+
 ## 2026-10-26 — LATEST: Xoom RAM transfer of 114 matched Stage-D modules SHA VERIFIED PASS
 
 Owner freed COM9; Surface native CMD uploader completed **exit0 in 32.08s**. On-device Xoom preflight confirmed UID0, `uname -r=7.0.0-next-20260422+`, internal `/dev/mmcblk0p8 ext4` root and unused `/run` target. All 2476 base64 lines transferred; **Xoom decoded 1,901,356-byte tar.xz to `/run/mz600-v064-stageD-matched-modules.tar.xz` and verified SHA256 `50d821138f0fe04f79855d8996a61652fa7788e48457a9ebf97409b527db11c6`**. This is a real physical RAM transfer PASS, not just Surface hash. **No module installation, loading, Wi-Fi radio activation, p7 flash or reboot.** Subsequent remote read-only preinstall audit script creation was blocked by connection safety checks, so proceed using owner's Xoom USB console for root/space/existing-dir verification and carefully scoped installation. [Full checkpoint](checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md).
