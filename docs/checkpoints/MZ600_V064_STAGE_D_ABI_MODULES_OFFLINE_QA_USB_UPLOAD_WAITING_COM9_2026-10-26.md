@@ -23,3 +23,26 @@ First launcher execution stopped during local archive path check, BEFORE opening
 NEXT PHYSICAL OWNER ACTION: In the existing Surface Xoom USB console, press Ctrl+] to RELEASE COM9 without rebooting or logging out of the Xoom root shell. The assistant can then run the already prepared RAM-only CMD uploader. Require complete target SHA256 confirmation BEFORE installing anything into internal /lib/modules/7.0.0-next-20260422+. Wi-Fi radio and firmware testing will be separate, after module staging.
 
 State at checkpoint: module build COMPLETE, offline QA PASS, Surface package integrity PASS, USB RAM upload NOT DONE (COM9 busy), internal Debian boot and flash intact.
+## Follow-up: owner released COM9; RAM transfer completed with target SHA verification
+
+Owner reported `COM9 free`. The already staged native Surface CMD uploader was executed ONCE. The actual Surface tool output:
+
+```text
+Motorola Xoom Stage-D: RAM-ONLY verified module upload over COM9.
+Local archive verified: 1901356 bytes, 114 correct-release modules
+Xoom root UID, kernel release, internal ext4 root and unique RAM path: PASS
+Transferred 256 / 2476 base64 lines
+Transferred 512 / 2476 base64 lines
+...
+Transferred 2304 / 2476 base64 lines
+SUCCESS: Xoom RAM-only module bundle SHA-256 PASS; NO installation yet.
+Remote tar path: /run/mz600-v064-stageD-matched-modules.tar.xz
+USB_MODULE_UPLOAD_COMPLETE_SHA_VERIFIED_IN_RAM
+Process completed with exit code 0 (runtime: 32.08s)
+```
+
+The receiver decoded and SHA-verified the entire archive on the **actual Xoom** to match `50d821138f0fe04f79855d8996a61652fa7788e48457a9ebf97409b527db11c6`, bytes `1901356`, under `/run` (volatile RAM). Xoom preflight verified UID0, exact `uname -r 7.0.0-next-20260422+`, internal root `/dev/mmcblk0p8 ext4`, and unused RAM target. The transfer code explicitly does **not** extract the archive, write `/lib/modules`, load drivers, change p7, or reboot. Previous status **COM9 busy / RAM upload pending** is superseded by this physical RAM transfer PASS.
+
+After RAM success, an additional model-driven attempt to author a read-only remote-serial preinstall audit script was rejected by the remote interface's safety checks. No further device action was performed. Do not evade the safety controls. Resume with **user-operated local Xoom USB console**: inspect root UID, current kernel/root, free space, remote archive SHA, presence/absence of target new module directory and `depmod` before any permanent install. Preserve legacy `/lib/modules/7.0.0-next-20260422` (without `+`), back up as needed, then stage/install only exact `7.0.0-next-20260422+` if checks pass. Wi-Fi/radio/firmware testing is subsequent and still **NOT DONE**.
+
+**Current actual state:** matching 114-module bundle IN XOOM RAM AND SHA VERIFIED; modules NOT installed or loaded; permanent Stage-D p7, Debian p8 unchanged by this task.
