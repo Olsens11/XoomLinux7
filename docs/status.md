@@ -1,5 +1,9 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — unattended module install blocked by console exclusivity
+
+[Host-only access checkpoint](checkpoints/MZ600_V064_UNATTENDED_INSTALL_COM9_CONSOLE_EXCLUSIVE_2026-10-26.md): Surface still online and COM9 recognized, but owner-opened interactive Xoom USB console continues to hold the exclusive handle. Another serial open fails Windows Access Denied, and Desktop Commander cannot feed input to that unmanaged console. **No module install performed**, no boot or radio changes. Preserve the live session; next needs controlled normal console release or a genuine managed access method, then read-only device checks followed by guarded installer. Prior safe-gzip on-Xoom SHA PASS remains authoritative as of actual transfer.
+
 ## 2026-10-26 — matching module installer prepared (no Xoom install yet)
 
 After Xoom-side SAFE gzip SHA verification, added [guarded user-operated installer](../scripts/host/xoom/install-v064-stageD-matching-modules-once-20261026.sh), WSL bash syntax PASS, checked 505 repo entries/0 errors. Staged owner-paste wrapper on Surface; existing COM9 root-console window reopened. **Installer has NOT run and no module tree, depmod, or driver activity can be claimed.** See [checkpoint](checkpoints/MZ600_V064_GZIP_MODULE_INSTALLER_OFFLINE_STAGED_OWNER_CONSOLE_PENDING_2026-10-26.md). Next owner action: authenticate root privately if needed, paste the guarded heredoc into the Surface Xoom console and return its actual result.
