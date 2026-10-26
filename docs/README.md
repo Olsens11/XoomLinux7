@@ -1,5 +1,8 @@
 # Documentation router
 
+> **2026-10-26 latest diagnostic:** [Stage-E corrected live p8 GPT PARTUUID temporary boot fails to reach Debian login (COM9 timeout); exact root-identifier problem unresolved, no persistent flash](checkpoints/MZ600_V064_STAGE_E_LIVE_GUID_TEMPBOOT_UNRESPONSIVE_2026-10-26.md). Stage-D direct-device internal p8 Debian boot proven, persistent Stage-B microSD rescue untouched. Next obtain stalled framebuffer evidence and recover normal SD boot.
+
+
 > **2026-10-26 latest Stage-E preparation:** [On currently working Stage-D internal-root Debian, original `/etc/fstab` backed up and corrected to live GPT p8 PARTUUID with complete one-line-only readback proof](checkpoints/MZ600_V064_STAGE_E_FSTAB_LIVE_P8_GUID_CORRECTED_2026-10-26.md). Stage-E internal p8 PARTUUID candidate remains TEMP-boot-only, not tested or flashed. Persistent p7 microSD Debian rescue intact.
 
 
