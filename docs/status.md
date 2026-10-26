@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 current — Fastboot connected, Stage-D flash paused without write
+
+Surface read-only fastboot identifies experimental replacement MZ600 `170061c243805617` and staged Stage-D script SHA passed. Surface's restrictive local PowerShell script execution policy prevented the script from running, while other remote execution was unavailable. No flash log exists; **no permanent boot flash or reboot occurred**. The user remains at fastboot, and p7 remains the previously verified Stage-B SD-root boot. Keep Stage-D candidate `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8` backed up, and do not claim persistent internal boot completed. See [updated checkpoint](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md).
+
+
 ## 2026-10-26 — PENDING FASTBOOT: user authorized persistent Stage-D internal-root p7 flash, all preflight PASS
 
 Read [preflight checkpoint](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md). The owner explicitly approved persistent switch. Surface sha-verified original factory p7/TWRP p6 backups, Stage-B SD rescue boot image, proven Stage-D internal-root image SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`. On live Stage-D Debian internal p8 `/dev/mmcblk0p8`, root UID0, p8 1GiB and stable ext4 filesystem UUID fstab verified, and internal p7 SHA first 6,645,760B still **Stage-B SD-root rescue** `b9667187ffe0ff74a6d0f801f300a78012d8242c2e45e34bd35e39c59fc657ba`. Prepared host one-shot script `captures/MZ600-V064-Persist-StageD-InternalP8-Boot-ONCE-20261026.ps1`, SHA `35b6761327b902a03d4cc63ec6a9716720412292a865d899a66dd387d3a6a32d`, AST 0 errors. **No flash performed yet**; Surface currently has COM9 and no fastboot, so **owner must enter fastboot manually using repaired keys**. After user says fastboot up, assistant will run one-shot flash p7 only, then ordinary reboot, verify root `/dev/mmcblk0p8` and readback SHA. Do not conflate authorization or script preparation with an executed flash.
