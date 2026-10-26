@@ -1,5 +1,14 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-26 — NEW SCREENSHOT BREAKTHROUGH: Stage-C failure is KERNEL WAITING FOR P8 ROOT PARTUUID
+
+**Latest [owner-supplied photographic framebuffer evidence](../checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).** User photographed the Xoom's actual stalled Stage-C screen (filename `PXL_20261026_075012822.jpg`). Linux framebuffer shows MZ600 relocated OEM GPT at LBA62513151, factory exact 10 partitions validated, **BigPart system 1GiB/cache512MiB/userdata28929.5MiB**, enumerates `mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10`, then **`Waiting for root device PARTUUID=<private p8 GUID>...` at ~1.875 sec**, continuing unrelated deferred sound/clock and `random: crng init done` to t+73 sec. This **localizes first Stage-C failure to EARLY KERNEL ROOT PARTUUID RESOLUTION**, not to Debian's systemd, kernel module vermagic, missing mount dirs, or generic eMMC absence. The precise reason GUID lookup fails despite partition registration is **not yet proven**; kernel `block/early-lookup.c` uses `bd_meta_info->uuid`. Check metadata and private GUID once persistent SD Debian rescue is available.
+
+**CURRENT TABLET**: still temporary Stage-C, framebuffer waiting on root PARTUUID; Surface COM9 enumerates but unresponsive, no ADB/fastboot. **NO permanent Stage-C flash; p7 Stage-B known-good persistent SD rescue unchanged.** Stage-D offline-only SHA `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`, cmdline **`root=/dev/mmcblk0p8`**, unchanged proven kernel+ramdisk, will discriminate. **NEXT user action:** use repaired physical Power/Volume controls to leave stalled boot and enter fastboot again **with microSD kept inserted**, then Surface SHA-verify and `fastboot boot` Stage-D TEMP ONLY. If Stage-D fails, normal power-on boots persistent p7 Stage-B Debian from SD; do not reformat p8 or write p7.
+
+---
+
+
 **2026-10-26 03:45 diagnostic preparation (OFFLINE ONLY):** New Python builder committed `scripts/experiments/stage-v064-bigpart-p8-devnode-diagnostic-boot-20261026.py` creates Stage-D from exact Stage-B kernel+ramdisk by changing ONLY Android header root selector to `root=/dev/mmcblk0p8`; keeps rootwait/ext4/systemd init. Surface offline candidate `downloads/MZ600-V064-BIGPART-INTERNAL-P8-DEVNODE-TEMPBOOT-OFFLINE-UNTESTED.img`, 6,645,760B, **SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`**, verified. NO Stage-D boot/flash performed. Use only TEMP fastboot boot after owner physical reboot to verified Stage-B SD Debian; p7 boot unchanged. Goal: distinguish kernel PARTUUID lookup vs /dev/mmcblk0p8 device-root mount, while noting userspace p8 by-partuuid udev link had been missing earlier. This is hypothesis, not proven cause. [Full diagnosis checkpoint](../checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).
 
 
