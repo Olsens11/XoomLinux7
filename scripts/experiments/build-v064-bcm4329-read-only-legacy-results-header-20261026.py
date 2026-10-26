@@ -47,7 +47,7 @@ def patch(original):
         "\t\t\t\tbrcmf_info(\"MZ600_5G_DIAG_SCAN_RESULTS_HEADER rc=%d\\n\",\n"
         "\t\t\t\t\t   legacy_rc);\n"
         "\t\t\t} else {\n"
-        "\t\t\t\tstruct brcmf_scan_results *res = pbuf;\n"
+        "\t\t\t\tstruct brcmf_scan_results *res = (void *)pbuf;\n"
         "\t\t\t\tbrcmf_info(\"MZ600_5G_DIAG_SCAN_RESULTS_HEADER rc=0 buflen=%u version=%u count=%u\\n\",\n"
         "\t\t\t\t\t   res->buflen, res->version, res->count);\n"
         "\t\t\t}\n"
