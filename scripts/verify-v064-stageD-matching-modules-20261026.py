@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import tarfile
 from pathlib import Path
@@ -42,10 +43,24 @@ def main() -> None:
     names = {m.name for m in modules}
     assert set(expected).issubset(names), sorted(set(expected) - names)
     hashes = {}
+    readelf_fallback_count = 0
     for module in modules:
         release = subprocess.check_output(
             ["modinfo", "-F", "vermagic", str(module)], text=True
         ).strip()
+        if not release:
+            # This host libkmod stops reporting *generated* fields after some
+            # empty "depends=" metadata, while the ELF .modinfo string remains
+            # present. Inspect the actual module ELF rather than assuming a
+            # missing/invalid kernel release from libkmod's empty display.
+            elf_strings = subprocess.check_output(
+                ["readelf", "-p", ".modinfo", str(module)], text=True
+            )
+            match = re.search(r"(?m)^\\s*\\[\\s*[0-9a-fA-F]+\\]\\s+vermagic=(.*)$",
+                              elf_strings)
+            if match:
+                release = match.group(1).strip()
+                readelf_fallback_count += 1
         assert release.startswith(RELEASE + " SMP mod_unload modversions ARMv7"), (
             module.name, release
         )
@@ -76,6 +91,7 @@ def main() -> None:
         "archive_bytes": bundle.stat().st_size,
         "module_count": len(modules),
         "vermagic_and_modversions_all_match": True,
+        "host_libkmod_empty_vermagic_readelf_fallback_count": readelf_fallback_count,
         "modprobe_brcmfmac_requires_brcmutil": True,
         "contains_separate_wcc_vendor_module": True,
         "module_sha256_by_relative_path": hashes,
