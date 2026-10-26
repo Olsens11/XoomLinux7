@@ -31,3 +31,12 @@ Host-side comparison of Stage-C vs proven persistent p7 Stage-B kernel+ramdisk i
 3. Keep p7 SD rescue and p6 TWRP, and never claim p8 boot pass until actual `findmnt -n -o SOURCE,FSTYPE /` shows **`/dev/mmcblk0p8 ext4`** on working internal-root Debian login.
 4. Continue updating main handoff and runtime state with every test; do not assume unresponsive COM9 is successful login.
 
+
+## Prepared additional OFFLINE diagnostic Stage-D (not booted or flashed)
+
+To isolate GUID-specific root-lookup behavior from device-node-based root selection, created a **new host-only diagnostic image** from the proven known-good Stage-B boot image using `scripts/experiments/stage-v064-bigpart-p8-devnode-diagnostic-boot-20261026.py` in the same GitHub branch. The builder checks Stage-B input bytes/size/hash and edits ONLY the legacy Android boot image command line: `root=PARTUUID=<known SD id>` → `root=/dev/mmcblk0p8`, preserving `rootwait rootfstype=ext4 rw init=/sbin/init`. The kernel and ramdisk remain identical. This is **a diagnostic alternative**, not a preferred final root naming convention; p8 PARTUUID remains the desired stable design once the problem is understood.
+
+**Private Surface path:** `C:\Users\olsen\xoom-linux-rom\downloads\MZ600-V064-BIGPART-INTERNAL-P8-DEVNODE-TEMPBOOT-OFFLINE-UNTESTED.img`. **Bytes 6,645,760**, **SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`**, with adjacent host-only manifest. Built and independently SHA-verified on Surface. **NO Stage-D fastboot boot or flash has occurred**. Do not try it until known-good SD-root rescue is restored and owner again enters fastboot with repaired buttons.
+
+**Additional hypothesis, unproven:** The p8 GPT PARTUUID exists in kernel `/sys/class/block/mmcblk0p8/uevent`, but earlier minimal SD Debian's userspace `/dev/disk/by-partuuid` link for p8 was absent. This might make an internal PARTUUID-based systemd fstab dependency stall even when kernel can find p8. Direct block-device naming Stage-D may help distinguish the issue. Do not claim cause proven and do not rewrite permanent p7 without Stage-D temporary boot validation.
+
