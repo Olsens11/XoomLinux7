@@ -31,3 +31,7 @@ SHA256 **`35b6761327b902a03d4cc63ec6a9716720412292a865d899a66dd387d3a6a32d`**, P
 4. Maintain Stage-B SD rescue image and original Android p7 backup on Surface. If Stage-D normal boot fails, use repaired physical buttons to enter fastboot and `fastboot boot` known-good Stage-B rescue and, if necessary, restore p7 Stage-B with verified one-shot fastboot flash. Leave p6 TWRP and GPT intact.
 5. Update this checkpoint/handoff after real flash and physical readback. Do not conflate temporary Stage-D successes with unperformed persistent flash.
 
+
+## 2026-10-26 — Flash attempt stopped before execution
+
+Owner reported fastboot up. Surface confirmed the expected serial and the unchanged staged script SHA256. The script did not run because local PowerShell script execution was disabled, and subsequent remote commands could not be completed. The one-shot flash log was verified absent. **No p7 flash or reboot occurred in this turn.** Stage-D remains a temporary-boot-verified candidate; p7 remains the previously verified Stage-B SD-root image. Next action: obtain a permitted local execution path and confirm the target device and original safeguards before any write. Do not mark the persistent conversion as complete.
