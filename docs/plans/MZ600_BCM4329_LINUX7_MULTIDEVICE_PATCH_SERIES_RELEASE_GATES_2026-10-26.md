@@ -58,6 +58,12 @@ Owner confirms original Android associated to a 5GHz AP on this same board. Linu
 
 ## Immediate development priority
 
+### Original 2a65edc Bluetooth first/last initialization order must be qualified
+
+The matching original Motorola BT rfkill source is now recovered; [51/51 pinned source/ELF audit](../checkpoints/MZ600_OEM_2A65EDC_BLUETOOTH_WLAN_SHARED_U4_51CHECK_SOURCE_AUDIT_2026-10-26.md) shows BT probe calls BLOCK before rfkill allocation, releasing an *untyped* shared-U4 count that could already contain a WLAN vote if BT driver binds late. Linux7 owner model must reject BT release without actual BT-acquired reference (host-only regression added). Future own-use and multi-device acceptance must deliberately exercise **WLAN-first BT-late, BT-first WLAN-late, BT blocked/unblocked with WLAN active, failed BT bind/unwind, WLAN unload with BT awake, and warm/cold recovery**, including U4/I7/U0/U2/LPO event traces and no duplicate GPIO owner. Do not assert this race happened in OEM; do not submit until measured and owner authorizes.
+
+
+
 ### Original OEM compiled-branch and full-lifecycle acceptance
 
 Reproducible [Motorola early 2.6.36 source+ELF lifecycle auditor](../../tools/forensics/audit_mz600_oem_system_lifecycle.py) is now **42/42 PASS** with exact original HRI39 binary. [Evidence](../checkpoints/MZ600_OEM_2A65EDC_CROSSLAYER_SOURCE_BINARY_CONDITIONAL_AUDIT_42_PASS_2026-10-26.md). New mandatory comparisons: platform control (CUSTOMER_HW2 and CONFIG_WIFI_CONTROL_FUNC compiled), **no artificial second generic U4 vote**, staged Wi-Fi power/carddetect and reverse order on remove, early suspend firmware settings vs no-op platform PM, runtime dongle reset, OEM SDMMC2 tap=6 already in Linux7 DTS, per-unit regulatory calibration, and Bluetooth/source-generation uncertainty. A source check is not physical acceptance. Any final 5GHz fix and full-chip pwrseq implementation require independent multi-unit WLAN/BT plus suspend/recovery tests; preserve later 2011 vs original 2a65edc vendor provenance boundaries.
