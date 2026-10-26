@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **NEW PHOTO 2026-10-26:** [Stage-E framebuffer directly confirms `Waiting for root device PARTUUID` at ~1.008sec after BigPart p8 enumeration, not a Debian userspace issue; repeatable PARTUUID lookup failure vs working `root=/dev/mmcblk0p8` Stage-D](MZ600_V064_STAGE_E_LIVE_GUID_TEMPBOOT_UNRESPONSIVE_2026-10-26.md). Next: fresh Stage-D temp boot, inspect p8 GPT GUID for cross-boot stability.
+
+
 > **LATEST 2026-10-26:** [Stage-E live-GPT-PARTUUID internal-root temporary fastboot boot accepted but Debian login NOT observed, COM9 serial timeouts. Prior Stage-D direct /dev/mmcblk0p8 internal-root PHYSICAL PASS remains valid; firmware rescue preserved, root GUID issue still unresolved](MZ600_V064_STAGE_E_LIVE_GUID_TEMPBOOT_UNRESPONSIVE_2026-10-26.md).
 
 
