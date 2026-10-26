@@ -1,5 +1,8 @@
 # Documentation router
 
+> **NEW CURRENT LIVE PHYSICAL STATE (Oct25 20:47 EDT):** [Relocated OEM GPT physically verified from TWRP via 64-bit ARM read-only probe](checkpoints/MZ600_BIGPART_TWRP_PHYSICAL_GPT_LLSEEK_PROOF_2026-10-25.md). Current device is TWRP 3.1.1-0/root ADB, not v06.3 Linux. [Stage-A isolated BigPart kernel builder](../scripts/experiments/stage-v064-bigpart-gpt-readonly-20261025.py) running on Desktop. No BigPart partition writes.
+
+
 > **Current approved storage target — CLASSIC XOOM BIGPART p8 `system` Linux root:** [implementation + hardware safety gates](plans/MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md). The earlier p10-root proposal is superseded; no userdata backup is required by user's explicit decision. Host layout proof PASS only; no eMMC changes or boot image yet.
 
 
