@@ -1,0 +1,20 @@
+# MZ600 OEM BCM4329 calibration comparison — original minus exactly 3 fields
+
+2026-10-26, physical MZ600 and private OEM image comparison. **No firmware swap or RF/regulatory change performed in this checkpoint.**
+
+- Original Motorola HRI39 and HRI66 normal firmware images have identical SHA256 `7afdc1b85313bcc6054e01bd22aa4540a47cf6f42903b4f9728a1236b955251a`, 261,317 bytes, firmware 4.218.248.20.
+- Original Motorola HRI39 and HRI66 calibration files match exactly: 1,595 bytes, SHA256 `07bc56307d0e40dfa913a9d59a0b20d323a62763cddf6fe5d032ad5ad3ab97c1`, 55 entries / 54 unique keys.
+- On private OEM reference Pi, removing only the original calibration's `ccode=US` (original line 71), `regrev=69` (line 72) and OEM bootstrap `macaddr` (line 80) yields an EXACT 1,550-byte file with SHA256 `a8715bb1ebe3c6e69c40781d58207326b71721dea4594acb8d37e935acef76cb`. This is precisely the current Linux7 private calibration, independently verified via live root Xoom COM9.
+- Keeping the OEM country and regulatory revision while omitting only original bootstrap MAC yields **1,569 bytes** SHA256 `6de236d4d097f4996e1fef31d538757bfd9f4024cbcf2ade8bbaa97c040e53c4`, independently reproduced on original private Pi and Desktop current calibration. **All other calibration bytes are identical to the original Motorola stock file**, including `aa5g=1`, 5GHz PA fields, `boardflags=0x200`, boardtype 0x4ff, boardrev 0x10, xtalfreq 38400.
+- Current 4.220.48 firmware image on live Xoom: 253,748 bytes SHA256 `d61983946b1e733e4c75dbe6841ac0f1250ebed2e3ee9058cdfdbbba3ba37c93`; current live calibration 1,550B SHA as above; original installed Linux7 ABI remains `7.0.0-next-20260422+`, internal p8 ext4.
+- Separate later-generation reference firmware: 4.218.248.44, 264,140 bytes SHA256 `5d4bdb6c56777e4a1eb27b08600a2782a76b563891dfd18afc163c8462d73834`. Its local calibration is still the same 1,550B identity-stripped copy; **do not conflate this 2011 late image with HRI39 original version**.
+- In the prior live diagnostic, the generic firmware reported **one band, 2G enum=2**, with 11 2GHz channels and 0 5GHz; `wlan0` and 2GHz passive scan previously passed. The original Motorola Android image had successful 5GHz associations according to owner.
+- Therefore the ONLY CALIBRATION differences are original bootstrap MAC, explicit US country, and Motorola regulatory revision 69. We have **not** established that the absence of `ccode/regrev` alone causes the firmware to report only 2.4 GHz: current firmware binary itself differs, and initial power/SDIO/PMU/configuration can affect it.
+
+## User's test preference and evidence gate
+
+The owner explicitly authorized a **temporary hard-coded diagnostic**, provided **both original country and original regulatory revision are applied at firmware NVRAM bootstrap**. This is different from merely setting `iw reg set` after the firmware has initialized. Design a one-variable comparison using exactly the 1,569-byte original-without-bootstrap-MAC calibration and unchanged generic firmware, module ABI, platform, and factory MAC handling, with an explicit rollback and no scan/transmission initially. Compare count-only kernel firmware `GET_BANDLIST` and `chanspecs`, and check country/regrev acceptance and any modified cfg80211 channel list. Never put OEM bootstrap MAC into a universal firmware configuration or modify a device-unique address. Do not assume manual country override is legal outside exact validated model/region; country+revision interpretation is firmware-version-specific.
+
+**Execution status:** The attempted one-shot RAM-overlay script authoring through remote tooling was blocked by the platform's safety checks and **was not committed or executed**. No mount, radio module load, power operation or firmware change occurred during this attempt. Preserve original p8 and p7 state; do not claim the A/B outcome or force a 5GHz PHY band.
+
+Next: investigate the effective firmware regulatory-iovar API versus NVRAM at initialization, validate a lawful reversible test procedure and clean rollback; then perform comparison only through an authorized method.
