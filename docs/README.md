@@ -1,5 +1,8 @@
 # Documentation router
 
+> **2026-10-26 native internal Debian breakthrough:** [Stage-D temporary `fastboot boot` produces actual Debian 12.15 running from `/dev/mmcblk0p8 ext4 /`, verified by USB login and `findmnt`](checkpoints/MZ600_V064_STAGE_D_INTERNAL_P8_DEVNODE_BOOT_PHYSICAL_PASS_2026-10-26.md). Current root on internal eMMC p8 while p7 persistent Debian SD fallback remains intact. Old saved PARTUUID mismatched current kernel GPT; Stage-E with verified live PARTUUID prepared offline, NOT booted/flash. Next fix internal `/etc/fstab` after owner sudo, then test Stage-E TEMP only.
+
+
 > **CURRENT SAFETY HOLD 2026-10-26:** [Stage-C internal BigPart p8 root temporary boot accepted by fastboot but did not reach usable Debian login; COM9 became unresponsive](checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md). Persistent p7 Debian microSD rescue remains flashed and verified; owner can recover by physical reset and normal boot with card inserted. Do not permanently flash Stage-C until root mount verified.
 
 
