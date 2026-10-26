@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST PHYSICAL (2026-10-26):** [Full normal Debian 12.15 SD-root Linux7 Classic BigPart boot + USB authenticated console, correct 1GiB p8 and read-only p8 installer preflight PASS](MZ600_V064_BIGPART_DEBIAN_SDRoot_PHYSICAL_PASS_INSTALL_PREFLIGHT_2026-10-26.md). Device currently booted real Debian from inserted SD. Original eMMC untouched; requires owner sudo authorization and independent boot rescue before destructive install.
+
+
 **LATEST OFFLINE (2026-10-25 late evening):** [v064 BigPart-aware Debian 12 microSD-root installer boot image built and SHA-verified](MZ600_V064_BIGPART_DEBIAN_MICROSD_INSTALLER_STAGE_B_OFFLINE_2026-10-25.md). **NOT physically booted;** device remains live in previously physically validated v064 stage-A RAM-only. Reinsert previously prepared microSD before first stage-B test.
 
 
