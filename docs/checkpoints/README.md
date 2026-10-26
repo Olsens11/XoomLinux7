@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **2026-10-26 ~03:30 EDT — NEWEST INTERNAL INSTALL:** [Experimental MZ600 classic BigPart p8 ext4 1GiB now contains Debian 12.15; after controlled installer stops, manually completed p8 fstab/mountpoints, unmounted and **e2fsck -fn exit0**. Stage-C internal-root BOOT STILL PENDING; kernel modules uname/vermagic mismatch found](MZ600_V064_BIGPART_INTERNAL_DEBIAN_P8_FILESYSTEM_INSTALLED_FSCK_PASS_2026-10-26.md). Persistent p7 microSD Debian fallback validated unchanged.
+
+
 > **HARDWARE CORRECTION 2026-10-26:** [Owner repaired BOTH replacement MZ600 DC charging jack AND volume button; manual fastboot/TWRP recovery works, outdated broken-button assumption must not block internal Debian installation](MZ600_REPLACEMENT_HARDWARE_REPAIR_VERIFIED_BY_OWNER_2026-10-26.md).
 
 
