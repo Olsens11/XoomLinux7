@@ -1,5 +1,9 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — passive SDIO and systemd tests after module install
+
+[Physical postinstall passive forensics](checkpoints/MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md): on-device 114 correct ABI modules and `modules.dep` remain verified. BCM4329 SDIO functions 1/2/3, firmware and per-device six-byte factory DT MAC present. Debian PID1 systemd runs but is `degraded`. WLAN service failed **earlier this boot** when WCC module had not yet been installed; no postinstall restart yet. WPA service failed because system D-Bus socket `/run/dbus/system_bus_socket` is absent; D-Bus remains unresolved. Neither `wlan0` nor live Broadcom drivers yet; no scan, radio activation or association. Next: bounded driver lifecycle with recovery safeguards, signed regulatory qualification, and independent D-Bus dependency recovery; preserve boot image and no repeat installs.
+
 ## 2026-10-26 — 114 ABI-exact modules PHYSICALLY INSTALLED in p8 Debian; depmod PASS
 
 [Actual installation checkpoint](checkpoints/MZ600_V064_114_ABI_MODULES_INTERNAL_P8_ATOMIC_INSTALL_PHYSICAL_PASS_2026-10-26.md): owner permitted unattended COM9 work; authenticated UID0 Linux 7.0.0-next-20260422+ `/dev/mmcblk0p8 ext4`; SAFE 2798775-byte gzip on-Xoom SHA PASS. Empty prior xz staging preserved. One-shot SHA-pinned Bash installer extracted 114 .ko, zero symlinks/special, atomic move to `/lib/modules/7.0.0-next-20260422+`, `depmod -a` PASS and `modprobe -n -v` dry-run PASS. Sender native exit0, all six markers present; independent COM9 audit re-counted 114 files, metadata and legacy module directory. No `brcm` loaded; `wlan0` absent, expected before driver load. **Do not rebuild or reinstall.** p7 and GPT left unchanged. Next independent firmware/SDIO/regulatory and PID1/systemd diagnostics, followed by controlled Wi-Fi lifecycle.
