@@ -1,5 +1,8 @@
 # START HERE — XoomLinux7
 
+> **2026-10-25 new authorized storage direction:** [v06.4 internal Debian p10 root / optional BigPart plan](docs/plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). User accepts replacing Android on the **replacement** MZ600 and optional BigPart if necessary. No partition changes have occurred; current v06.3 physical baseline remains. Read handoff and the plan before proposing persistent writes.
+
+
 > **CURRENT — October 25, 2026:** Replacement MZ600 runs **verified v06.3** (19:25 EDT read-only COM9 PONG). BCM4329B1 HCD firmware path/HCI up/down and subsequent Wi-Fi/wlan0 initialization and cleanup **physically PASS**. **No Wi-Fi RF scan or Bluetooth keyboard pairing yet; no real on-screen terminal.** Mandatory NEXT functional deliverable is [v06.4 build specification](docs/plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md), using the [comprehensive handoff](docs/handoffs/MZ600_LINUX7_BCM4329_COMPREHENSIVE_HANDOFF_2026-10-25.md). Earlier Oct24 F2 -62 and v015/v020 guidance is *historical*, not the current clean v06.3 state.
 
 
