@@ -21,3 +21,22 @@
 - Source root installer `scripts/experiments/mz600-bigpart-install-debian-from-sd-20261026.sh` SHA256 `e265a0e8f7baae66311788d37ea504dc4e9785530139423428b15a1f41a28650`, previously achieved **`--preflight` exit 0**, but **`--install` never run**. Offline prepared Stage-C internal p8-root boot image SHA256 `15feced18d384ec532b7e3d9fb04463eac14c445909fadb5798920ee661571c8` **NOT booted**.
 - Proposed next: authenticated privileged p7 readback matching Stage-B; optionally test another ordinary warm reboot from Debian into persistent Debian (note normal restart from Linux previously went to Android because p7 was Android, but now p7 is Debian). Then validate recovery plan and guarded p8 installer. **Do not erase Android /system until independent rescue is good and physical readback passed.**
 
+
+## Additional post-persistent-boot read-only p8 installer preflight PASS
+
+Without root, after successful ordinary boot from p7 into Debian-on-SD, re-ran the exact previously pinned microSD installer `/home/xoom/mz600-bigpart-install-debian-from-sd-20261026.sh --preflight`, with an explicit shell return-code marker. Actual result:
+
+```
+INFO_P8_UDEV_SYMLINK_MISSING_KERNEL_GPT_UUID_VERIFIED
+MZ600_BIGPART_PREFLIGHT_PASS
+ROOT=Debian-12.15-SD-ext4 KERNEL=Linux7
+TARGET=P8_BIGPART_1G P9_CACHE_512M P10_DATA_28929_5M
+ALL_PROTECTED_P1_TO_P7_UNCHANGED=PASS
+SD_ROOT_USED_KIB=465916 TARGET_UNMOUNTED=PASS
+IDENTITY_AND_PARTUUID_VERIFIED=PASS
+READ_ONLY_NO_FORMAT_NO_MOUNT_NO_TRANSFER
+RECHECK_RETURN_0
+```
+
+**Important clarification:** output `ALL_PROTECTED_P1_TO_P7_UNCHANGED=PASS` is an unfortunately misleading historical script label: preflight verifies partition **geometries and that it performs no writes**, NOT hashes or persistence of previous p7 contents. **p7 was intentionally flashed with Debian SD Stage-B**, so never interpret that line as proof p7 Android contents unchanged. Correct this label in public script and on SD before future p8 destructive execution. The source allocated footprint is now **465,916 KiB** and still fits 1GiB p8. Current unprivileged shell cannot read `/dev/mmcblk0p7` (root:disk mode 0660); owner's local `sudo -s` is required for raw boot-image readback.
+
