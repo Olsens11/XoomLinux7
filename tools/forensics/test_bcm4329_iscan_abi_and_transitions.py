@@ -188,8 +188,8 @@ class IscanWireContract(unittest.TestCase):
         p.scan_duration = 0
         raw = C.string_at(C.byref(p), historical_iscan_payload_length())
         self.assertEqual(len(raw), 72)
-        self.assertEqual(raw[:8], b"\\x01\\x00\\x00\\x00\\x02\\x00\\x00\\x00")
-        self.assertEqual(len(b"iscan\\x00" + raw), 78)
+        self.assertEqual(raw[:8], bytes([1, 0, 0, 0, 2, 0, 0, 0]))
+        self.assertEqual(len(b"iscan" + bytes([0]) + raw), 78)
 
     def test_abort_payload_length_remains_unverified(self):
         # ABORT is defined as action 3, but the specific 2.6.39
