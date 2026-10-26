@@ -1,5 +1,8 @@
 # Documentation router
 
+> **NEW storage design decision:** [2026-10-25 internal eMMC p10 Debian root / optional BigPart plan](plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). User accepts replacing Android on experimental replacement MZ600 if needed, but no partition has been modified. p10 is large enough without BigPart, pending backup and Linux7 native TegraPT visibility.
+
+
 > **New v06.4 engineering checkpoint:** [offline ARMHF dependency-closure and packing preflight](checkpoints/MZ600_V064_ARMHF_PACKAGING_PREFLIGHT_OFFLINE_2026-10-25.md). The preflight script ran on Desktop WSL; no new image or physical feature pass yet.
 
 
