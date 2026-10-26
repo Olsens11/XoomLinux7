@@ -1,5 +1,9 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — SAFE gzip matching-modules archive physically received on Xoom: SHA PASS
+
+**Physical milestone, not installation:** Owner freed COM9; original dedicated uploader sent 3645 framed lines to RAM; root/kernel/internal p8 ext4 device preflight passed. Xoom receiver checksum verified **2,798,775-byte gzip SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409** to `/run/mz600-v064-stageD-matched-modules-gzip-safe.tar.gz`. Sender exit0, success JSON privately verified on Surface, no boot or radio changes. **Modules still NOT installed.** Next: owner console root preflight, inspect hidden old failed xz stage, atomic versioned install, depmod and modprobe **dry-run only**. [Full physical checkpoint](checkpoints/MZ600_V064_SAFE_GZIP_RAM_UPLOAD_PHYSICAL_SHA_PASS_2026-10-26.md).
+
 ## 2026-10-26 — NEXT-CHAT HOST RESUMPTION PASS; Xoom gzip transfer still blocked by COM9
 
 The [new resumption checkpoint](checkpoints/MZ600_V064_NEXTCHAT_SURFACE_REVALIDATION_SAFE_GZIP_COM9_STILL_HELD_2026-10-26.md) physically rehashes the Surface safe gzip (2,798,775B, SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409), the original strict Python uploader and CMD launcher. WSL repo tree clean at 2586918, validator 501 entries/0 errors before this documentation update. COM9 remains occupied by owner's terminal; gzip-specific success JSON absent. No new tablet commands, module install, radio test or p7/GPT writes. Owner must release COM9 with Ctrl+] without reboot; then launch exact existing verified gzip-only RAM uploader and demand on-device SHA before installation.
