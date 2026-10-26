@@ -37,16 +37,22 @@ def main():
     # v063 (artifact tag) and v06.3 (human-facing version) are valid spellings.
     current_path = ROOT / "runtime/CURRENT_LINUX7_STATE.env"
     canonical = current_path.read_text(encoding="utf-8") if current_path.exists() else ""
-    m = re.search(r"(?m)^LAST_VERIFIED_RUNNING_IMAGE=(V[0-9]+)$", canonical)
+    # A reboot into TWRP replaces the *live* Linux environment but does not
+    # invalidate the most recently proven temporary-boot Linux image.
+    m = (re.search(r"(?m)^LAST_VERIFIED_LINUX_IMAGE=(V[0-9]+)$", canonical)
+         or re.search(r"(?m)^LAST_VERIFIED_RUNNING_IMAGE=(V[0-9]+)$", canonical))
     if m:
         compact = m.group(1).lower()
         pretty = compact[:-1] + "." + compact[-1] if len(compact) >= 4 else compact
         if compact not in status and pretty not in status:
-            errors.append("Canonical physical baseline missing from docs/status.md")
+            errors.append("Canonical last verified Linux image missing from status")
     else:
         legacy = re.search(r"(?m)^CURRENT_HARDWARE_VERIFIED=(v[0-9]+)(?:_partial)?$", state)
         if not legacy or legacy.group(1) not in status:
             errors.append("Physical baseline version missing or inconsistent")
+    current = re.search(r"(?m)^CURRENT_DUT_MODE=([^\\n]+)$", canonical)
+    if current and current.group(1).startswith("TWRP") and "TWRP" not in status:
+        errors.append("Current TWRP device state not documented in status")
     for err in errors: print("ERROR",err)
     print(f"Checked {len(files)} filesystem entries; errors={len(errors)}")
     return int(bool(errors))
