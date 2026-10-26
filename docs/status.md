@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — CURRENT MASTER HANDOFF FOR NEXT CHAT
+
+[Read the full continuity/next-chat handoff](handoffs/MZ600_LINUX7_FULL_TRANSITION_HANDOFF_2026-10-26.md) before any further hardware work. The persistent Stage-D Debian p7/p8 installation remains physically verified. Latest module status: 114 ABI-matched modules built and offline verified; original xz archive transported to Xoom RAM and SHA checked; extraction aborted because Debian lacks xz before target module directory was moved; SAFE no-symlink gzip on Surface verified (2,798,775B, SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409). Dedicated safe gzip uploader has NOT transferred to Xoom yet because existing console occupied COM9. No matching-module installation or Wi-Fi activation. Inspect hidden /lib/modules/.stage-v064-XXXXXXXX leftover before any cleanup. Next physical action: user Ctrl+] to release COM9; SHA-verified RAM-only gzip transfer; guarded atomic modules install and depmod/dry-run. See detailed handoff for precise device IDs, backups, tools, failure distinctions and recovery.
+
+
 ## 2026-10-26 — xz unavailable on Xoom; gzip-safe replacement verified on Surface, COM9 busy
 
 Owner's sha256 of original RAM tar.xz passed, but GNU tar failed because xz executable is absent. Guarded install exited before final module directory move, depmod, or radio loading. Same 114 correct-release modules were repacked to a safe gzip archive, excluding one WSL-only build symlink. Surface verified 2,798,775B gzip archive SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409. New gzip-safe Surface serial RAM uploader passed all offline checks; its first COM9 open failed Access Denied because owner's USB console currently holds the port. NO new RAM gzip transfer or p8 module install. Next owner must press Ctrl+] in the existing console and assistant can rerun the guarded RAM-only gzip uploader. See checkpoint docs/checkpoints/MZ600_V064_MATCHED_MODULES_XZ_UNAVAILABLE_GZIP_SAFE_READY_COM9_BUSY_2026-10-26.md.
