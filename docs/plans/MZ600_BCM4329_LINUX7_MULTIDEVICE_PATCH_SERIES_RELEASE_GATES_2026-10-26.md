@@ -1,4 +1,10 @@
 
+### G4 dual-band lab PHY support succeeded, scan and release gates remain OPEN/PENDING
+
+[Physical MZ600 5GHz wiphy and failed escan scan checkpoint](../checkpoints/MZ600_V064_HRI39_5GHZ_WLAN0_PASSIVE_CHANNELS_PASS_ESCAN_UNSUPPORTED_2026-10-26.md): Original matched Motorola HRI39 firmware returns actual WLC_GET_VALID_CHANNELS 20 entries including 9 for 5GHz. Board-scoped Linux7 v05 fallback ABI compiled/physically tested; `wlan0`+5GHz channels present and `NO_IR` for every enabled channel. **This fulfills a preliminary enum/wiphy acceptance subgate only.** 5GHz passive-only scan on ch36/40/44/48 failed at `brcmf_run_escan: -52`, no BSS; cannot claim whole Wi-Fi functional. Next code track must safely implement legacy scan state/result handling, preserve no-IR and world/regulatory restrictions, scan timeout/cancel, firmware/staging confidentiality, and retest original generic 2G plus Bluetooth. Multi-unit Xoom MZ600/MZ602/MZ604, cold/warm and WLAN+BT concurrent physical tests and owner explicit permission **still required before upstream review**. Lab binary not a production deliverable.
+
+
+
 ### 2026-10-26 owner-performed negative OEM US/69 bootstrap A/B
 
 [Physical owner COM9 A/B](../checkpoints/MZ600_V064_OEM_US69_BOOTSTRAP_NVRAM_A_B_PHY5GHZ_UNCHANGED_OWNER_PHYSICAL_2026-10-26.md) verified Motorola original country/rev `US/69` in NVRAM prior to current firmware startup, but current generic firmware still reported only 2G (11 chanspecs). Reverted cleanly. Do **not** count this as G4 5GHz pass or evidence of country readback; firmware might ignore/translate override. Additional one-variable OEM firmware-vs-generic study is required; no forced channels or regulatory workaround. Preserve the working 2GHz scan and full-chip multi-device qualification gates.
