@@ -53,7 +53,7 @@
  	for (i = 1; i <= n_bands && i < ARRAY_SIZE(bandlist); i++) {
  		if (bandlist[i] == cpu_to_le32(WLC_BAND_2G)) {
  			band = kmemdup(&__wl_band_2ghz, sizeof(__wl_band_2ghz),
- 			       GFP_KERNEL);
+ 				       GFP_KERNEL);
 @@ -7774,8 +7792,11 @@
  
  	wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
