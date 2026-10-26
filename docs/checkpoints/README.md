@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **NEWEST PHYSICAL PROOF 2026-10-26 02:55 EDT:** [Persistent Linux7 Debian SD p7 ordinary boot AND raw on-device p7 first-6,645,760B SHA EXACTLY MATCHES known Stage-B image; full 8MiB hash and all safety guards recorded](MZ600_V064_PERSISTENT_P7_PHYSICAL_READBACK_SHA_PASS_2026-10-26.md). p8 unchanged, no destructive install; independent bootloader rescue not yet proven.
+
+
 > **LATEST PHYSICAL 2026-10-26:** [Permanent p7 Linux7 Debian 12 SD-root NORMAL FASTBOOT REBOOT physically PASS (no temporary boot), native flash exit 0, Sending+Writing OKAY](MZ600_V064_PERSISTENT_SD_DEBIAN_BOOT_PHYSICAL_PASS_2026-10-26.md). Current device at authenticated unprivileged Debian microSD shell, p7 post-flash raw hash still pending private root authentication. p8 unchanged.
 
 
