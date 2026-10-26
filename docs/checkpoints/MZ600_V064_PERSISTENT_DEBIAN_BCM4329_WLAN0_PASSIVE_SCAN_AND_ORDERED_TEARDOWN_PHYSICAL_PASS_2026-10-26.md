@@ -103,3 +103,13 @@ This is **an important installed-userspace physical validation of the existing g
 ## Final post-scan physical boot integrity checksum
 
 After completed scan, teardown and independent COM9 post-audit, a **separate** read-only raw-eMMC operation again returned `sha256sum /dev/mmcblk0p7 = 901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`, matching the long-preserved full 8MiB Stage-D p7 boot baseline. `blkid -s UUID /dev/mmcblk0p8` returned `c2fb0167-7143-4186-b284-c86d6c09ea64`, matching installed Debian root fstab. **No boot partition mutation or filesystem-ID drift** from Wi-Fi scanning.
+
+## Surface independent private receipt verification
+
+After the test, Surface reread the saved (PRIVATE) one-shot JSON receipt independent of the active serial process:
+`wlan0_physically_observed=true`; `scan_command_exit=0`; `passive_scan_bss_count=19`; `cleanup_verified=true`; `full_bounded_test_pass=true`. The 3,337-byte host serial transcript SHA256 **`2e8e9a135e1dfbb12ece1b05381f1dc5619aa98c56e750c91b19313388882bef`** matched the JSON's `transcript_sha256`. The JSON receipt's own SHA256 was **`b1a39e70209227d32525a3dd7685b83d7b237b99040e1b68343387b8d5f7ef2b`**. Local private capture files:
+
+- `C:\Users\olsen\xoom-linux-rom\captures\MZ600-V064-WiFi-WLAN0-PassiveScan-PRIVATE-Physical-20261026.txt`
+- `C:\Users\olsen\xoom-linux-rom\captures\MZ600-V064-WiFi-WLAN0-PassiveScan-Physical-Receipt-20261026.json`
+
+These logs contain redacted test markers (not the scan BSS names); the original 51,104-byte scan file is Xoom RAM-only and should never be pushed to public GitHub.
