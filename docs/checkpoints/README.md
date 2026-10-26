@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST PHYSICAL 2026-10-26:** [Permanent p7 Linux7 Debian 12 SD-root NORMAL FASTBOOT REBOOT physically PASS (no temporary boot), native flash exit 0, Sending+Writing OKAY](MZ600_V064_PERSISTENT_SD_DEBIAN_BOOT_PHYSICAL_PASS_2026-10-26.md). Current device at authenticated unprivileged Debian microSD shell, p7 post-flash raw hash still pending private root authentication. p8 unchanged.
+
+
 > **LATEST SAFETY CHECKPOINT (2026-10-26 02:26 EDT):** [Linux→fastboot reboot mode FAILED (returned Android); persistent p7 boot flash AMBIGUOUS due native AVB warning/PowerShell exception; device recovered to RAM temporary SD Debian and p7 requires read-only hash before any further writes](MZ600_LINUX7_RESCUE_BOOTLOADER_AND_P7_FLASH_AMBIGUITY_2026-10-26.md). Do not format p8 yet.
 
 
