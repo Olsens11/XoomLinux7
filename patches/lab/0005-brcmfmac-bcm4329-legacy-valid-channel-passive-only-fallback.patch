@@ -1,0 +1,182 @@
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -7006,8 +7006,11 @@
+ 	u8 *pbuf;
+ 	u32 i, j;
+ 	u32 total;
+ 	u32 chaninfo;
++	u32 diag_2g = 0;
++	u32 diag_5g = 0;
++	u32 diag_other = 0;
+ 
+ 	pbuf = kzalloc(BRCMF_DCMD_MEDLEN, GFP_KERNEL);
+ 
+ 	if (pbuf == NULL)
+@@ -7017,9 +7020,88 @@
+ 
+ 	err = brcmf_fil_iovar_data_get(ifp, "chanspecs", pbuf,
+ 				       BRCMF_DCMD_MEDLEN);
+ 	if (err) {
++		int saved_err = err;
++		int legacy_rc;
++		u32 max_channels = (BRCMF_DCMD_MEDLEN - sizeof(list->count)) /
++				   sizeof(list->element[0]);
++		u32 count = 0, count_2g = 0, count_5g = 0, count_other = 0;
++		u32 index, legacy_channel;
+ 		bphy_err(drvr, "get chanspecs error (%d)\n", err);
++		/* Diagnostic ONLY. Legacy Motorola DHD uses ioctl 217 and
++		 * sets list->count to output capacity before querying. */
++		memset(pbuf, 0, BRCMF_DCMD_MEDLEN);
++		list->count = cpu_to_le32(max_channels);
++		legacy_rc = brcmf_fil_cmd_data_get(ifp,
++					      BRCMF_C_GET_VALID_CHANNELS,
++					      pbuf, BRCMF_DCMD_MEDLEN);
++		if (!legacy_rc) {
++			count = le32_to_cpu(list->count);
++			if (count <= max_channels) {
++				for (index = 0; index < count; index++) {
++					legacy_channel = le32_to_cpu(list->element[index]);
++					if (legacy_channel >= 1 && legacy_channel <= 14)
++						count_2g++;
++					else if (legacy_channel >= 30 && legacy_channel <= 196)
++						count_5g++;
++					else
++						count_other++;
++				}
++			} else {
++				legacy_rc = -EINVAL;
++			}
++		}
++		brcmf_info("MZ600_5G_DIAG_LEGACY_VALID_CHANNELS original_chanspec_rc=%d legacy_rc=%d total=%u 2g=%u 5g=%u other=%u max=%u\n",
++			   saved_err, legacy_rc, count, count_2g, count_5g,
++			   count_other, max_channels);
++		/* Narrow, non-transmitting fallback for BCM4329 firmware
++		 * which has no 'chanspecs' iovar but reports valid channels.
++		 * No broad device override, no regulatory bypass, no TX. */
++		if (saved_err == -EBADE && !legacy_rc && count > 0 &&
++		    count_5g > 0 && !count_other &&
++		    drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++			band = wiphy->bands[NL80211_BAND_2GHZ];
++			if (band)
++				for (j = 0; j < band->n_channels; j++)
++					band->channels[j].flags = IEEE80211_CHAN_DISABLED;
++			band = wiphy->bands[NL80211_BAND_5GHZ];
++			if (band)
++				for (j = 0; j < band->n_channels; j++)
++					band->channels[j].flags = IEEE80211_CHAN_DISABLED;
++			for (index = 0; index < count; index++) {
++				legacy_channel = le32_to_cpu(list->element[index]);
++				band = legacy_channel <= 14 ?
++					wiphy->bands[NL80211_BAND_2GHZ] :
++					wiphy->bands[NL80211_BAND_5GHZ];
++				if (!band)
++					continue;
++				for (j = 0; j < band->n_channels; j++)
++					if (band->channels[j].hw_value == legacy_channel)
++						break;
++				if (j == band->n_channels)
++					continue;
++				channel = &band->channels[j];
++				if (channel->orig_flags & IEEE80211_CHAN_DISABLED)
++					continue;
++				/* No active TX or initiating radiation on ANY
++				 * legacy channel; cfg80211 regdb may only narrow. */
++				channel->flags = channel->orig_flags |
++					IEEE80211_CHAN_NO_IR |
++					IEEE80211_CHAN_NO_HT40 |
++					IEEE80211_CHAN_NO_80MHZ |
++					IEEE80211_CHAN_NO_160MHZ;
++				if (band->band == NL80211_BAND_5GHZ &&
++				    channel->center_freq >= 5260 &&
++				    channel->center_freq <= 5720)
++					channel->flags |= IEEE80211_CHAN_RADAR;
++			}
++			brcmf_info("MZ600_5G_LEGACY_PASSIVE_ONLY_FALLBACK chip=4329 fw2g=%u fw5g=%u no_ir=1 ht20_only=1\n",
++				   count_2g, count_5g);
++			err = 0;
++			goto fail_pbuf; /* shared free buffer */
++		}
++		err = saved_err;
+ 		goto fail_pbuf;
+ 	}
+ 
+ 	band = wiphy->bands[NL80211_BAND_2GHZ];
+@@ -7041,8 +7123,14 @@
+ 
+ 	for (i = 0; i < total; i++) {
+ 		ch.chspec = (u16)le32_to_cpu(list->element[i]);
+ 		cfg->d11inf.decchspec(&ch);
++		if (ch.band == BRCMU_CHAN_BAND_2G)
++			diag_2g++;
++		else if (ch.band == BRCMU_CHAN_BAND_5G)
++			diag_5g++;
++		else
++			diag_other++;
+ 
+ 		if (ch.band == BRCMU_CHAN_BAND_2G) {
+ 			band = wiphy->bands[NL80211_BAND_2GHZ];
+ 		} else if (ch.band == BRCMU_CHAN_BAND_5G) {
+@@ -7120,8 +7208,12 @@
+ 						IEEE80211_CHAN_NO_IR;
+ 			}
+ 		}
+ 	}
++
++	/* Only counts: no channels, calibration, identity or RF writes. */
++	brcmf_info("MZ600_5G_DIAG_CHANSPECS total=%u 2g=%u 5g=%u other=%u\n",
++		   total, diag_2g, diag_5g, diag_other);
+ 
+ fail_pbuf:
+ 	kfree(pbuf);
+ 	return err;
+@@ -7644,8 +7736,10 @@
+ 	bool gscan;
+ 	__le32 bandlist[3];
+ 	u32 n_bands;
+ 	int err, i;
++	struct brcmf_fil_country_le diag_country = {};
++	int diag_country_rc;
+ 
+ 	wiphy->max_scan_ssids = WL_NUM_SCAN_MAX;
+ 	wiphy->max_scan_ie_len = BRCMF_SCAN_IE_LEN_MAX;
+ 	wiphy->max_num_pmkids = BRCMF_MAXPMKID;
+@@ -7729,8 +7823,13 @@
+ 		return err;
+ 	}
+ 	/* first entry in bandlist is number of bands */
+ 	n_bands = le32_to_cpu(bandlist[0]);
++	/* Firmware band enums only; no MAC, SSID, key or regulatory override. */
++	brcmf_info("MZ600_5G_DIAG_BANDLIST count=%u first=%u second=%u\n",
++		   n_bands,
++		   n_bands >= 1 ? le32_to_cpu(bandlist[1]) : 0,
++		   n_bands >= 2 ? le32_to_cpu(bandlist[2]) : 0);
+ 	for (i = 1; i <= n_bands && i < ARRAY_SIZE(bandlist); i++) {
+ 		if (bandlist[i] == cpu_to_le32(WLC_BAND_2G)) {
+ 			band = kmemdup(&__wl_band_2ghz, sizeof(__wl_band_2ghz),
+ 				       GFP_KERNEL);
+@@ -7774,8 +7873,26 @@
+ 
+ 	wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
+ 
+ 	wiphy_read_of_freq_limits(wiphy);
++	brcmf_info("MZ600_5G_DIAG_WIPHY has2g=%u has5g=%u\n",
++		   !!wiphy->bands[NL80211_BAND_2GHZ],
++		   !!wiphy->bands[NL80211_BAND_5GHZ]);
++	/* Read-only DHD country iovar after successful bandlist fetch. */
++	/* Never SET country, force a PHY channel, or modify NVRAM here. */
++	diag_country_rc = brcmf_fil_iovar_data_get(ifp, "country",
++						&diag_country, sizeof(diag_country));
++	if (diag_country_rc) {
++		brcmf_info("MZ600_5G_DIAG_COUNTRY_READ rc=%d\n", diag_country_rc);
++	} else {
++		/* print two code bytes as hex; no board MAC or credentials */
++		brcmf_info("MZ600_5G_DIAG_COUNTRY_READ rc=0 abbrev=%02x%02x ccode=%02x%02x rev=%u\n",
++			   (u8)diag_country.country_abbrev[0],
++			   (u8)diag_country.country_abbrev[1],
++			   (u8)diag_country.ccode[0],
++			   (u8)diag_country.ccode[1],
++			   le32_to_cpu(diag_country.rev));
++	}
+ 
+ 	return 0;
+ }
