@@ -41,3 +41,7 @@ Required for any later patch: operation-type and generation ownership under a re
 ## Next action
 
 Offline target ARMv7 C `BUILD_BUG_ON` for struct offset/length/chanspec and simulated status/error/abort races; separately trace if HRI39 original firmware expects a particular iscan ABORT representation from a broader historical host/firmware build. Only then discuss staging a unique guarded owner-operated passive-only 5180MHz test. The existing old `WLC_SCAN=50` / `WLC_SCAN_RESULTS=51` physical PASS and ~10s fallback remains untouched.
+
+## Correction: a more relevant historical brcmfmac host source DOES implement 72B ISCAN ABORT
+
+The earlier 2.6.39 bcmdhd/wl_cfg80211.c contained no visible WL_SCAN_ACTION_ABORT invocation, but a separate historical **brcm80211/brcmfmac/wl_cfg80211.c** indeed invokes `brcmf_run_iscan(iscan, &ssid, WL_SCAN_ACTION_ABORT)` with zero-length `ssid`. Its action serializer uses a fixed `BRCMF_SCAN_PARAMS_FIXED_SIZE + offsetof(brcmf_iscan_params_le,params_le) = 64+8 = 72` host bytes for empty SSID. See [upstream brcmfmac reference audit](MZ600_HRI39_EARLY_BRCMFMAC_ISCAN_ABORT_AND_GOOGLE_WORKER_SOURCE_AUDIT_2026-10-26.md). Thus **host implementation of 72B ABORT is PROVEN**, though exact HRI39 response and fully cleared on-chip state remain UNVERIFIED. The older note's statement that no historical ABORT host call was found applies only to the single 2.6.39 *bcmdhd* file investigated. Early brcmfmac's own START is unrestrained all-channel, so not a safe drop-in for our passive CH36.
