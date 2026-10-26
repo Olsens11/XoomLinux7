@@ -1,3 +1,8 @@
+
+### 2026-10-26 owner-performed negative OEM US/69 bootstrap A/B
+
+[Physical owner COM9 A/B](../checkpoints/MZ600_V064_OEM_US69_BOOTSTRAP_NVRAM_A_B_PHY5GHZ_UNCHANGED_OWNER_PHYSICAL_2026-10-26.md) verified Motorola original country/rev `US/69` in NVRAM prior to current firmware startup, but current generic firmware still reported only 2G (11 chanspecs). Reverted cleanly. Do **not** count this as G4 5GHz pass or evidence of country readback; firmware might ignore/translate override. Additional one-variable OEM firmware-vs-generic study is required; no forced channels or regulatory workaround. Preserve the working 2GHz scan and full-chip multi-device qualification gates.
+
 # Linux 7 BCM4329 whole-chip patch series — multi-device engineering and review gates
 
 **Decided with owner:** 2026-10-26. **Status:** development/test policy and roadmap, **not upstream-submitted and not a claim of compatibility**. The goal is a polished, reproducible and useful Linux patch series that first serves our own Xoom restoration effort and can *later* make a meaningful community contribution after rigorous **physical testing on multiple devices**.
