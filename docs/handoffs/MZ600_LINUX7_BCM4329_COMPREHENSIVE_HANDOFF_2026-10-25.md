@@ -1,5 +1,14 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-26 — FINAL PERSISTENT INTERNAL DEBIAN 12.15 PHYSICAL P7 SHA VERIFIED — MILESTONE COMPLETE
+
+**Newest authoritative evidence: [FULLY VERIFIED PERSISTENT INTERNAL DEBIAN checkpoint](../checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md).** This supersedes all prior "p7 physical readback pending" notes. Owner has now explicitly supplied **root@xoom-mz600** live Debian outputs: `id -u=0`, `findmnt -n -o SOURCE,FSTYPE / = /dev/mmcblk0p8 ext4`, `/sys/class/block/mmcblk0p7/size=16384` sectors (8MiB). **Actual read-only eMMC p7 readback `head -c 6645760 /dev/mmcblk0p7 | sha256sum` = `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`, EXACT match to verified Stage-D boot image SHA256 and length.** **Actual full 8MiB p7 `sha256sum /dev/mmcblk0p7` = `901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`.** Different full vs prefix hashes are expected because image 6,645,760B versus p7 8,388,608B. Physical readback fully PASSED and is NO LONGER pending.
+
+Recall owner previously ran native Windows CMD one-shot `fastboot flash boot` Stage-D on precisely verified replacement MZ600 serial `170061c243805617`, Sending/Writing OKAY exit0, then a separate **normal** `fastboot reboot` gave COM9 Debian 12.15 login and `/dev/mmcblk0p8 ext4 /` root. **Native Debian internal boot is persistent and byte-verified end-to-end.** No further p7 flash required. Original factory p7 Android backup, TWRP p6 backup, Stage-B SD-root rescue IMAGE remain saved on Surface, but p7 now Stage-D internal-root by default. `/etc/fstab` p8 uses stable ext4 UUID `c2fb0167-7143-4186-b284-c86d6c09ea64`; avoid per-boot changing GPT PARTUUID. Continue separately Linux kernel/module vermagic `+` mismatch, BCM4329 Wi-Fi, systemd D-Bus, and raw GPT metadata investigation. Device still the EXPERIMENTAL replacement, not protected original.
+
+---
+
+
 ## Latest: privileged postflash p7 SHA readback still outstanding
 
 User confirmed local sudo root console access after persistent Stage-D normal internal Debian p8 boot. COM9 remains enumerated on Surface, but remote serial commands were unavailable in this turn. No new p7 data/hash obtained. Verify locally under root: confirm `id -u` is 0, `findmnt -n -o SOURCE,FSTYPE /` reports `/dev/mmcblk0p8 ext4`, p7 sector count 16384, and SHA256 over the first 6645760 bytes of `/dev/mmcblk0p7` is `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`; record the full 8MiB p7 SHA256 separately. Do not mark postflash raw verification complete based solely on fastboot flash OKAY and normal boot success. No writes during this phase.
