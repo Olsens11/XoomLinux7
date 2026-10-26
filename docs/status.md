@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 ~04:12 EDT — Internal p8 fstab corrected to kernel-reported live GPT PARTUUID, all readback checks PASS
+
+Current experimental replacement Xoom **still live Stage-D temporary internal p8 Debian root `/dev/mmcblk0p8 ext4 rw`**. Owner privately sudo-authenticated root, physical checks p8 BigPart start118784 size2097152, current p8 GPT `PARTNAME=system`; previous p8 fstab root GUID mismatched. Guarded **one-file** change: backed up original as `/etc/fstab.before-stage-e-live-guid-20261026`, replaced only root selector with actual live sysfs p8 GPT PARTUUID, synced. Device printed `STAGE_E_P8_FSTAB_LIVE_GUID_UPDATED_AND_BACKUP_VERIFIED`. Independent checks prove same live kernel p8 GUID in fstab, backup exists, no other line changed (reverse transform cmp), uid/mode preserved, current root p8. Host terminal ANSI buffering initially misreported fail, physically disproven by separate audit. **No reboot, format, flash or p7 write**. Stage-E true-live-GPT-PARTUUID image on Surface SHA `c91d7f40d90df5bcb058fee6f843c64b46d02190b74eee36186ba3d9b4c3c63d` **NOT TESTED/NOT FLASHED**. Next owner manually enters fastboot, then TEMP Stage-E `fastboot boot` with SD fallback inserted; verify `findmnt /` p8. [Latest evidence](checkpoints/MZ600_V064_STAGE_E_FSTAB_LIVE_P8_GUID_CORRECTED_2026-10-26.md).
+
+
 ## 2026-10-26 ~04:08 EDT — STAGE-D TEMP BOOT: INTERNAL P8 DEBIAN 12.15 PHYSICALLY RUNNING!
 
 **MAJOR VERIFIED MILESTONE:** On correct unlocked replacement MZ600 fastboot serial `170061c243805617`, exact SHA-gated Stage-D `root=/dev/mmcblk0p8` image **SHA256 fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8** loaded via `fastboot boot` TEMP only. USB COM9 Debian 12 login arrived, Surface private login probe entered xoom shell, **`findmnt /` = `/dev/mmcblk0p8 ext4 /` mounted rw**, `uname -r 7.0.0-next-20260422+`, Debian 12.15, p8 BigPart 118784/2097152 sectors. **Internal Debian root boots properly!** No permanent p7 flash or p8/GPT changes this test; p7 still proven SD-root rescue.
