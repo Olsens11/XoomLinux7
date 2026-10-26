@@ -61,7 +61,8 @@ def main() -> None:
         members = t.getmembers()
     archive_kos = [m for m in members if m.name.endswith(".ko") and m.isfile()]
     assert len(archive_kos) == 114
-    assert all(m.name.startswith("lib/modules/" + RELEASE + "/") for m in members)
+    assert all(m.name.startswith("lib/modules/" + RELEASE + "/") or
+               (m.isdir() and m.name == "lib/modules/" + RELEASE) for m in members)
     assert all(not m.issym() and not m.islnk() for m in members)
     assert all(".." not in Path(m.name).parts for m in members)
     manifest = {
