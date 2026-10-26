@@ -1,5 +1,21 @@
 # MZ600 Linux7 independent recovery attempt and interrupted p7 flash — DO NOT INFER FLASH SUCCESS
 
+## 2026-10-26 — definitive READ-ONLY p7 boot partition readback after interrupted fastboot attempt
+
+Owner again signed in using private Debian credentials and `sudo -s`; shell `root@xoom-mz600:/home/xoom#` confirmed; remote read-only COM9 `id -u` = 0, `findmnt -n -o SOURCE,FSTYPE /` = `/dev/mmcblk1p1 ext4`, and internal p7 `/sys/class/block/mmcblk0p7/{start,size}` = `102400` / `16384` 512-byte sectors (**8MiB**). No p7 mount.
+
+Physically read p7 without modifying it:
+```bash
+sha256sum /dev/mmcblk0p7
+# 4da4c9f1486374bb66f31c96389cd1ee3067a447e8a72aea33b2fc24ac3985e3 /dev/mmcblk0p7
+head -c 6645760 /dev/mmcblk0p7 | sha256sum
+# e560dea72ffd24dfcc38e9c89bddbb57bd210b0300c68bd76b46a07332d6f873 -
+od -An -tx1 -N 8 /dev/mmcblk0p7
+# 41 4e 44 52 4f 49 44 21  [ASCII ANDROID!]
+```
+**CONCLUSIVE RESULT:** exact whole-partition SHA256 matches stock original Android p7 8MiB private backup `android-HMJ37-boot-p7.img`. Stage-B image prefix expected SHA256 `b9667187ffe0ff74a6d0f801f300a78012d8242c2e45e34bd35e39c59fc657ba` is NOT present. The earlier PowerShell AVB warning terminated the flash BEFORE modifying p7; the ambiguity is **fully RESOLVED**. A second read-only root proof rechecked both SHA values; complete capture stored privately Surface `captures/MZ600-P7-READONLY-SHA256-PROOF-20261026.txt` (capture SHA256 `59c83d3350978786193808393f1da901323e86d347f1ca645564d3900386a0f5`). No internal eMMC writes or formats. Current replacement MZ600 physically running known Stage-B Debian 12 on inserted SD via USB COM9 at authenticated root prompt. Private login credential not displayed/logged. No need to retry flash until corrected host wrapper verified; next stage must capture fastboot stdout and stderr independently and check actual exit/status, verify writes by subsequent independent p7 readback before persistent reboot.
+
+
 **Local time 2026-10-26 02:19–02:26 EDT.** Replacement experimental MZ600 only. This is the newest operational status and supersedes the live-stage-B/root-session claims in the earlier 01:48 checkpoint.
 
 ## Root access obtained by owner
