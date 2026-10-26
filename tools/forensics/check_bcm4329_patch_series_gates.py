@@ -37,8 +37,10 @@ def checked_series(config: dict) -> dict:
             raise ValueError(f"invalid series entry: {entry!r}")
         p = path_inside_repo(parent + "/" + entry)
         blob = p.read_bytes()
-        if not blob.startswith(b"From ") and not blob.startswith(b"diff --git"):
-            raise ValueError(f"not a recognized git-format patch: {entry}")
+        # RFC email-style patches may begin with "Subject:" and retain
+        # the canonical diff after a cover explanation, without a From mbox.
+        if (b"diff --git a/" not in blob or b"--- a/" not in blob or b"+++ b/" not in blob):
+            raise ValueError(f"not a recognized unified Linux git patch: {entry}")
         patches.append({"name": entry, "bytes": len(blob),
                         "sha256": hashlib.sha256(blob).hexdigest()})
     return {"rfc_patch_count": len(patches), "rfc_patches": patches}
