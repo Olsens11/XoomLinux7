@@ -140,7 +140,7 @@ static int brcmf_legacy_inform_bss108(struct brcmf_cfg80211_info *cfg,
 			return -EINVAL;
 
 		bss_data.chan = channel;
-		bss_data.boottime_ns = ktime_get_boottime_ns();
+		bss_data.boottime_ns = ktime_to_ns(ktime_get_boottime());
 		bss_data.signal = (s32)rssi * 100;
 		bss = cfg80211_inform_bss_data(
 			wiphy, &bss_data, CFG80211_BSS_FTYPE_UNKNOWN,
