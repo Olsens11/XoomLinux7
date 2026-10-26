@@ -1,5 +1,12 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## Latest: privileged postflash p7 SHA readback still outstanding
+
+User confirmed local sudo root console access after persistent Stage-D normal internal Debian p8 boot. COM9 remains enumerated on Surface, but remote serial commands were unavailable in this turn. No new p7 data/hash obtained. Verify locally under root: confirm `id -u` is 0, `findmnt -n -o SOURCE,FSTYPE /` reports `/dev/mmcblk0p8 ext4`, p7 sector count 16384, and SHA256 over the first 6645760 bytes of `/dev/mmcblk0p7` is `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`; record the full 8MiB p7 SHA256 separately. Do not mark postflash raw verification complete based solely on fastboot flash OKAY and normal boot success. No writes during this phase.
+
+---
+
+
 ## 2026-10-26 — NEWEST VERIFIED: Stage-D p7 persistent flash PASS; NORMAL BOOT Debian 12.15 from internal p8 PASS
 
 **This supersedes all prior "flash pending/blocked" notes.** Owner manually executed Surface native one-shot CMD `captures/MZ600-V064-Persist-StageD-InternalP8-Boot-ONCE-20261026.cmd flash`, checked **all four** original OEM p7, TWRP p6, SD Stage-B rescue and proven Stage-D image SHA256s and sizes; exact unlocked replacement `xoom-cdma` verified. Actual fastboot **Sending OKAY (1.188sec), Writing OKAY (1.782sec), native exit0**, and one-shot script `STAGE_D_P7_FLASH_ACK_VERIFIED_SUCCESS`. AVB footer warning nonfatal. Independent read-only Surface evidence files `captures/MZ600-V064-PERSISTENT-P7-STAGED-ONESHOT-CMD-20261026.log` and `...-fastboot.txt` confirmed recorded exit0 and Sending/Writing OKAY. Stage-D p7 installed image SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`, 6,645,760B. No other partition targeted. **One subsequent NORMAL `fastboot reboot` (not temporary fastboot boot)** resulted in Surface fastboot disappearing and COM9 appearing. USB real tty `Debian GNU/Linux 12 xoom-mz600 ttyGS0`; existing local private login workflow authenticated `xoom`. **`uname -r=7.0.0-next-20260422+`; `/etc/debian_version=12.15`; `findmnt /` = `/dev/mmcblk0p8 ext4 /`.** First **PERSISTENT/internal Debian eMMC boot** proven after normal restart. P8 fstab stable ext4 `UUID=c2fb0167-7143-4186-b284-c86d6c09ea64`. Original OEM p7 and TWRP p6 backups preserved on Surface; SD Stage-B rescue image remains on Surface/microSD, but **p7 now holds Stage-D internal-root image**, no longer Stage-B rescue by default.
