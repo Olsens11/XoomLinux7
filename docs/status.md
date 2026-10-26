@@ -1,5 +1,12 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 ~04:08 EDT — STAGE-D TEMP BOOT: INTERNAL P8 DEBIAN 12.15 PHYSICALLY RUNNING!
+
+**MAJOR VERIFIED MILESTONE:** On correct unlocked replacement MZ600 fastboot serial `170061c243805617`, exact SHA-gated Stage-D `root=/dev/mmcblk0p8` image **SHA256 fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8** loaded via `fastboot boot` TEMP only. USB COM9 Debian 12 login arrived, Surface private login probe entered xoom shell, **`findmnt /` = `/dev/mmcblk0p8 ext4 /` mounted rw**, `uname -r 7.0.0-next-20260422+`, Debian 12.15, p8 BigPart 118784/2097152 sectors. **Internal Debian root boots properly!** No permanent p7 flash or p8/GPT changes this test; p7 still proven SD-root rescue.
+
+**PARTUUID forensic issue:** Old private UUID used in Stage-C matches NONE of current kernel-reported p1–p10 GPT partition IDs; installed internal p8 `/etc/fstab` root GUID mismatches currently live p8. Saved current live p8 GUID privately Surface, no raw GUID in Git. Prepared Stage-E offline image based on actual live p8 PARTUUID, **SHA256 c91d7f40d90df5bcb058fee6f843c64b46d02190b74eee36186ba3d9b4c3c63d**, size 6,645,760B, **NOT booted or flashed**. Need owner local `sudo -s` in internal Debian to back up & fix copied p8 fstab, then TEMP Stage-E fastboot test; permanent p7 stays SD for now. Wi-Fi/modules ABI and systemctl bus still need work. [Full newest physical checkpoint](checkpoints/MZ600_V064_STAGE_D_INTERNAL_P8_DEVNODE_BOOT_PHYSICAL_PASS_2026-10-26.md).
+
+
 ## 2026-10-26 — Photo pinpoints Stage-C at kernel root PARTUUID wait
 
 Owner-provided photograph shows relocated GPT and BigPart **fully enumerate p1..p10 and 1GiB p8**, but kernel prints **`Waiting for root device PARTUUID=<private p8 GUID>...`** at ~1.875 sec, continues later unrelated messages through ~73 sec, never mounts internal root. **This is an early kernel root-device lookup problem, not a systemd or module-load failure.** Cause of PARTUUID mismatch remains unknown. **Stage-C temp fastboot boot only** had been used, no persistent flash; COM9 present but unresponsive, p7 Stage-B persistent Debian SD rescue remains intact. Offline SHA-pinned Stage-D diagnostic image uses direct `root=/dev/mmcblk0p8`. Owner's repaired Power/Volume controls can manually enter fastboot; next **temporary** Stage-D boot, then inspect resulting framebuffer/console and recover known-good p7 SD root if necessary. [Photo evidence and procedure](checkpoints/MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md).
