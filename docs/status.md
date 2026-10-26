@@ -1,5 +1,9 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — NEXT-CHAT HOST RESUMPTION PASS; Xoom gzip transfer still blocked by COM9
+
+The [new resumption checkpoint](checkpoints/MZ600_V064_NEXTCHAT_SURFACE_REVALIDATION_SAFE_GZIP_COM9_STILL_HELD_2026-10-26.md) physically rehashes the Surface safe gzip (2,798,775B, SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409), the original strict Python uploader and CMD launcher. WSL repo tree clean at 2586918, validator 501 entries/0 errors before this documentation update. COM9 remains occupied by owner's terminal; gzip-specific success JSON absent. No new tablet commands, module install, radio test or p7/GPT writes. Owner must release COM9 with Ctrl+] without reboot; then launch exact existing verified gzip-only RAM uploader and demand on-device SHA before installation.
+
 ## 2026-10-26 — CURRENT MASTER HANDOFF FOR NEXT CHAT
 
 [Read the full continuity/next-chat handoff](handoffs/MZ600_LINUX7_FULL_TRANSITION_HANDOFF_2026-10-26.md) before any further hardware work. The persistent Stage-D Debian p7/p8 installation remains physically verified. Latest module status: 114 ABI-matched modules built and offline verified; original xz archive transported to Xoom RAM and SHA checked; extraction aborted because Debian lacks xz before target module directory was moved; SAFE no-symlink gzip on Surface verified (2,798,775B, SHA256 5e051de2a1cf9875414886966a1ff00cf3ec5ba038b0688e7f7750ea2594a409). Dedicated safe gzip uploader has NOT transferred to Xoom yet because existing console occupied COM9. No matching-module installation or Wi-Fi activation. Inspect hidden /lib/modules/.stage-v064-XXXXXXXX leftover before any cleanup. Next physical action: user Ctrl+] to release COM9; SHA-verified RAM-only gzip transfer; guarded atomic modules install and depmod/dry-run. See detailed handoff for precise device IDs, backups, tools, failure distinctions and recovery.
