@@ -71,3 +71,14 @@ This repair was a **Debian packaging/runtime** change only. It does NOT modify `
 Next controlled stage: inspect `/usr/local/libexec/xoom-check-factory-wlan-mac` and service dependency semantics read-only; prepare bounded WLAN driver start **with ordered WCC->brcmfmac->brcmutil cleanup, explicit COM9/watchdog/power recovery plan**, respecting factory MAC and signed regulatory limits. User may still be offsite; defer any uncontrolled radio restart, RF scan, regulatory override or reboot. Normal systemd D-Bus is now available for subsequent standard userspace testing.
 
 **PHYSICAL ACCEPTANCE:** OFFICIAL DEBIAN DBUS6 OFFLINE INSTALL 6/6, SYSTEM DBUS SOCKET AND DAEMON ACTIVE, ACTUAL SYSTEM BUS RPC PASS; NO WIFI/BT LIVE TEST THIS STAGE.
+
+## Additional physical service-lifecycle source audit — do not blindly restart WLAN
+
+After the successful D-Bus RPC and read-only poststate audit, COM9 was used to inspect the **actual** installed `/usr/local/libexec/xoom-check-factory-wlan-mac`, `systemctl cat mz600-wlan.service`, and `modprobe -n -v brcmfmac-wcc` (dry-run only):
+
+- The startup script rejects unreadable/invalid length/multicast/all-zero/unprogrammed Motorola fallback MAC, silently derives the six-byte original bootloader identity without printing the real MAC, and then executes `modprobe brcmfmac-wcc` followed by `modprobe brcmfmac`.
+- Exact-version `modprobe -n -v brcmfmac-wcc` prints dependency loads for `brcmutil.ko`, `brcmfmac.ko`, then `brcmfmac-wcc.ko`. **The module stack remains unloaded**; this command was a dry-run.
+- The service is `Type=oneshot`, `RemainAfterExit=yes`, with **no `ExecStop`**, no bounded wait/USB watchdog/paired cleanup. **`systemctl stop mz600-wlan.service` alone is NOT proven to unload any Broadcom modules or power-cycle the shared chip.** Do not use it as the reversible test plan.
+- A future explicitly bounded hardware test must maintain independent recovery and stop handlers to unload WCC first, `brcmfmac` second, `brcmutil` third, and **must not** claim full shared PMU power-off from unloaded modules alone. Keep MZ600 chip-controller U4/I7/U0/U2/LPO facts in the [whole-chip integration ledger](../research/MZ600_BCM4329_LINUX7_WHOLE_CHIP_PATCH_INTEGRATION_LEDGER_2026-10-26.md).
+
+Result is **service source audit**, not a successful live Wi-Fi restart. Avoid unattended restart while the owner is offsite and red-LED/PMIC recovery is unproven.
