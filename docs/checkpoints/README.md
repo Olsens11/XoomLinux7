@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST 2026-10-26 — COMPLETE:** [Permanent Stage-D Debian 12.15 internal eMMC boot NORMAL restart PASS and actual p7 6,645,760-byte image readback SHA256 **exactly matches** `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`; full 8MiB p7 SHA256 `901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c`; `/dev/mmcblk0p8 ext4 /` physically verified. **NO p7 SHA readback pending.**](MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md).
+
+
 > **LATEST 2026-10-26:** [Owner ran native one-shot CMD and flashed p7 Stage-D: fastboot Sending+Writing OKAY native exit0; normal reboot (NOT fastboot boot) reached Debian 12.15 USB login with internal `/dev/mmcblk0p8 ext4 /`, **persistent internal root BOOT PASS**; postflash p7 raw SHA readback pending owner sudo](MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md).
 
 
