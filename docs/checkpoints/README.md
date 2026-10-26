@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST 2026-10-26:** [Internal Debian p8 `/etc/fstab` root PARTUUID repaired to **live kernel-reported p8 GPT GUID**, exact saved backup + unchanged-other-lines proof and original permissions preserved. Stage-D p8 boot still running; Stage-E corrected-GUID TEMP boot image prepared, NOT BOOTED or FLASHED](MZ600_V064_STAGE_E_FSTAB_LIVE_P8_GUID_CORRECTED_2026-10-26.md).
+
+
 > **NEWEST 2026-10-26 Stage-D BREAKTHROUGH:** [Native Debian 12.15 **PHYSICALLY BOOTS FROM INTERNAL p8** with `root=/dev/mmcblk0p8`, USB login & `findmnt /` PASS. Earlier PARTUUID saved was wrong vs ALL current kernel partition GUIDs; current installed fstab mismatches p8. Correct live-GUID Stage-E image staged OFFLINE, no flash](MZ600_V064_STAGE_D_INTERNAL_P8_DEVNODE_BOOT_PHYSICAL_PASS_2026-10-26.md).
 
 
