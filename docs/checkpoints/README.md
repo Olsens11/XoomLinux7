@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+**LATEST PHYSICAL (20:57 EDT):** [MZ600 Linux7 v064 Classic BigPart RAM temporary boot, USB PONG and exact kernel virtual p8 1GiB/p9 512MiB/p10 28,929.5MiB PASS](MZ600_V064_CLASSIC_BIGPART_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md). Current device is v064 RAM-only, not TWRP. No block writes or internal Debian install.
+
+
 > **NEWEST PHYSICAL (Oct25 20:47 EDT):** [Verified OEM relocated GPT at LBA 62,513,151 with 64-bit ARM O_RDONLY probe while in TWRP, original partition geometry intact](MZ600_BIGPART_TWRP_PHYSICAL_GPT_LLSEEK_PROOF_2026-10-25.md). Device presently in **TWRP 3.1.1-0 ADB root**, not v06.3 Linux. BigPart read-only kernel stage-A is being compiled offline; no partition formatted or flashed.
 
 
