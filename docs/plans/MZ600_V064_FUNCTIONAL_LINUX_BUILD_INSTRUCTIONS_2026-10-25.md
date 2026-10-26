@@ -1,5 +1,8 @@
 # v06.4 (v064) — executable next-conversation build instructions: Wi-Fi scan, real terminal, Bluetooth keyboard
 
+> **NEW storage-path expansion (2026-10-25 evening EDT):** User permits an internal eMMC installation replacing Android on the replacement MZ600, and optional BigPart if needed. The 256MiB factory p8 cannot hold Debian, but existing p10 userdata has ~29.34GiB and is the preferred future normal ext4 root **without repartitioning**. See [new internal root and safety implementation plan](MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). Earlier no-eMMC/no-SD RAM-only restrictions in this pre-existing plan describe the *proven baseline* and still apply to the current v06.3 image; they do not prohibit the separately gated new user-approved architecture. **Do not execute p10/p7 writes until Linux7 partition mapping, full userdata backup and independent recovery have passed.** v06.4 still must pass standard iw scan, real on-screen terminal and Motorola keyboard typing. No v06.4 image or internal installation exists yet.
+
+
 **Specification created 2026-10-25. Status: PLAN ONLY; no v06.4 image has been built, transferred or physically booted.** This document is the next-session implementation contract. Work from the physically qualified **v06.3** Linux 7 RAM-boot image and complete handoff; do not replay the old unsuccessful BCM4329 SDIO F2 branch. User explicitly expects functional software now, not yet another firmware-only or diagnostic-display-only version.
 
 ## 0. Resume precisely and safely
