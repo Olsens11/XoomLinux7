@@ -1,5 +1,9 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-25 late evening — v064 stage-B BigPart-aware real Debian microSD installer BOOT IMAGE BUILT OFFLINE
+
+Host-only successful separate build reused previously physically successful Debian12 SD-root boot header/private PARTUUID/external gzip ramdisk with stage-A physical-PASS BigPart kernel, without embedded diagnostic /init. New image 6,645,760B SHA256 b9667187ffe0ff74a6d0f801f300a78012d8242c2e45e34bd35e39c59fc657ba, independently checked on Desktop and Surface. [New offline checkpoint](checkpoints/MZ600_V064_BIGPART_DEBIAN_MICROSD_INSTALLER_STAGE_B_OFFLINE_2026-10-25.md). **Not booted or installed.** Current DUT still v064 stage-A RAM-only Linux with BigPart p8 1GiB PONG PHYSICAL PASS, factory Android/TWRP storage unchanged. Previously verified 32GB Debian microSD is physically absent; needs user to reinsert it before normal Debian installer boot. No block writes/format/flash and no new radio activity.
+
 ## 2026-10-25 20:57 EDT — v064 BigPart physical USB and geometry PASS, CURRENT running Linux7 Stage A
 
 Replacement MZ600 passed temporary fastboot boot of v064 BigPart diagnostic SHA256 626e33972bff4bcb6d4bfad895397b7ff28343a781322fad68cb96836ed94cf6, 6,561,792B; USB COM9 PONG PASS, actual /proc/partitions p8 system 1GiB, p9 cache 512MiB, p10 userdata 28,929.5MiB, p1-p7 unchanged. [Physical checkpoint](checkpoints/MZ600_V064_CLASSIC_BIGPART_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md). No eMMC writes, flash, format, Wi-Fi or Bluetooth tests. v063 remains last full radio lifecycle test. Next integrate normal Debian microSD-root console with proven BigPart kernel to safely deploy 768MiB root to new p8; stock TWRP cannot format enlarged p8. Real terminal/iw scan/BT keyboard not yet delivered.
