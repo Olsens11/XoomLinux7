@@ -1,5 +1,10 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 PERSISTENT INTERNAL ROOT BOOT PHYSICAL PASS — p7 Stage-D flashed, normal Debian login on p8
+
+Owner executed native one-shot Surface CMD with SHA256 verified original p7/TWRP p6 backups, Stage-B SD rescue image and Stage-D image, and correct unlocked MZ600 serial. Actual `fastboot flash boot Stage-D` resulted **Sending OKAY, Writing OKAY, native exit0**, recorded in host flash log. Normal `fastboot reboot` (NOT temporary boot) produced Debian USB COM9 login; private xoom login gave Linux 7 `7.0.0-next-20260422+`, Debian **12.15**, and **`findmnt /` = `/dev/mmcblk0p8 ext4 /`**: internal eMMC root, **PERSISTENT boot proven**. Surface backup images preserved, p6/GPT/p8 not touched in flash; p7 no longer SD Stage-B, now persistent Stage-D. **Still outstanding:** authenticated root `sudo -s` via owner locally on Surface so the assistant can do read-only postflash p7 SHA prefix/full hash. No root credential provided in chat; postflash raw p7 hash NOT verified yet. WiFi/modules ABI and systemctl bus separate. [Detailed physical milestone](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md).
+
+
 ## 2026-10-26 current — Fastboot connected, Stage-D flash paused without write
 
 Surface read-only fastboot identifies experimental replacement MZ600 `170061c243805617` and staged Stage-D script SHA passed. Surface's restrictive local PowerShell script execution policy prevented the script from running, while other remote execution was unavailable. No flash log exists; **no permanent boot flash or reboot occurred**. The user remains at fastboot, and p7 remains the previously verified Stage-B SD-root boot. Keep Stage-D candidate `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8` backed up, and do not claim persistent internal boot completed. See [updated checkpoint](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md).
