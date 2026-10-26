@@ -1,5 +1,9 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-26 — definitive p7 readback (supersedes flash ambiguity)
+
+Authenticated Debian SD-root console read-only SHA256 of the complete internal p7 boot (8MiB) returned `4da4c9f1486374bb66f31c96389cd1ee3067a447e8a72aea33b2fc24ac3985e3`, EXACTLY the same SHA256 as the backed-up factory Android p7. The 6,645,760-byte p7 prefix returned `e560dea72ffd24dfcc38e9c89bddbb57bd210b0300c68bd76b46a07332d6f873`, different from Stage-B SD-root boot image. The p7 first eight bytes are ASCII `ANDROID!`. The earlier fastboot PowerShell error DID NOT change internal p7. Full physical proof captured on Surface at `captures/MZ600-P7-READONLY-SHA256-PROOF-20261026.txt` (SHA256 `59c83d3350978786193808393f1da901323e86d347f1ca645564d3900386a0f5`). All work on the tablet in this stage was read-only. Current Xoom mode: authenticated Debian 12 SD-root via temporary Stage-B kernel, BigPart p8 remains unmounted/unmodified. Before any new p7 write, use corrected fastboot wrapper capturing native stderr warning and exit status separately, then verify physical p7 readback.
+
 ## 2026-10-26 02:26 EDT — CURRENT: LINUX→FASTBOOT REBOOT DID NOT SELECT FASTBOOT; INTERRUPTED P7 BOOT FLASH, READBACK REQUIRED
 
 **READ NEWEST [RESCUE AND FLASH AMBIGUITY CHECKPOINT](../checkpoints/MZ600_LINUX7_RESCUE_BOOTLOADER_AND_P7_FLASH_AMBIGUITY_2026-10-26.md) BEFORE ANY NEXT ACTION.** User successfully privately authenticated Debian sudo and became root, USB console disconnected; root session initially confirmed. Stage-B kernel PMC scratch reboot via verified 664-byte freestanding ARM EABI `reboot(2)` RESTART2("bootloader") utility returned to original Android, **NOT fastboot**. This route is NOT verified independent rescue; do NOT trust it. Android later recovered ADB fully with 100% battery.
