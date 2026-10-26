@@ -1,5 +1,15 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 20:57 EDT — NEWEST: Linux7 Classic BigPart physical PASS, v064 stage-A RAM boot CURRENT
+
+Live replacement MZ600 is now running hash-verified v064 Classic BigPart stage-A RAM-only Linux (not TWRP). One guarded fastboot boot passed; Surface COM9 PONG passed after one transient serial error. **Actual physical /proc/partitions:** p8 system 1,048,576 KiB (1GiB), p9 cache 524,288 KiB (512MiB), p10 userdata 29,623,808 KiB (28,929.5MiB); protected p1-p7 unchanged. Three acceptance flags TRUE. This is original Schischu BigPart's in-memory virtual mapping physically proven on the exact MZ600. No GPT rewrite, format, block write, flash, mounting, Wi-Fi activation or BT activation.
+
+**Immutable new image:** 6,561,792 bytes, SHA256 626e33972bff4bcb6d4bfad895397b7ff28343a781322fad68cb96836ed94cf6. Image in Desktop artifacts-embedded-v064-bigpart-stageA and Surface downloads; builder scripts/experiments/stage-v064-bigpart-gpt-readonly-20261025.py. v063 old image hash 07950963496de68cf53b7d0218ed71450252450846768f065b0f36a37cb6743e unchanged. Privately logged on Surface MZ600-V064-BIGPART-STAGEA-TEMPBOOT-PRIVATE-20261025.log. See [new PHYSICAL checkpoint](../checkpoints/MZ600_V064_CLASSIC_BIGPART_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md).
+
+**Next:** 768MiB Debian ARMhf ext4 image SHA256 0aafdddccf58c5259007f272fb7878c417006629f5cb678c6d5e0f361ef8376e fits enlarged p8. But stage-A diagnostic has no shell/upload installer. Stock TWRP 3.1.1-0 still sees p8=256MiB: DO NOT use stock recovery to format/write BigPart system! Integrate BigPart Linux7 kernel into the previously proven normal Debian 12.15 microSD-root/USB-console runtime, obtain standard shell/verified BigPart p8 device and only then install ext4 root to p8 with write/readback verification. Removable SD absent in current run. No actual internal Debian install or Wi-Fi scan/keyboard pairing yet. Original p7 and p6 retained.
+
+---
+
 ## 2026-10-25 20:47 EDT — LIVE TWRP ROOT, RELOCATED GPT PHYSICALLY PROVED, v06.4 BIGPART STAGE A SOURCE BUILD IN PROGRESS
 
 **LATEST OPERATIONAL TRUTH (supersedes 19:25 v06.3 live claim below):** Authorized replacement MZ600 was read-only checked in v06.3 USB COM9 (PING/PONG PASS, both radio module stacks unloaded), then rebooted via the existing two-stage armed+confirmed USB REBOOT. Exact stock Android Stingray boot completion passed, then verified-device ADB rebooted to **TWRP 3.1.1-0 root ADB**. TWRP is the **current live device environment**, not v06.3 Linux. Its full 62,521,344-sector internal eMMC geometry and **factory p8=256MiB, p9=169MiB, p10=30040.5MiB** were reconfirmed. No eMMC formatting/flash/partition writes occurred.
