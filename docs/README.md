@@ -1,5 +1,8 @@
 # Documentation router
 
+> **LATEST 2026-10-26:** [Persistent internal Debian achieved: native CMD Stage-D flash boot p7 passed and normal reboot started Debian 12.15 from eMMC `/dev/mmcblk0p8 ext4 /`](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FLASH_PREFLIGHT_STAGED_2026-10-26.md). Postflash p7 raw SHA verification awaits owner local sudo; microSD Stage-B image and OEM/TWRP backups retained separately.
+
+
 > **LATEST 2026-10-26:** [Stage-D repeat temporary fastboot boot PASS: Debian 12.15 runs from internal p8, but the kernel-reported p8 GPT PARTUUID differs from previous Stage-D and failed Stage-E image. Internal root fstab now stale again; stable ext4 UUID available. No persistent flash](checkpoints/MZ600_V064_STAGE_D_RETEST_P8_GPT_PARTUUID_CHANGES_ACROSS_BOOTS_2026-10-26.md).
 
 
