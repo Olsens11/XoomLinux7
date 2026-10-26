@@ -1,5 +1,8 @@
 # Documentation router
 
+> **LATEST 2026-10-26:** [Real Debian 12.15 microSD-root successfully boots with Linux 7 Classic BigPart 1GiB p8 and guarded installer passes complete read-only preflight](checkpoints/MZ600_V064_BIGPART_DEBIAN_SDRoot_PHYSICAL_PASS_INSTALL_PREFLIGHT_2026-10-26.md). Current live device stage-B Debian on SD, no partition/boot flash yet. Stage C p8-root boot prepared offline but NOT booted. Next: secure owner sudo in USB console and validate recovery independent of Android before erasing p8.
+
+
 **LATEST offline candidate:** [BigPart-aware Debian microSD-root stage-B boot image hash-verified across Desktop and Surface](checkpoints/MZ600_V064_BIGPART_DEBIAN_MICROSD_INSTALLER_STAGE_B_OFFLINE_2026-10-25.md). Needs reinserted same 32GB installed Debian microSD for physical normal shell test; no format or flash.
 
 
