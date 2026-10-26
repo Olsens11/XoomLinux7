@@ -30,3 +30,25 @@ STAGE_E_FASTBOOT_BOOT_EXIT=0
 - Next engineering investigation: inspect per-boot p8 PARTUUID under known-good Stage-D and p8 GPT metadata, check whether GUID actually changes after cold/warm boots; or use small kernel instrumentation around early `devt_from_partuuid` / BigPart metadata to print lookup result and registered p8 UUID (without leaking exact private GUID publicly). Compare `root=PARTLABEL=system` diagnostic if useful. Avoid asserting cause without data.
 - Safe practical fallback for eventual internal-root default: proven **`root=/dev/mmcblk0p8`** Stage-D could be a stable boot candidate with p7 backup, but it is currently only TEMP-boot validated (no ordinary cold persistent p7 boot yet). Need explicit user approval and rollback plan before overwriting p7. Must continue addressing module uname+ vs vermagic mismatch, Wi-Fi, systemd bus as separate tasks.
 
+
+## Follow-up photograph physically confirms early kernel PARTUUID wait (2026-10-26)
+
+The owner supplied a photograph directly in this conversation: `PXL_20261026_082627686.jpg`. This replaces the prior open question about what the Stage-E framebuffer showed. The screen **conclusively shows** the Stage-E Linux7 kernel does not resolve the requested `root=PARTUUID=<Stage-E true-prior-live p8 GPT GUID>`. Relevant visible lines (do not publish raw p8 GUID):
+
+```text
+[0.897294] mmcblk0: mmc0:0001 MMC32G 29.8 GiB
+[0.904453] MZ600 BigPart: probing relocated OEM GPT at sector 62513151
+[0.908727] Primary GPT is invalid, using alternate GPT.
+[0.908886] MZ600 BigPart: validated exact factory 10-partition GPT; virtual
+           system 1GiB, cache 512MiB, userdata 28929.5MiB
+[0.909115] mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10
+[1.008262] Waiting for root device PARTUUID=<Stage-E GPT GUID>...
+[10.725787] platform sound-hdmi: deferred probe pending: asoc-simple-card: parse error
+[31.213907] vdd_led: disabling
+[62.367013] random: crng init done
+```
+
+**Interpretation:** the MMC controller, eMMC enumeration, relocated OEM GPT probing, validated BigPart layout and all ten block partition nodes are reported before the kernel begins waiting for the root PARTUUID. No Debian userspace startup, mount, or login appears. The later HDMI/clock and random logs do not explain this failure. Stage-C with an older (stale/wrong) full GPT p8 PARTUUID showed the identical failure, whereas Stage-D, unchanged kernel+ramdisk but `root=/dev/mmcblk0p8`, physically booted Debian 12.15 and confirmed internal `/dev/mmcblk0p8 ext4 /`. The newer corrected Stage-E GUID came directly from the preceding working Stage-D boot, so its failure **cannot be ascribed solely to the old capture mistake**. It remains possible that the UUID itself varies across boots or that `block/early-lookup.c`'s UUID search cannot match BigPart p8 metadata.
+
+**Next test when the user uses repaired keys to enter fastboot:** temporarily `fastboot boot` the already proven Stage-D devnode-root image SHA256 `fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8`, leaving p7 unchanged; in a running internal-root Debian shell compare p8 `/sys/class/block/mmcblk0p8/uevent` PARTUUID against the saved Stage-E GPT GUID **without printing it to chat or public docs**. Also verify `findmnt /`, exact BigPart p8 LBA/size, and whether UUID changed between physical boots. If UUID is unchanged yet Stage-E hangs, prioritize scoped kernel instrumentation of `devt_from_partuuid` / partition metadata registration to establish the exact mechanism. No more p8 formatting or permanent p7 flash is indicated.
+
