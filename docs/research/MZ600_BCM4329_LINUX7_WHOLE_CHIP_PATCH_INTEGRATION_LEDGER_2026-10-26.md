@@ -1,3 +1,8 @@
+
+## 2026-10-26: OEM US/69 firmware-bootstrap field-level test physically negative
+
+Owner executed the [country/rev original-OEM NVRAM overlay A/B](../checkpoints/MZ600_V064_OEM_US69_BOOTSTRAP_NVRAM_A_B_PHY5GHZ_UNCHANGED_OWNER_PHYSICAL_2026-10-26.md) over COM9, with exact-hash 1569B Motorola calibration-minus-bootstrap-MAC, original `ccode=US` and `regrev=69` temporarily supplied before generic brcmfmac 4.220.48 initialization. Result **bandlist still 1x2G; chanspecs still 11x2G+0x5G**. Successful driver startup and verified cleanup. This means the two missing NVRAM regulatory lines **are not sufficient on their own** to restore 5GHz under current firmware/host/init. Effective on-chip country iovar remains unmeasured. No field should be forced into firmware country/power policy. Do not tie this negative radio-band result to the unintegrated whole-chip U4/I7/U0/U2/LPO provider or OEM six-field SDIO quirk without evidence. Next tests: read-only effective firmware country/rev iovar; strictly version-matched OEM HRI39 firmware/NVRAM vs modern generic differences, RAM-only if safe, respect per-unit MAC/calibration and independent multi-device qualification.
+
 # MZ600 Linux 7 BCM4329 — whole-chip kernel patch integration ledger
 
 **Updated:** 2026-10-26, following successful internal-p8 installation of all 114 ABI-exact Linux `7.0.0-next-20260422+` modules and read-only USB diagnostics. **Explicit user priority:** carry each material discovery from ordinary Debian bring-up into the longer-term **whole BCM4329 combination-chip** upstream-compatible kernel design. This file is the current integration tracker, **not** a claim that the whole-chip provider has been built, deployed or tested.
