@@ -1,5 +1,7 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **2026-10-26 POST-INSTALL PHYSICAL READ-ONLY:** [SDIO 3 functions, onboard Wi-Fi firmware and six-byte factory FDT MAC verified; PID1 systemd degraded, WLAN unit previously failed missing WCC, WPA failed missing system D-Bus socket; no radio activation](MZ600_V064_POST_MODULE_INSTALL_READONLY_SDIO_WIFI_SYSTEMD_FORENSICS_2026-10-26.md).
+
 > **CURRENT 2026-10-26 PHYSICAL INSTALL PASS:** [114 ABI-matched `.ko` modules safely extracted to new versioned Debian p8 module tree; atomic move, depmod and `modprobe -n` dry-runs PASS; independent Xoom re-count verifies 114 and legacy tree intact](MZ600_V064_114_ABI_MODULES_INTERNAL_P8_ATOMIC_INSTALL_PHYSICAL_PASS_2026-10-26.md). No radio load, scan or association yet; earlier install-pending statements are historical.
 
 > **Latest remote attempt, 2026-10-26:** [Unattended installation not executed: COM9 held by existing owner console, second serial client rejected, unmanaged console cannot accept Desktop Commander input](MZ600_V064_UNATTENDED_INSTALL_COM9_CONSOLE_EXCLUSIVE_2026-10-26.md). No new tablet writes; prior SAFE gzip RAM receipt still PASS.
