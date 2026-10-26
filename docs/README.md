@@ -1,5 +1,8 @@
 # Documentation router
 
+> **LATEST 2026-10-26:** [Stage-D repeat temporary fastboot boot PASS: Debian 12.15 runs from internal p8, but the kernel-reported p8 GPT PARTUUID differs from previous Stage-D and failed Stage-E image. Internal root fstab now stale again; stable ext4 UUID available. No persistent flash](checkpoints/MZ600_V064_STAGE_D_RETEST_P8_GPT_PARTUUID_CHANGES_ACROSS_BOOTS_2026-10-26.md).
+
+
 > **2026-10-26 latest diagnostic:** [Stage-E corrected live p8 GPT PARTUUID temporary boot fails to reach Debian login (COM9 timeout); exact root-identifier problem unresolved, no persistent flash](checkpoints/MZ600_V064_STAGE_E_LIVE_GUID_TEMPBOOT_UNRESPONSIVE_2026-10-26.md). Stage-D direct-device internal p8 Debian boot proven, persistent Stage-B microSD rescue untouched. Next obtain stalled framebuffer evidence and recover normal SD boot.
 
 
