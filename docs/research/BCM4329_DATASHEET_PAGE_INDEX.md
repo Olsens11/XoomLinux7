@@ -160,6 +160,11 @@ The exact uploaded datasheet remains the specification authority. Refer to figur
 | 148 | L | Ordering continuation | No new startup requirement found |
 | 149 | L | Manufacturer contact/back matter | No functional requirement |
 
+
+### NEW 2026-10-26 navigation: verified hardware 5GHz, current Linux band-availability failure
+
+Owner confirms Android negotiated 5GHz on this exact Motorola Xoom. Later Linux7 p8 Debian `brcmfmac`+BCM4329/3 generic firmware scanned 2.4GHz successfully but `iw phy` advertised **no 5GHz band or channels**. This is a *firmware/NVRAM/driver band-discovery software question*, not a failure of the chip to support 5GHz RF. Use **pp42–46 (WLAN PHY/RF/calibration), pp106–115 (RF electrical; p110–111 5GHz receiver, p114 5GHz transmitter), pp47 and 62–63 (on-chip WLAN firmware and host/DHD control), pp64–70 and 132–134 (shared supply/clock/reset if proven relevant), pp79–84 (RF/PA pads/board binding)**. Indexed original document 149 pages and requirements matrix are unchanged. Follow pinned kernel `brcmf_setup_wiphy()` firmware `BRCMF_C_GET_BANDLIST` and `brcmf_construct_chaninfo()` firmware `chanspecs`, as discovered in [2026-10-26 physical 5GHz regression checkpoint](../checkpoints/MZ600_V064_5GHZ_BAND_NOT_ADVERTISED_PASSIVE_SCAN_BLOCKED_PHYSICAL_2026-10-26.md). **Do not simply force channels into cfg80211 or change country/regrev, RF power or MAC to make a scan work.** This index is navigation, not a full radio qualification test.
+
 ## Fast reference by subsystem
 
 - **Startup blocking path:** pp. **47–52**, **62–70**, **81–89**, **116–119**, **132–134**.
