@@ -1,5 +1,8 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
+> **LATEST PHYSICAL 2026-10-26 ~03:42 EDT:** [Stage-C internal p8 root temporary fastboot boot ACK, but USB COM9 never yielded Debian login (105 sec), write timeout; stage C NOT verified, p7 rescue unchanged](MZ600_V064_STAGE_C_INTERNAL_P8_TEMPBOOT_NO_LOGIN_2026-10-26.md). Need owner to reset and normal-boot from persistent p7 with SD inserted before diagnostics.
+
+
 > **2026-10-26 ~03:30 EDT — NEWEST INTERNAL INSTALL:** [Experimental MZ600 classic BigPart p8 ext4 1GiB now contains Debian 12.15; after controlled installer stops, manually completed p8 fstab/mountpoints, unmounted and **e2fsck -fn exit0**. Stage-C internal-root BOOT STILL PENDING; kernel modules uname/vermagic mismatch found](MZ600_V064_BIGPART_INTERNAL_DEBIAN_P8_FILESYSTEM_INSTALLED_FSCK_PASS_2026-10-26.md). Persistent p7 microSD Debian fallback validated unchanged.
 
 
