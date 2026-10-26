@@ -1,5 +1,8 @@
 # Documentation router
 
+**LATEST:** [Physical v064 original Xoom BigPart geometry PASS](checkpoints/MZ600_V064_CLASSIC_BIGPART_RAM_BOOT_PHYSICAL_PASS_2026-10-25.md), replacement MZ600 now runs temporary BigPart-aware Linux7; stock TWRP remains 256MiB system view. No persistent writes yet.
+
+
 > **NEW CURRENT LIVE PHYSICAL STATE (Oct25 20:47 EDT):** [Relocated OEM GPT physically verified from TWRP via 64-bit ARM read-only probe](checkpoints/MZ600_BIGPART_TWRP_PHYSICAL_GPT_LLSEEK_PROOF_2026-10-25.md). Current device is TWRP 3.1.1-0/root ADB, not v06.3 Linux. [Stage-A isolated BigPart kernel builder](../scripts/experiments/stage-v064-bigpart-gpt-readonly-20261025.py) running on Desktop. No BigPart partition writes.
 
 
