@@ -1,3 +1,11 @@
+## 2026-10-26 upstream patch hygiene — one logical, bisectable change per commit
+
+The owner explicitly confirmed the **Linux kernel norm: one logical change per patch**, not one file or one function per patch. A patch may modify several files when they together implement one independently understandable, testable change. Conversely, do not mix unrelated firmware compatibility, Motorola board regulators, BT power sequencing, Debian services, or logging into a single change. **Every intermediate commit must compile and remain operational (bisectable).**
+
+For **`wifi: brcmfmac` legacy BCM4329 firmware compatibility**, use existing feature/quirk detection, not scattered hardcoded Xoom branches. Candidate independently coherent boundaries: (A) capability probing and error handling, without visible behavior change; (B) tightly bounded legacy firmware channel-list support with cfg80211/regulatory protections and modern-firmware regression tests; (C) a *complete* legacy scan request+results+completion+abort/timeout integration in a single bisectable commit or safely staged internal helper commits; (D) dedicated parser/lifecycle KUnit regression tests and documentation when these form meaningful reviewable units. Patch C must never expose a `.scan` path that can queue requests without eventual completion. Adjust split for maintainers' feedback rather than targeting an arbitrary number of commits.
+
+Do not send the physical lab diagnostic / v05 fallback as if it were a clean upstream patch: remove hardware-test printk instrumentation and correct `checkpatch.pl` failures, prove bounded parsing/no memory-corruption risks, exactly-once cfg80211 completion, regulatory compliance and multi-model behavior. Keep **whole-chip U4/I7/U0/U2/LPO / device-tree / MMC quirk** as separate logically scoped subsystem series with its own test gates; connect dependencies through a cover letter and correct base tree. Upstream base and `MAINTAINERS` routing must be refreshed at the time of submission, and genuine DCO `Signed-off-by` requires the human author's approval. **No upstream submission currently authorized.**
+
 
 ### G4 dual-band lab PHY support succeeded, scan and release gates remain OPEN/PENDING
 
