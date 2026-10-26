@@ -56,7 +56,7 @@ def main() -> None:
             elf_strings = subprocess.check_output(
                 ["readelf", "-p", ".modinfo", str(module)], text=True
             )
-            match = re.search(r"(?m)^\\s*\\[\\s*[0-9a-fA-F]+\\]\\s+vermagic=(.*)$",
+            match = re.search(r"(?m)^\s*\[\s*[0-9a-fA-F]+\]\s+vermagic=(.*)$",
                               elf_strings)
             if match:
                 release = match.group(1).strip()
