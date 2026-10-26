@@ -5,8 +5,8 @@ set -Eeuo pipefail
 export SYSTEMD_PAGER=cat PAGER=cat
 K='7.0.0-next-20260422+'
 FACTORY='/sys/firmware/devicetree/base/mmc@c8000200/wifi@1/local-mac-address'
-PHY='/run/mz600-v064-5ghz-phy-20261026-private.txt'
-RAW='/run/mz600-v064-5ghz-passive-scan-20261026-private.txt'
+PHY='/run/mz600-v064-5ghz-phy-discovered-20261026-private.txt'
+RAW='/run/mz600-v064-5ghz-passive-discovered-20261026-private.txt'
 STATE=INIT
 say() { printf '%s\n' "$*"; }
 cleanup() {
@@ -68,7 +68,11 @@ for n in $(seq 1 30); do
 done
 [[ -d /sys/class/net/wlan0 ]] || { say 'MZ600_5G_WLAN0_MISSING'; exit 2; }
 say 'MZ600_5G_WLAN0_PRESENT'
-iw phy phy0 info > "$PHY"
+# Linux ieee80211 PHY indices are dynamic across driver rebinds.
+PHY_ID="$(iw dev wlan0 info | awk '$1=="wiphy" {print $2;exit}')"
+[[ "$PHY_ID" =~ ^[0-9]+$ ]] || { say 'MZ600_5G_ACTIVE_PHY_ID_NOT_DETECTED'; exit 4; }
+say "MZ600_5G_DYNAMIC_WIPHY_INDEX=$PHY_ID"
+iw phy "phy$PHY_ID" info > "$PHY"
 say "MZ600_5G_PHY_PRIVATE_SHA256=$(sha256sum "$PHY" | awk '{print $1}')"
 say 'MZ600_5G_PHY_CHANNEL_QUERY_BEGIN'
 FREQS=''
