@@ -27,7 +27,9 @@ REL = Path("drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c")
 CFILE = SOURCE / REL
 MODULE_REL = Path("drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko")
 ORIGINAL_MODULE = OUTPUT / MODULE_REL
-WORK = BASE / "v064-5ghz-bandlist-diagnostic-20261026"
+# Kernel make M= builds .ko inside the source subdirectory even with O=.
+BUILT_MODULE = SOURCE / MODULE_REL
+WORK = BASE / "v064-5ghz-bandlist-diagnostic-v2-20261026"
 COMPILER = "/home/xoomdev/xoom-linux-rom/toolchains/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-linux-gnueabihf/bin/"
 READ_ELF = Path(COMPILER) / "arm-none-linux-gnueabihf-readelf"
 ABI = "7.0.0-next-20260422+"
@@ -142,6 +144,7 @@ def main() -> int:
         raise RuntimeError("one-shot output directory already exists; inspect prior result")
     original_source = CFILE.read_bytes()
     orig_module = ORIGINAL_MODULE.read_bytes()
+    preexisting_built = BUILT_MODULE.read_bytes() if BUILT_MODULE.exists() else None
     orig_text = original_source.decode("utf-8")
     revised = make_patch(orig_text)
     if "MZ600_5G_DIAG" in orig_text:
@@ -191,10 +194,12 @@ def main() -> int:
         rc = res.returncode
         if rc != 0:
             raise RuntimeError(f"build command exit={rc}, see private build.log")
-        patched_module = ORIGINAL_MODULE.read_bytes()
+        if not BUILT_MODULE.is_file():
+            raise RuntimeError("kernel M= build did not produce source-directory .ko")
+        patched_module = BUILT_MODULE.read_bytes()
         if sha(patched_module) == sha(orig_module):
             raise RuntimeError("new module unchanged versus original")
-        new_modinfo = shell([str(READ_ELF), "-p", ".modinfo", str(ORIGINAL_MODULE)],
+        new_modinfo = shell([str(READ_ELF), "-p", ".modinfo", str(BUILT_MODULE)],
                             capture_output=True).stdout
         if f"vermagic={ABI} SMP mod_unload modversions ARMv7" not in new_modinfo:
             raise RuntimeError("new module wrong ABI")
@@ -222,10 +227,18 @@ def main() -> int:
         # Restore canonical source and original build output in ALL cases.
         CFILE.write_bytes(original_source)
         ORIGINAL_MODULE.write_bytes(orig_module)
+        if preexisting_built is not None:
+            BUILT_MODULE.write_bytes(preexisting_built)
+        elif BUILT_MODULE.exists():
+            BUILT_MODULE.unlink()
         if CFILE.read_bytes() != original_source:
             raise RuntimeError("RESTORE_SOURCE_FAILED")
         if ORIGINAL_MODULE.read_bytes() != orig_module:
             raise RuntimeError("RESTORE_BASELINE_MODULE_FAILED")
+        if preexisting_built is not None and BUILT_MODULE.read_bytes() != preexisting_built:
+            raise RuntimeError("RESTORE_PREEXISTING_SOURCE_MODULE_FAILED")
+        if preexisting_built is None and BUILT_MODULE.exists():
+            raise RuntimeError("UNEXPECTED_STALE_BUILD_OUTPUT_MODULE")
         print("OFFLINE_SOURCE_AND_ORIGINAL_MODULE_RESTORED_VERIFIED", flush=True)
         print(f"BUILD_STATUS={rc}", flush=True)
 
