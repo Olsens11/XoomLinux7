@@ -46,6 +46,11 @@ For every physical test log: timestamp/time zone; private anonymized unit ID; mo
 
 Add a new checkpoint, update [whole-chip integration ledger](../research/MZ600_BCM4329_LINUX7_WHOLE_CHIP_PATCH_INTEGRATION_LEDGER_2026-10-26.md), current handoff, runtime env and status after each milestone. **Physical testing on other devices has not begun.**
 
+
+### Current installed Debian WLAN lifecycle caveat
+
+The actual MZ600 factory-MAC guarded `mz600-wlan.service` contains `ExecStart` with WCC then brcmfmac load, `RemainAfterExit=yes`, **no `ExecStop`**. A one-shot unit stop is **not** proof of modules unloaded or shared chip reset. Before G3 field tests, build an independently supervised **reversible WLAN start/stop diagnostic**, explicitly unload WCC→brcmfmac→brcmutil, preserve serial and the ability to recover from power-state hangs; test only with operator near device or a separately qualified recovery method. Continue to isolate changes to Debian service scripts from upstream kernel patches.
+
 ## Immediate development priority
 
 Continue current **MZ600** without touching verified p7/GPT: validate D-Bus daemon package deficiency and eventually restore signed Debian packages; conduct guarded module lifecycle test only after stable USB/recovery gate, then use **actual** Xoom live results to refine shared-chip kernel source. Start an independent hardware inventory worksheet for MZ602/MZ604 **before** proposing a universal DTS or regulator/pin configuration. Keep a comprehensible `patches/upstream/rfc/series` and change log of tested versus merely compiled patches.
