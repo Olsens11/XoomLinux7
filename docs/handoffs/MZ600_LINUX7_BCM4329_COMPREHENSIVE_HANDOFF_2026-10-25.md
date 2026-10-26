@@ -1,5 +1,12 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## Safety label correction completed on GitHub and actual Debian microSD
+
+Corrected the false-implication historical p8 installer read-only preflight label: `ALL_PROTECTED_P1_TO_P7_UNCHANGED=PASS` is replaced by accurate `PROTECTED_P1_TO_P7_PARTITION_GEOMETRY_PASS_NO_WRITES`. This label reports checked extents and no writes by this preflight; p7 itself has deliberately been replaced by Stage-B Linux7. The updated public source `scripts/experiments/mz600-bigpart-install-debian-from-sd-20261026.sh` and the physically updated file `/home/xoom/mz600-bigpart-install-debian-from-sd-20261026.sh` on removable SD have been independently verified to the new exact SHA256 **`d597e8b6c1cf7b83126d1db3bc82d726e26e8df61a12c87695da7b5d47a38e43`**. Prior hash `e265a0e8...` is OBSOLETE for current on-device script. Executed corrected **`--preflight` in persistent-booted Debian**: **PASS exit 0**; SD root 465916 KiB allocated, p8 internal 1GiB unmounted, intact geometry p1–p10, no formatting/transfer. New correct label printed.
+
+`sudo -n id` after persistent normal reboot returned exit code 1, confirming unprivileged `xoom` shell needs owner to type Debian sudo password locally again for post-flash p7 raw readback. No password was fetched, displayed or stored in project. Root-level readback remains PENDING. No eMMC write was performed by preflight or installer label correction (it updates an SD-card shell script only).
+
+
 > **2026-10-26 persistent normal-boot postcheck:** On live Debian microSD, guarded internal p8 installer **read-only** `--preflight` returned **exit 0**, BigPart internal p8 1GiB, target unmounted, SD Debian ext4 root, source allocated **465,916KiB**. No formatting was executed. Historical preflight line `ALL_PROTECTED_P1_TO_P7_UNCHANGED=PASS` checks the *partition extents and its own no-write behavior*, NOT contents: p7 was intentionally reflashed; correct misleading output before future destructive p8 installation. [Full checkpoint](../checkpoints/MZ600_V064_PERSISTENT_SD_DEBIAN_BOOT_PHYSICAL_PASS_2026-10-26.md).
 
 ## 2026-10-26 ~02:44 EDT — LATEST BREAKTHROUGH: PERSISTENT NORMAL BOOT OF LINUX7 DEBIAN SD ROOT PHYSICAL PASS
