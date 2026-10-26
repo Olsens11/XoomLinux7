@@ -1,5 +1,8 @@
 # Documentation router
 
+> **Latest 2026-10-26:** [ABI-exact 114 Linux7 Stage-D modules built and offline-verified, Surface archive SHA256 identical to Desktop; USB RAM staging awaits release of COM9 from the existing console](checkpoints/MZ600_V064_STAGE_D_ABI_MODULES_OFFLINE_QA_USB_UPLOAD_WAITING_COM9_2026-10-26.md). Persistent internal Debian remains byte-verified; no modules deployed yet.
+
+
 > **Latest 2026-10-26 — FULL VERIFIED INSTALLATION:** [Persistent internal Debian 12.15 boots normally on replacement MZ600, p7 flash confirmed byte-for-byte by physical 6,645,760B SHA and complete 8MiB SHA, running root is `/dev/mmcblk0p8 ext4 /`](checkpoints/MZ600_V064_STAGE_D_PERSISTENT_P7_FULL_PHYSICAL_SHA_VERIFIED_2026-10-26.md). All persistent-boot verification gates PASS; remaining Wi-Fi/modules and systemd work is separate.
 
 
