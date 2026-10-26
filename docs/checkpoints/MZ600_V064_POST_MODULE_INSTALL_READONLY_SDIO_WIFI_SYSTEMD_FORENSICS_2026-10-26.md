@@ -40,3 +40,20 @@ Actual COM9 command readback:
 5. Checkpoint each subsequent *physical* service change and userland validation; no repetition of proven installation steps.
 
 **Physical findings:** kernel module installation remains PASS; SDIO device and firmware files present; factory DT MAC exactly six bytes; systemd PID1 active but degraded; two failed services have distinct grounded causes; live WLAN/RF and system D-Bus not yet qualified.
+
+## Final independent read-only p7 and ext4 UUID integrity proof
+
+Following all module installation and passive diagnostics, a separate root COM9 on-Xoom **read-only raw partition checksum** returned:
+
+```text
+head -c 6645760 /dev/mmcblk0p7 | sha256sum
+fa28f9a9edfd4fd07031faf62de1216abda413e569ff933075ce0aa6ec4c70f8  -
+sha256sum /dev/mmcblk0p7
+901c79cfbeb646dad7f41d6de9d8605029d3fe082231ab7032cdba8cc7c0ff5c  /dev/mmcblk0p7
+blkid -s UUID -o value /dev/mmcblk0p8
+c2fb0167-7143-4186-b284-c86d6c09ea64
+grep -E ^UUID= /etc/fstab
+UUID=c2fb0167-7143-4186-b284-c86d6c09ea64 / ext4 errors=remount-ro 0 1
+```
+
+Both the 6,645,760-byte Stage-D image prefix and **full physical p7 8MiB SHA256 exactly match the pre-module-install permanent boot verification checkpoint**. The internal p8 ext4 UUID and fstab root selector are unchanged and mutually consistent. This is direct post-install hardware integrity evidence, not merely a lack of write commands. No reboot, filesystem repair, GPT edit or p7 write.
