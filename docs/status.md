@@ -1,3 +1,7 @@
+## 2026-10-26 — legacy BCM4329 scan upstream groundwork: BSS wire-version gap, 22/22 offline safety tests
+
+[New protocol and logically split upstream development plan](research/MZ600_BCM4329_LEGACY_SCAN_UPSTREAM_PROTOCOL_IMPLEMENTATION_2026-10-26.md) explicitly documents Froyo-era Broadcom source BSS version **108** vs pinned Linux 7 brcmfmac version **109**, plus a September 2026 newer-format (109–112) mailing-list patch **proposal** (not verified merged). Modern .scan *always* requests escan even when it uses parameter struct v1; original Motorola HRI39 FW 4.218.248.20 rejects escan, while its ioctl 217 returned 11+9 valid 2G/5G channels and physical lab v05 established wlan0 + 5GHz NO_IR wiphy. Legacy WLC_SCAN ioctl 50 / WLC_SCAN_RESULTS 51 and actual FW BSS results format remain untested on physical MZ600. [Host-only synthetic safety suite](../tools/forensics/test_bcm4329_legacy_scan_contract.py) **22/22 PASS** tests malformed version/length/count record envelopes and scan request exactly-once, timeout/abort/late-event ownership. They are NOT KUnit, NOT integrated C, NOT physical scan success. Maintain one-logical-change per patch, bisectable driver capability+parser+complete scan path; leave full-chip U4/I7/BT and OEM MMC six-field patch series separate. No live tablet change, no radio reactivation, no upstream submission.
+
 
 ## 2026-10-26 latest — original HRI39 firmware enables native 5GHz WLAN0 via lab legacy fallback; passive scan blocked by old escan API
 
