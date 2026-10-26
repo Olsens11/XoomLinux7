@@ -1,5 +1,9 @@
 # Verified project state — imported 2026-10-24
 
+## 2026-10-26 — 114 ABI-exact modules PHYSICALLY INSTALLED in p8 Debian; depmod PASS
+
+[Actual installation checkpoint](checkpoints/MZ600_V064_114_ABI_MODULES_INTERNAL_P8_ATOMIC_INSTALL_PHYSICAL_PASS_2026-10-26.md): owner permitted unattended COM9 work; authenticated UID0 Linux 7.0.0-next-20260422+ `/dev/mmcblk0p8 ext4`; SAFE 2798775-byte gzip on-Xoom SHA PASS. Empty prior xz staging preserved. One-shot SHA-pinned Bash installer extracted 114 .ko, zero symlinks/special, atomic move to `/lib/modules/7.0.0-next-20260422+`, `depmod -a` PASS and `modprobe -n -v` dry-run PASS. Sender native exit0, all six markers present; independent COM9 audit re-counted 114 files, metadata and legacy module directory. No `brcm` loaded; `wlan0` absent, expected before driver load. **Do not rebuild or reinstall.** p7 and GPT left unchanged. Next independent firmware/SDIO/regulatory and PID1/systemd diagnostics, followed by controlled Wi-Fi lifecycle.
+
 ## 2026-10-26 — unattended module install blocked by console exclusivity
 
 [Host-only access checkpoint](checkpoints/MZ600_V064_UNATTENDED_INSTALL_COM9_CONSOLE_EXCLUSIVE_2026-10-26.md): Surface still online and COM9 recognized, but owner-opened interactive Xoom USB console continues to hold the exclusive handle. Another serial open fails Windows Access Denied, and Desktop Commander cannot feed input to that unmanaged console. **No module install performed**, no boot or radio changes. Preserve the live session; next needs controlled normal console release or a genuine managed access method, then read-only device checks followed by guarded installer. Prior safe-gzip on-Xoom SHA PASS remains authoritative as of actual transfer.
