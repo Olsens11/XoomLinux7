@@ -3,6 +3,10 @@
 # Diagnostic checkpoint ledger — v01 through v014
 
 
+> **LATEST EARLY OEM BT/WLAN CODE 2026-10-26:** [Replaced earlier 42-check source coverage with 51/51 exact 2a65edc original Motorola Bluetooth RFKill+Wi-Fi+original ELF static gates PASS; BT initial BLOCK shares untyped U4 with WLAN, possible startup-order hazard; no observed runtime issue](MZ600_OEM_2A65EDC_BLUETOOTH_WLAN_SHARED_U4_51CHECK_SOURCE_AUDIT_2026-10-26.md). Exact earlier 42/42 remains valid intermediate proof; new [source auditor](../../tools/forensics/audit_mz600_oem_system_lifecycle.py) includes early BT pin, LPM and rfkill call graph. Whole-chip provider not deployed.
+
+
+
 > **2026-10-26 OEM SOURCE+SHIPPING ELF VERIFIED:** [Exact early MZ600 HRI39 2.6.36.3 Motorola board+Broadcom source, compiled startup power/carddetect branch, OEM six-cap workaround, matching SDMMC2 tap=6, DHD warm reset, early suspend — 42/42 SHA-pinned source+ELF checks PASS](MZ600_OEM_2A65EDC_CROSSLAYER_SOURCE_BINARY_CONDITIONAL_AUDIT_42_PASS_2026-10-26.md). [Reusable static audit tool](../../tools/forensics/audit_mz600_oem_system_lifecycle.py). Important: OEM generic WLAN_POWER_ON is NOT double power vote under CUSTOMER_HW2; matching-generation BT source still partial. No live hardware altered.
 
 
