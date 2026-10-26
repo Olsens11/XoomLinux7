@@ -93,4 +93,15 @@ class GateTruthTable(unittest.TestCase):
   self.assertFalse(v.full_off_is_proven(Observation(L,L,L,L)))
   self.assertFalse(v.full_off_is_proven(Observation(L,H,L,L,internal_regulators_confirmed_off=True)))
   self.assertTrue(v.full_off_is_proven(Observation(L,L,L,L,internal_regulators_confirmed_off=True)))
+ def test_oem_bt_initial_block_can_release_wlan_shared_u4_vote(self):
+  # Motorola 2a65edc board-stingray-bluetooth.c probes BT by blocking it;
+  # board-stingray.c uses a shared, UNtyped U4 count. This is an offline
+  # possible interleaving, never a claim it occurred on the original board.
+  count=1 # only WLAN acquired shared physical U4 vote
+  if count>0:count-=1 # OEM initial BT-block callback releases it
+  self.assertEqual(count,0) # WLAN vote accidentally consumed in this order
+  guarded=SharedVotes();guarded.acquire("wlan")
+  with self.assertRaises(ValueError):guarded.release("bluetooth")
+  self.assertEqual(guarded.motorola_shared_u4_plan(),(H,L))
+  self.assertEqual((guarded.wlan_users,guarded.bt_users),(1,0))
 if __name__=="__main__":unittest.main(verbosity=2)
