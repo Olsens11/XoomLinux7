@@ -1,5 +1,15 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 late evening — OFFLINE v064 STAGE B BIGPART-AWARE DEBIAN MICROSD INSTALLER BUILT (NOT PHYSICALLY BOOTED)
+
+Source/build advancement: Physically successful v064 BigPart stage-A RAM-only is CURRENT on replacement MZ600 (p8=1GiB, p9=512MiB, p10=28,929.5MiB; USB PONG). We built a separate v064 stage-B **real Debian SD-root** boot image by reproducing the previously PHYSICAL PASS Debian 12.15 microSD boot path with same unmodified private PARTUUID/root selector, original validated external CPIO ramdisk and new physical-PASS BigPart kernel/DTS (CONFIG_MOTOROLA_XOOM_BIGPART=y, empty built-in initramfs). The image was not booted.
+
+Stage B image: 6,645,760 bytes, SHA256 b9667187ffe0ff74a6d0f801f300a78012d8242c2e45e34bd35e39c59fc657ba. Proven earlier microSD boot SHA c84172c23e149bf8f215eb78284efeb46aa0a13090df4c159a7ab5d3c2a8cb8c. Root ext4 768MiB SHA 0aafdddccf58c5259007f272fb7878c417006629f5cb678c6d5e0f361ef8376e. No host/device source reset, no hardware commands in this stage. Independent SHA matched Desktop and Surface. New builder [stage-B SD-root image](../../scripts/experiments/build-v064-bigpart-debian-sdroot-stageB-20261025.py). [Full checkpoint](../checkpoints/MZ600_V064_BIGPART_DEBIAN_MICROSD_INSTALLER_STAGE_B_OFFLINE_2026-10-25.md).
+
+**NEXT USER PHYSICAL STEP REQUIRED:** Reinsert the **same 32GB microSD containing previously verified Debian** into the replacement MZ600; it is currently absent. Only then perform SHA-pinned temporary fastboot boot of stage-B for Debian tty1/USB shell and BigPart p8 discovery. Never write p8 via stock TWRP's 256MiB view; no internal data erasure yet. After normal live Debian SD root is proven, develop/apply properly guarded native ext4 system p8 installer with 1GiB target confirmation, partition not mounted, checksum and readback, then switch to internal p8 boot. v06.4 actual iw scan/BT pairing still not implemented/tested.
+
+---
+
 ## 2026-10-25 20:57 EDT — NEWEST: Linux7 Classic BigPart physical PASS, v064 stage-A RAM boot CURRENT
 
 Live replacement MZ600 is now running hash-verified v064 Classic BigPart stage-A RAM-only Linux (not TWRP). One guarded fastboot boot passed; Surface COM9 PONG passed after one transient serial error. **Actual physical /proc/partitions:** p8 system 1,048,576 KiB (1GiB), p9 cache 524,288 KiB (512MiB), p10 userdata 29,623,808 KiB (28,929.5MiB); protected p1-p7 unchanged. Three acceptance flags TRUE. This is original Schischu BigPart's in-memory virtual mapping physically proven on the exact MZ600. No GPT rewrite, format, block write, flash, mounting, Wi-Fi activation or BT activation.
