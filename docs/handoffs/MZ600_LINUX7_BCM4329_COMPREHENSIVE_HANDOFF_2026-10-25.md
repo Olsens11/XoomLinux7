@@ -1,5 +1,18 @@
 # XoomLinux7 / Motorola Xoom MZ600 — Comprehensive Engineering Handoff
 
+## 2026-10-25 evening EDT — USER EXPANDS AUTHORIZED DESIGN SCOPE TO INTERNAL DEBIAN / OPTIONAL BIGPART (NO EMMC WRITES)
+
+**NEW USER DECISION:** It is acceptable to remove the *replacement experiment MZ600's* Android installation if necessary to build a real, functional Linux OS, and acceptable to perform a BigPart-style resize **if genuinely required**. The protected original MZ600 remains excluded. This supersedes the prior absolute Android-preservation *design preference*, not the procedural per-partition write checks. **No destructive action, reboot or radio activation was performed in this phase.**
+
+**Previously verified exact replacement eMMC geometry now drives the decision:** p6 recovery/TWRP 12MiB, p7 boot 8MiB, p8 Android system 256MiB, p9 cache 169MiB, **p10 userdata ~29.34GiB**. Therefore the 768MiB Debian root image plainly cannot fit stock p8, but **repurposing p10 as a conventional ext4 Debian root has ample capacity WITHOUT BigPart**. Retain p8/TWRP at first; Android with its original userdata destroyed will not remain usable. We already physically booted Debian 12.15 from microSD with actual on-screen tty1 login, USB serial login, systemd and wlan0 on this replacement tablet in an earlier Oct25 checkpoint, so this is not starting the terminal from scratch. Present v06.3 isolated RAM driver qualification remains the last live check; v06.4 is still **not built**.
+
+**Safety blockers before any write:** Existing private p6/p7/p8 and 25MiB reserved-sector backups were freshly SHA256-verified on Surface and match the documented checkpoint; there is **NOT** yet a full p10 userdata backup. Recover first, capture p10, test a boot-independent route into TWRP/fastboot (Volume Down defective; red-light startup remains unresolved). Kernel7 has MSDOS and EFI partition support but *does not have TegraPT parser in its source*, and the original NVIDIA table was not a straightforward GPT at LBA1. Prove Linux7 sees p10 with correct exact start/size, preferably via a read-only RAM-boot probe; consider proper TegraPT kernel patch rather than generic parted/repartition or hardcoded offset. Boot new Debian root from internal p10 temporarily using `fastboot boot` BEFORE any persistent p7 flash. Do not misapply Wingray/MZ604 BigPart packages to MZ600. **BigPart postponed unless internal p10 path is impossible.**
+
+**NEW MANDATORY PLAN:** [internal eMMC p10 root / optional BigPart decision and write gates](../plans/MZ600_V064_INTERNAL_EMMC_ROOT_AND_OPTIONAL_BIGPART_2026-10-25.md). Preserve v06.4 acceptance for real `iw` RF scan, terminal/USB rescue, user-mediated Motorola keyboard pairing/typing, full BCM4329 shared-chip ownership. Last measured radio module state remains from 19:25; no new physical measurements in this turn.
+
+---
+
+
 ## 2026-10-25 evening EDT — v06.4 FIRST OFFLINE PREFLIGHT MEASURED (NO NEW IMAGE)
 
 **New engineering progress:** The authorized Desktop WSL workspace was read non-destructively; working Git branch `wip/clean-wifi-bt-usb-20261025` was clean at the initial audit and the Linux kernel tree is still upstream-pinned at `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3` with pre-existing dirty DTS/atags edits preserved. The v06.3 immutable input hash passed. Public preflight script [`preflight-v064-armhf-dependency-closure-20261025.py`](../../scripts/experiments/preflight-v064-armhf-dependency-closure-20261025.py) was committed, pulled to Desktop and run successfully. Its detailed JSON remains local/private at `artifacts-embedded-v064-preflight/PREFLIGHT.json`. **No hardware action, reboot, flash, Wi-Fi scan, keyboard pairing, or new build image** occurred in this phase.
