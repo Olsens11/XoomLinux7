@@ -1,5 +1,7 @@
 # Documentation router
 
+> **2026-10-27 CANONICAL CROSS-COMPUTER PROCEDURE:** [Desktop → Surface → Xoom standard SHA-verified artifact transfer](process/DESKTOP_SURFACE_XOOM_ARTIFACT_TRANSFER.md), derived from verified V17–V19 commands; use for all further module tests. Related [development workflow](process/DEVELOPMENT_WORKFLOW.md).
+
 > **START HERE — OCT 26 TRANSITION:** [Complete current XoomLinux7 engineering handoff](handoffs/MZ600_LINUX7_FULL_TRANSITION_HANDOFF_2026-10-26.md) with proven persistent eMMC Debian, partition/boot SHA, private backup map, upstream Wi-Fi/BT history, exact module build and safe gzip uploader, failed xz install, COM9 blocker, remaining tasks and next-chat runbook. Earlier handoff final paragraphs may be outdated.
 
 
