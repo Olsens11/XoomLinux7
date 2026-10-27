@@ -64,12 +64,10 @@ static void mz600_v30_read_fw_state(struct brcmf_if *ifp, const char *where)
 			brcmf_info("MZ600_V30_MPC_SET value=%d rc=%d\n", mpc, err);
 		if (err) {''')
     # Caller traces: actual scan entry, MPC before/after, firmware request.
-    anchor='''\tbrcmf_dbg(SCAN, "Enter\\n");
-\tescan->ifp = ifp;'''
+    anchor='''\tescan->escan_state = WL_ESCAN_STATE_SCANNING;'''
     c=base.replace_once(c,anchor,'''\
-	brcmf_dbg(SCAN, "Enter\n");
-	mz600_v30_read_fw_state(ifp, "before_scan");
-	escan->ifp = ifp;''')
+	escan->escan_state = WL_ESCAN_STATE_SCANNING;
+	mz600_v30_read_fw_state(ifp, "before_scan");''')
     anchor='''\tbrcmf_scan_config_mpc(ifp, 0);
 \tresults = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;'''
     c=base.replace_once(c,anchor,'''\
