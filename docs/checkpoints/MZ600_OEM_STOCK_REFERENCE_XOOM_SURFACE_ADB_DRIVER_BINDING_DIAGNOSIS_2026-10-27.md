@@ -1,0 +1,20 @@
+# Spare original Android Motorola Xoom: Surface sees MTP + ADB USB function, but platform-tools ADB empty
+
+**2026-10-27. Host-side read-only diagnostics only; no tablet Wi-Fi scan, firmware changes, driver rebinding or root access performed.** OEM reference intended for comparing 5GHz scan terminal completion and Android's progressively populated security details.
+
+## Actual observations on SURFACE-BOOK-2
+
+- OEM Xoom is physically connected and Windows reports `Xoom` portable/MTP interface, Motorola USB Composite Device, AND **Mot Composite ADB Interface** with Status **OK**.
+- USB VID **22B8** (Motorola), PID **70A9**, composite MI_00 (MTP) and **MI_01 (ADB)**. Do not log full USB serial or hardware BSSID publicly.
+- ADB function is *already enumerated* and advertises compatible interface class **ff/subclass42/protocol01**. USB debugging appears to be enabled; absence in ADB is not explained by MTP-only USB enumeration.
+- MI_01 uses service **`motandroidusb`**, kernel binary **`C:\Windows\System32\Drivers\motoandroid.sys`**, package **`oem104.inf`** (original `motoandroid.inf`), Motorola version **1.3.0.0, March 25 2013**. WinUSB is **not** the active ADB function driver, despite Windows PnP status OK.
+- `pnputil /enum-devices /connected /class USB /drivers` for this exact MI_01 lists signed Motorola `oem104.inf` as best-ranked **00FF0001** and Microsoft **`winusb.inf` as compatible but outranked 00FF2000**, matching `USB\Class_ff&SubClass_42&Prot_01`. That gives a carefully scoped replacement option for only the debugging interface.
+- Signed newer Motorola WinUSB package **`oem108.inf`** original `motoandroid2.inf`, 2.0.2.0 July 7 2013, is already in driver store, but its supported VID/PID entries include later Motorola models **not this Xoom PID70A9**, so simply installing it won't fix this exact Xoom's MI_01. Do not modify signed INF or disable driver signature validation.
+- Modern Android Platform Tools ADB **1.0.41 / version37.0.1** at user's Winget platform-tools path, installed and functional; both normal `adb devices -l` and a separate-port experimental `ADB_LIBUSB=1 adb -P 5049 devices -l` reported **empty**. Independent port was killed normally, main ADB server left alone. USB interface recognition is currently the blocker.
+- One extraneous legacy WMI enumeration command failed due CIM-to-WMI cast and another static INF search failed because of regex quoting; these had no host/device effects and do not change independent USB driver findings.
+
+## Safety/next step
+
+First, owner can safely unplug/reconnect the spare OEM Xoom **after USB debugging is enabled**, while keeping its screen unlocked, and rerun `adb devices -l`. If already connected and still empty, use Windows **Device Manager > Mot Composite ADB Interface > Update driver > Browse my computer > Let me pick** and select the **Microsoft WinUSB device** that `pnputil` showed as a compatible option, **only for MI_01**. This modifies the Surface host driver binding and may require elevated privileges; do not change without user consent. Preserve old package `oem104.inf` and note recovery: same Device Manager > Update driver > Let me pick > Motorola Mot Composite ADB Interface or Driver > Roll Back Driver. Keep the parent Motorola USB Composite Device and Xoom MTP untouched. After driver selection, test stock native `adb devices -l`, and if empty test explicit experimental libusb backend using an independent server port to avoid interference. Since generic WinUSB may not register the ADB-specific GUID for native Windows ADB, do not claim success until actually measured. Neither libusb backend nor legacy Moto package guaranteed.
+
+**Only when ADB sees one authorized stock Xoom:** run [the pre-staged read-only Android Wi-Fi log observer](../../scripts/host/surface/observe-stock-xoom-oem-wifi-scan-readonly-20261027.ps1). It captures private model/build/fingerprint, before/after Wi-Fi status and live logcat while owner manually refreshes Wi-Fi Settings; no root/scans triggered programmatically. Do not interfere with separate experimental Debian Xoom's COM9 or Bluetooth process on Surface.
