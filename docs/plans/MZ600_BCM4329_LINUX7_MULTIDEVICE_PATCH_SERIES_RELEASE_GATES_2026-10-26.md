@@ -1,3 +1,20 @@
+## 2026-10-27 — V21 upstream-quality intent: distinguish a proven lab workaround from the lasting fix
+
+The owner reaffirms that this research must produce **a correctly modeled, reviewable, bisectable Linux kernel compatibility patch**, not just a BCM4329-specific override that makes `iw scan` appear to work once.
+
+**Superseding physical evidence:** [V20 checkpoint](../checkpoints/MZ600_V20_EVENT_HEADER_V2_17_EVENTS_PHYSICAL_PASS_DMESG_ROLLOVER_RECOVERED_2026-10-27.md) established that all 17 captured Event69 headers report **version 2**. The terminal had ifidx/bsscfgidx=0, reached cfg80211, ended a passive scan normally (1801ms; 3 BSS; aborted=0). Other V2 partials have unresolvable indices; V19 observed an actual terminal delivered to event worker but dropped on iflist lookup. Therefore **old V1 header incompatibility is not proven**, and older text below describing V20 as untested is historical, not the current status. A narrow Event69 SUCCESS routing experiment is proposed, **not yet built or physically tested**.
+
+Promotion gates for the eventual `wifi: brcmfmac` patch:
+1. **State the actual mismatch**: which firmware message properties Linux misinterprets or fails to route, what source code path is responsible, and why the correction is safe. Record explicit negative hypotheses; do not describe index values as bad firmware unless established. Prefer a genuine protocol/driver fix if one is demonstrated over arbitrary remapping.
+2. **Prove the minimum functional change** using an exact-ABI reversible one-module A/B switch (default OFF): only genuine Event69 SUCCESS, active scan owner, bounded/index-validated wire header, proven affected BCM4329 firmware or capability; do not fabricate terminal status, modify private firmware/NVRAM, disable timeout, change scan parameters or rewrite other events.
+3. **Correctness in races**: no scan completion from stale/unrelated events, canceled scan, P2P/multiple active interfaces, device detach or reset; preserve single-completion semantics, locking and lifetime rules. Account for current fixed ESCAN sync_id 0x1234; a merely non-NULL `scan_request` is insufficient evidence of matching scan generation.
+4. **Regressions**: unchanged valid Event69 routes, 2.4GHz and 5GHz, generic firmware, scan cancellation, reentrant/late completion, multiple interface configurations if supported, device-specific calibrations, Bluetooth coexistence and other Xoom variants. Never claim multi-device gate passed from one MZ600.
+5. **Patch hygiene**: one causal logical change per commit, reviewable commit description with before/after traces and `Fixes:`/stable annotations only when truly justified, tests and failure-path analysis; update the existing ordered patch-series slot and revision lineage rather than burying fix in builder scripts. No DCO/signoff or upstream submission without explicit owner authorization.
+
+The current stage is **diagnostic source and V20 physical evidence PASS; V21 narrow terminal-only hypothesis PLANNED; upstream/production readiness NOT YET MET**. Preserve previous trial receipts and exact SHA-protected binaries without rerunning consumed IDs.
+
+---
+
 ## 2026-10-27 — owner reaffirmation: preserve evolving patch series throughout development
 
 The **patch series itself** is a primary, versioned, reproducible engineering deliverable; do not wait for final results to reconstruct it. Existing project rules and the Linux kernel's own authoritative guidance govern patch organization, not a novel project-specific patch standard. In particular, consult [xoom-linux/linux Documentation/process/submitting-patches.rst](https://github.com/xoom-linux/linux/blob/master/Documentation/process/submitting-patches.rst) (actual repository default-ref document was read on 2026-10-27), plus the kernel's submit checklist, development process and DT binding submission guidance. A patch contains **one logical change** even when it touches several files; separate subsystem responsibilities; ensure intermediate commits remain reviewable and bisectable.
