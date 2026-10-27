@@ -1,3 +1,9 @@
+## 2026-10-27 — V24 generation test gate: first live request PASS, second request NOT REACHED
+
+[Full V24 lab checkpoint](../checkpoints/MZ600_V24_PER_SCAN_GENERATION_PAIRED_MODULE_LAB_FINDINGS_2026-10-27.md): generated ID4661 in first scan, firmware echoes 4661 and Linux completes existing handler; second scan is rejected by host (-EPERM) before firmware and no 4662 assignment. Preserve distinct source and paired WCC ABIs; do not disable modversions, silently alter NO_IR passive constraints or claim multi-generation safety. Existing physical cleanup PASS. Next required evidence: numeric reason for second `iw scan` rejection, then two successful scans in one module with different verified returned IDs; all abort/race/multi-interface/cross-device gates remain open.
+
+---
+
 ## 2026-10-27 — V24 kernel-ABI and successive-scan gate
 
 [Four-attempt V24 checkpoint](../checkpoints/MZ600_V24_GENERATION_CHECK_FIRST_SCAN_PASS_TWO_SCAN_GATE_OPEN_2026-10-27.md): controlled, matched-ABI generation-check lab module compiled and physically validated **one** true Event69 SUCCESS terminal with returned `sync_id=4661` and owner reroute `bsscfgidx=16`; original `cfg80211_scan_done` succeeded, three BSS in 1140ms. **Second scan in the same loaded driver remains unproven**: a later V24D attempt with 4s separation returned userspace `-EPERM` before second generation. A temporary hash-checked WCC module-path bind mount is the test-only answer to lazy module autoload selecting a mismatched installed companion; source patch series must instead compile and distribute all modules in an ABI-compatible set. Gate OPEN: diagnose second-request permission predicate without lowering regulatory guards, then test per-scan ID 4661→4662, stale/duplicate/cancel/timeout, 16-bit wrap, locks/teardown, multiple interfaces, generic firmware and multi-Xoom regression. Historical experiment outputs and all failures retained; no upstream submission.
