@@ -1,3 +1,7 @@
+> **LATEST 2026-10-27 V24:** [Real Event69 generation-checked first scan physically passed; successive-scans gate still open](checkpoints/MZ600_V24_GENERATION_CHECK_FIRST_SCAN_PASS_TWO_SCAN_GATE_OPEN_2026-10-27.md). The BCM4329 firmware returned newly assigned sync ID 4661, Linux accepted genuine terminal even with `bsscfgidx=16`, and completed cfg80211 scan with three BSS. Second request in the same module lifetime was blocked (`Operation not permitted (-1)`) before another generation; not yet solved. Matched companion module and controlled RAM overlay proven, all original files verified restored. **V24 is lab evidence, not a production patch.** Older V23 next-step text historical.
+
+---
+
 > **LATEST 2026-10-27 — LEGACY BCM4329 ESCAN TRANSACTION IDs VERIFIED:** [V23 host-chosen 0x1235/0x1236 firmware echo physical checkpoint](checkpoints/MZ600_V23_ALTERNATE_ESCAN_SYNC_IDS_FIRMWARE_ECHO_PHYSICAL_PASS_2026-10-27.md). Both real Event69 SUCCESS IDs matched Linux request, both invalid-index events were correctly delivered by V21 lab fallback, 3 userspace BSS in 1.8/1.7s, watchdog-free, final original runtime check PASS. Earlier [V22b 0x1234 echo](checkpoints/MZ600_V22B_TERMINAL_SYNC_ID_ECHO_PHYSICAL_PASS_2026-10-27.md). Production per-scan generation/race/multiif correctness remains OPEN; only tested lab module, no firmware or persistent installation change. Consult [design RFC](research/MZ600_V21_TO_UPSTREAM_EVENT69_COMPLETION_MODEL_2026-10-27.md).
 
 ---
