@@ -1,3 +1,9 @@
+## 2026-10-27 — V26b normal regulatory behavior restored to scan gate; second ESCAN command still rejected
+
+[Hardware V26b checkpoint](../checkpoints/MZ600_V26B_NO_IR_GATE_REMOVED_SECOND_ESCAN_FW_ERROR_2026-10-27.md): removing a **lab-only** requirement that NO_IR always be set resolved spurious cfg80211 host -EPERM after beacon hints. With unchanged firmware in one module session, first sync-id4661 scan normally completed via genuine Event69, second ID4662 was generated and transmitted but firmware returned -52 from ESCAN request. This is not proof of a second completion or of stale-event handling; do not overstate. Do not graft single-channel/no-SSID/forced-passive test controls into actual upstream patch. Qualify genuine firmware repeat-scan behavior, then normal regulatory association and multiple-device/race/coexistence gates. No regulatory flag manipulation or firmware binary editing.
+
+---
+
 ## 2026-10-27 — V24 generation test gate: first live request PASS, second request NOT REACHED
 
 [Full V24 lab checkpoint](../checkpoints/MZ600_V24_PER_SCAN_GENERATION_PAIRED_MODULE_LAB_FINDINGS_2026-10-27.md): generated ID4661 in first scan, firmware echoes 4661 and Linux completes existing handler; second scan is rejected by host (-EPERM) before firmware and no 4662 assignment. Preserve distinct source and paired WCC ABIs; do not disable modversions, silently alter NO_IR passive constraints or claim multi-generation safety. Existing physical cleanup PASS. Next required evidence: numeric reason for second `iw scan` rejection, then two successful scans in one module with different verified returned IDs; all abort/race/multi-interface/cross-device gates remain open.
