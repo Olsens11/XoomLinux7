@@ -15,7 +15,9 @@ spec=importlib.util.spec_from_file_location("v25_gate_diag",PREV)
 v25=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v25)
 base=v25.base
-base.RESULT=base.ROOT/"v064-2012-oem-escan-v26-20261027"
+base.RESULT=base.ROOT/"v064-2012-oem-escan-v26b-20261027"
+# V25 initializes WCC_COPY at import time; rebind it to this fresh output.
+v25.WCC_COPY=base.RESULT/"brcmfmac-wcc-matched-v25.ko"
 previous_scan=base.instrument
 previous_event=base.instrument_fweh
 
