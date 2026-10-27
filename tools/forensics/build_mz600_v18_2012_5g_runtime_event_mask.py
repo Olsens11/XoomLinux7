@@ -120,8 +120,8 @@ def instrument(original):
 /* Lab-only extra subscriptions, latched before firmware event activation.
  * Separate bits for historic firmware scan/status codes:
  * bit0 Event26 SCAN_COMPLETE; bit1 Event45 SCAN_CONFIRM_IND;
- * bit2 Event13 RESET_COMPLETE; bit3 Event14 QUIET_START;
- * bit4 Event35 RADIO; bit5 Event40 QUIET_END;
+ * bit2 Event35 RESET_COMPLETE; bit3 Event13 QUIET_START;
+ * bit4 Event40 RADIO; bit5 Event14 QUIET_END;
  * bit6 Event63 CHANNEL_ADOPTED.
  * Mask0 = stock subscriptions; mask127 = previous V17 broad subscription.
  * No dynamic mutation of the device event mask while scanning.
