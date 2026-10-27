@@ -64,7 +64,7 @@ def send(p, line):
     p.flush()
 
 def session():
-    p = serial.Serial("COM9", 115200, timeout=.20, write_timeout=10, exclusive=True)
+    p = serial.Serial("COM9", 115200, timeout=.20, write_timeout=10)
     p.dtr = p.rts = True
     p.reset_input_buffer()
     p.write(b"\r")
@@ -97,7 +97,9 @@ def root_probe():
         if body_start < 0 or body_end < 0:
             raise RuntimeError("Could not isolate exact device preflight")
         body = result[body_start+len(start):body_end]
-        for marker in ("0", "7.0.0-next-20260422+", "/dev/mmcblk0p8 ext4",
+        if not re.search(r"(?m)^0\\s*$", body):
+            raise RuntimeError("COM9 session was not root")
+        for marker in ("7.0.0-next-20260422+", "/dev/mmcblk0p8 ext4",
                        "NO_WLAN0", "NO_BRCM_BT", "FW_UNMOUNTED",
                        "NV_UNMOUNTED", BASE_FW, BASE_NV, BASE_KO):
             if marker not in body:
@@ -184,7 +186,7 @@ def main():
         raise RuntimeError("Prior v13 attempt or report exists; no rerun permitted")
     fw = checked(FW, 264140, FW_SHA)
     ko = checked(KO, 343200, KO_SHA)
-    source = checked(SH, 0 if False else SH.stat().st_size, SH_SHA).decode("ascii")
+    source = checked(SH, SH.stat().st_size, SH_SHA).decode("ascii")
     if not source.endswith("\n") or TAG in source:
         raise RuntimeError("Staged bash source invalid")
     print("V13_2012_SURFACE_TRIPLE_SHA_PASS", flush=True)
