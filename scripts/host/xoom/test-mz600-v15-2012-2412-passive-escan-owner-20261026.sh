@@ -114,7 +114,7 @@ msg 'MZ600_V15_FIRMWARE_BAND_DIAGNOSTICS_BEGIN'
 msg "MZ600_V15_DMESG_LINES_BEFORE=$LOG_LINE_BEFORE"
 dmesg | awk -v first="$LOG_LINE_BEFORE" 'NR>first' | grep -E 'MZ600_5G_DIAG_(BANDLIST|CHANSPECS|WIPHY|LEGACY_VALID_CHANNELS)|MZ600_5G_LEGACY_PASSIVE_ONLY_FALLBACK|Firmware: BCM4329|brcmf_construct_chaninfo.*error|brcmf_bus_started.*failed' | tail -14 | sed -E 's/([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}/[private-mac]/g' || true
 msg 'MZ600_V15_FIRMWARE_BAND_DIAGNOSTICS_END'
-# Strictly one permitted frequency: 2412 MHz (5 GHz ch1), non-DFS NO_IR.
+# Strictly one permitted frequency: 2412 MHz (2.4 GHz ch1), non-DFS NO_IR.
 [[ -e /sys/class/net/wlan0 && "$phy" =~ ^[0-9]+$ ]] || {
   msg 'MZ600_V15_STOP_NO_WLAN_OR_WIPHY'
   exit 30
