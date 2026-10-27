@@ -155,14 +155,17 @@ static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
 ''')
     # This records the A/B mask decision, without altering the actual
     # preexisting Event69 registration or packet processing.
-    anchor='''static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
-{
+    anchor='''\t/* V18 controlled A/B: identical logging and runtime to V17,
+\t * with ONLY the extra firmware event subscriptions disabled.
+\t * Regular ESCAN Event69 subscription remains unchanged.
+\t */
 \tif (false && cfg->pub->bus_if->chip == BRCM_CC_4329_CHIP_ID) {'''
     c=replace_once(c,anchor,'''\
-static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
-{
-\tif (cfg->pub->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\tbrcmf_info("MZ600_V18_EXTRA_SUBSCRIPTIONS_DISABLED baseline_Event69_only=1\\n");
+\tbrcmf_info("MZ600_V18_EXTRA_SUBSCRIPTIONS_DISABLED baseline_Event69_only=1\\n");
+\t/* V18 controlled A/B: identical logging and runtime to V17,
+\t * with ONLY the extra firmware event subscriptions disabled.
+\t * Regular ESCAN Event69 subscription remains unchanged.
+\t */
 \tif (false && cfg->pub->bus_if->chip == BRCM_CC_4329_CHIP_ID) {''')
 
     anchor='''\tstatus = e->status;
