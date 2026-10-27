@@ -1,0 +1,176 @@
+diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
+--- a/block/partitions/Kconfig
++++ b/block/partitions/Kconfig
+@@ -255,6 +255,14 @@
+ 	  Say Y here if you would like to use hard disks under Linux which
+ 	  were partitioned using EFI GPT.
+ 
++config MOTOROLA_XOOM_BIGPART
++	bool "Motorola Stingray CDMA classic Xoom BigPart in-memory GPT view"
++	depends on EFI_PARTITION && OF && ARCH_TEGRA
++	help
++	  Exact legacy Xoom BigPart geometry on opt-in Stingray internal eMMC.
++	  Never writes GPT. Requires exact 10-entry factory geometry, OEM
++	  relocated GPT sector and explicit eMMC DT opt-in; refuses otherwise.
++
+ config SYSV68_PARTITION
+ 	bool "SYSV68 partition table support" if PARTITION_ADVANCED
+ 	default y if VME
+diff --git a/block/partitions/efi.c b/block/partitions/efi.c
+--- a/block/partitions/efi.c
++++ b/block/partitions/efi.c
+@@ -87,6 +87,10 @@
+ #include <linux/ctype.h>
+ #include <linux/math64.h>
+ #include <linux/slab.h>
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++#include <linux/of.h>
++#include <linux/device.h>
++#endif
+ #include "check.h"
+ #include "efi.h"
+ 
+@@ -95,9 +99,25 @@
+  * the partition tables happens after init too.
+  */
+ static int force_gpt;
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++static u64 xoom_gpt_sector;
++static bool xoom_bigpart_enabled(struct parsed_partitions *state);
++static int __init xoom_gpt_sector_setup(char *s)
++{
++	if (kstrtoull(s, 0, &xoom_gpt_sector))
++		xoom_gpt_sector = 0;
++	return 1;
++}
++__setup("gpt_sector=", xoom_gpt_sector_setup);
++#endif
+ static int __init
+ force_gpt_fn(char *str)
+ {
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++	/* The legacy __setup() matcher uses prefixes: do not eat gpt_sector=. */
++	if (*str)
++		return 0;
++#endif
+ 	force_gpt = 1;
+ 	return 1;
+ }
+@@ -619,6 +639,16 @@
+ 					 &agpt, &aptes);
+         if (!good_agpt && force_gpt)
+                 good_agpt = is_gpt_valid(state, lastlba, &agpt, &aptes);
++
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++	/* Bootloader supplies this sector. Only on the exact opt-in eMMC. */
++	if (!good_agpt && force_gpt && xoom_bigpart_enabled(state) &&
++	    xoom_gpt_sector == 62513151ULL) {
++		pr_info("MZ600 BigPart: probing relocated OEM GPT at sector %llu\n",
++			(unsigned long long)xoom_gpt_sector);
++		good_agpt = is_gpt_valid(state, xoom_gpt_sector, &agpt, &aptes);
++	}
++#endif
+ 
+ 	if (!good_agpt && force_gpt && fops->alternative_gpt_sector) {
+ 		sector_t agpt_sector;
+@@ -709,10 +739,69 @@
+  *  1 if successful
+  *
+  */
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++static bool xoom_bigpart_enabled(struct parsed_partitions *state)
++{
++	struct device *d;
++	if (!of_machine_is_compatible("motorola,stingray") ||
++	    get_capacity(state->disk) != 62521344ULL ||
++	    queue_logical_block_size(state->disk->queue) != 512)
++		return false;
++	for (d = disk_to_dev(state->disk); d; d = d->parent)
++		if (d->of_node &&
++		    of_property_read_bool(d->of_node, "motorola,xoom-bigpart"))
++			return true;
++	return false;
++}
++/* Standard 2013 Schischu BigPart 1GiB system, 512MiB cache mapping.
++ * We validate ALL ten original MZ600 GPT entry extents, not just the three
++ * remapped starts, and reject extra valid entries to prevent overlaps.
++ */
++static int xoom_bigpart_prepare(struct parsed_partitions *state,
++				gpt_header *gpt, gpt_entry *ptes)
++{
++	static const u64 starts[10] = {
++		51200, 57344, 61440, 65536, 73728, 77824, 102400,
++		118784, 643072, 989184
++	};
++	static const u64 sizes[10] = {
++		6144, 4096, 4096, 8192, 4096, 24576, 16384,
++		524288, 346112, 61522944
++	};
++	u32 i, n = le32_to_cpu(gpt->num_partition_entries);
++	if (!xoom_bigpart_enabled(state))
++		return 0;
++	if (n < 10 || state->limit <= 10)
++		return -EINVAL;
++	for (i = 0; i < n; i++) {
++		u64 start = le64_to_cpu(ptes[i].starting_lba);
++		u64 end = le64_to_cpu(ptes[i].ending_lba);
++		if (i >= 10) {
++			if (is_pte_valid(&ptes[i], last_lba(state->disk)))
++				return -EINVAL;
++			continue;
++		}
++		if (!is_pte_valid(&ptes[i], last_lba(state->disk)) ||
++		    start != starts[i] || end < start ||
++		    end - start + 1 != sizes[i])
++			return -EINVAL;
++	}
++	/* Factory p10 end and every protected p1..p7 extent are invariant. */
++	if (starts[9] + sizes[9] != 62512128ULL)
++		return -EINVAL;
++	pr_info("MZ600 BigPart: validated exact factory 10-partition GPT; "
++		"virtual system 1GiB, cache 512MiB, userdata 28929.5MiB\n");
++	return 1;
++}
++#endif
++
+ int efi_partition(struct parsed_partitions *state)
+ {
+ 	gpt_header *gpt = NULL;
+ 	gpt_entry *ptes = NULL;
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++	int xoom_remap = 0;
++#endif
+ 	u32 i;
+ 	unsigned ssz = queue_logical_block_size(state->disk->queue) / 512;
+ 
+@@ -721,6 +810,16 @@
+ 		kfree(ptes);
+ 		return 0;
+ 	}
++
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++	xoom_remap = xoom_bigpart_prepare(state, gpt, ptes);
++	if (xoom_remap < 0) {
++		pr_err("MZ600 BigPart: REFUSING unexpected partition layout\n");
++		kfree(gpt);
++		kfree(ptes);
++		return -1;
++	}
++#endif
+ 
+ 	pr_debug("GUID Partition Table is valid!  Yea!\n");
+ 
+@@ -734,6 +833,13 @@
+ 		if (!is_pte_valid(&ptes[i], last_lba(state->disk)))
+ 			continue;
+ 
++#ifdef CONFIG_MOTOROLA_XOOM_BIGPART
++		if (xoom_remap > 0) {
++			if (i == 7) { start = 118784; size = 2097152; }
++			if (i == 8) { start = 2215936; size = 1048576; }
++			if (i == 9) { start = 3264512; size = 59247616; }
++		}
++#endif
+ 		put_partition(state, i+1, start * ssz, size * ssz);
+ 
+ 		/* If this is a RAID volume, tell md */

@@ -1,0 +1,59 @@
+diff --git a/arch/arm/boot/compressed/atags_to_fdt.c b/arch/arm/boot/compressed/atags_to_fdt.c
+--- a/arch/arm/boot/compressed/atags_to_fdt.c
++++ b/arch/arm/boot/compressed/atags_to_fdt.c
+@@ -11,6 +11,46 @@
+ #endif
+ 
+ #define NR_BANKS 16
++
++/*
++ * Motorola Stingray's Android bootloader passes its per-device WLAN MAC in
++ * this vendor ATAG. Fold it into the SDIO child before Linux enumerates
++ * brcmfmac, which already uses eth_platform_get_mac_address() to generate
++ * the firmware NVRAM macaddr entry.
++ *
++ * Never fall back to a board-shared, fabricated, or random MAC here.
++ */
++#define ATAG_STINGRAY_MAC 0x57464d41
++#define STINGRAY_WIFI_PATH "/mmc@c8000200/wifi@1"
++
++static void stingray_mac_atag_to_fdt(void *fdt, const struct tag *atag)
++{
++    const unsigned char *mac = (const unsigned char *)&atag->u;
++    unsigned char any = 0;
++    int wifi, i;
++
++    /* 2 header words and 2 payload words provide 6 valid MAC bytes. */
++    if (atag->hdr.size < 4)
++        return;
++
++    for (i = 0; i < 6; i++)
++        any |= mac[i];
++
++    /* Never publish multicast, all-zero, or unprogrammed OEM fallback. */
++    if (!any || (mac[0] & 1))
++        return;
++    if (mac[0] == 0 && mac[1] == 0x90 && mac[2] == 0x4c &&
++        !mac[3] && !mac[4] && !mac[5])
++        return;
++
++    /* Restrict vendor ATAG processing to Stingray's actual Wi-Fi SDIO. */
++    wifi = fdt_path_offset(fdt, STINGRAY_WIFI_PATH);
++    if (wifi < 0)
++        return;
++
++    /* Fail closed if the FDT cannot be updated; no MAC gets invented. */
++    fdt_setprop(fdt, wifi, "local-mac-address", mac, 6);
++}
+ 
+ static int node_offset(void *fdt, const char *node_path)
+ {
+@@ -201,6 +241,8 @@
+ 					initrd_start);
+ 			setprop_cell(fdt, "/chosen", "linux,initrd-end",
+ 					initrd_start + initrd_size);
++		} else if (atag->hdr.tag == ATAG_STINGRAY_MAC) {
++			stingray_mac_atag_to_fdt(fdt, atag);
+ 		} else if (atag->hdr.tag == ATAG_SERIAL) {
+ 			char serno[16+2];
+ 			hex_str(serno, atag->u.serialnr.high);

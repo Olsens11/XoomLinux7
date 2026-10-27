@@ -1,0 +1,679 @@
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -33,6 +33,48 @@
+ #include "bus.h"
+ #include "common.h"
+ #include "fwvid.h"
++
++/* Lab-only extra subscriptions, latched before firmware event activation.
++ * Separate bits for historic firmware scan/status codes:
++ * bit0 Event26 SCAN_COMPLETE; bit1 Event45 SCAN_CONFIRM_IND;
++ * bit2 Event35 RESET_COMPLETE; bit3 Event13 QUIET_START;
++ * bit4 Event40 RADIO; bit5 Event14 QUIET_END;
++ * bit6 Event63 CHANNEL_ADOPTED.
++ * Mask0 = stock subscriptions; mask127 = previous V17 broad subscription.
++ * No dynamic mutation of the device event mask while scanning.
++ */
++static unsigned int mz600_v20_extra_events;
++static int mz600_v20_mask_set(const char *val, const struct kernel_param *kp)
++{
++	unsigned int value;
++	int err = kstrtouint(val, 0, &value);
++
++	if (err)
++		return err;
++	if (value & ~127U)
++		return -ERANGE;
++	*(unsigned int *)kp->arg = value;
++	return 0;
++}
++static const struct kernel_param_ops mz600_v20_mask_ops = {
++	.set = mz600_v20_mask_set,
++	.get = param_get_uint,
++};
++module_param_cb(mz600_extra_events, &mz600_v20_mask_ops,
++		&mz600_v20_extra_events, 0444);
++MODULE_PARM_DESC(mz600_extra_events,
++	"BCM4329 lab event subscriptions 0..127 (always retains Event69)");
++
++
++/* V23 lab parameter: vary the existing request's 16-bit sync_id only. */
++static ushort mz600_v23_request_sync_id = 0x1234;
++module_param_named(mz600_request_sync_id, mz600_v23_request_sync_id, ushort, 0444);
++MODULE_PARM_DESC(mz600_request_sync_id, "LAB ONLY: BCM4329 ESCAN request sync ID");
++
++/* V24 LAB: generation check default OFF, no generic-chip changes. */
++static bool mz600_v24_generation;
++module_param_named(mz600_generation, mz600_v24_generation, bool, 0444);
++MODULE_PARM_DESC(mz600_generation, "LAB ONLY: rotate BCM4329 ESCAN sync id per scan");
+ 
+ #define BRCMF_SCAN_IE_LEN_MAX		2048
+ 
+@@ -1195,6 +1237,8 @@
+ 
+ 	/* clear scan request, because the FW abort can cause a second call */
+ 	/* to this functon and might cause a double cfg80211_scan_done      */
++	brcmf_info("MZ600_V29_SCAN_COMPLETION aborted=%u fw_abort=%u owned=%u\n",
++		    aborted, fw_abort, !!cfg->scan_request);
+ 	scan_request = cfg->scan_request;
+ 	cfg->scan_request = NULL;
+ 
+@@ -1480,14 +1524,34 @@
+ 		}
+ 		params_v1->version = cpu_to_le32(BRCMF_ESCAN_REQ_VERSION);
+ 		brcmf_scan_params_v2_to_v1(&params->params_v2_le, &params_v1->params_le);
++		if (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++			brcmf_info("MZ600_V29_V1_CH36_WIRE chanspec=0x%04x passive_ms=%d scan_type=%u nprobes=%d nchans=%u\n",
++			    le16_to_cpu(params_v1->params_le.channel_list[0]),
++			    le32_to_cpu(params_v1->params_le.passive_time),
++			    params_v1->params_le.scan_type,
++			    le32_to_cpu(params_v1->params_le.nprobes),
++			    le32_to_cpu(params_v1->params_le.channel_num));
+ 		kfree(params);
+ 		params = params_v1;
+ 	}
+ 
+ 	params->action = cpu_to_le16(WL_ESCAN_ACTION_START);
+-	params->sync_id = cpu_to_le16(0x1234);
++
++	/*
++	 * Probe only: no change on generic chips and no new scan semantics.
++	 * The returned ID is read separately from the true firmware terminal.
++	 */
++	if (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++		params->sync_id = cpu_to_le16(mz600_v24_generation ? READ_ONCE(cfg->escan_info.mz600_sync_active) : READ_ONCE(mz600_v23_request_sync_id));
++		brcmf_info("MZ600_V29_SCAN_REQUEST_SYNC id=%u\n",
++			   le16_to_cpu(params->sync_id));
++	} else {
++		params->sync_id = cpu_to_le16(0x1234);
++	}
+ 
+ 	err = brcmf_fil_iovar_data_set(ifp, "escan", params, params_size);
++	brcmf_info("MZ600_V29_ESCAN_SET_RC=%d v2=%u\n",
++		    err, brcmf_feat_is_enabled(ifp, BRCMF_FEAT_SCAN_V2));
+ 	if (err) {
+ 		if (err == -EBUSY)
+ 			brcmf_dbg(INFO, "system busy : escan canceled\n");
+@@ -1510,6 +1574,20 @@
+ 	struct escan_info *escan = &cfg->escan_info;
+ 
+ 	brcmf_dbg(SCAN, "Enter\n");
++
++	if (mz600_v24_generation &&
++	    ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++		u16 id = READ_ONCE(escan->mz600_sync_next);
++		id = id ? id + 1 : 0x1235;
++		if (!id)
++			id = 1;
++		WRITE_ONCE(escan->mz600_sync_next, id);
++		WRITE_ONCE(escan->mz600_sync_active, id);
++		WRITE_ONCE(escan->mz600_generation_enabled, true);
++		brcmf_info("MZ600_V29_NEW_SCAN_GENERATION id=%u\n", id);
++	} else {
++		WRITE_ONCE(escan->mz600_generation_enabled, false);
++	}
+ 	escan->ifp = ifp;
+ 	escan->wiphy = cfg->wiphy;
+ 	escan->escan_state = WL_ESCAN_STATE_SCANNING;
+@@ -3424,6 +3502,8 @@
+ 	int i;
+ 
+ 	bss_list = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
++	brcmf_info("MZ600_V29_FINAL_BSS count=%u version=%u\n",
++		    bss_list->count, bss_list->version);
+ 	if (bss_list->count != 0 &&
+ 	    bss_list->version != BRCMF_BSS_INFO_VERSION) {
+ 		bphy_err(drvr, "Version %d != WL_BSS_INFO_VERSION\n",
+@@ -3579,6 +3659,7 @@
+ 	struct brcmf_pub *drvr = cfg->pub;
+ 
+ 	if (cfg->int_escan_map || cfg->scan_request) {
++		brcmf_info("MZ600_V29_ESCAN_WATCHDOG_FIRED\n");
+ 		bphy_err(drvr, "timer expired\n");
+ 		schedule_work(&cfg->escan_timeout_work);
+ 	}
+@@ -3639,7 +3720,26 @@
+ 	u32 i;
+ 	bool aborted;
+ 
++
+ 	status = e->status;
++	if (mz600_v24_generation &&
++	    drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++	    status == BRCMF_E_STATUS_SUCCESS) {
++		u16 expected = READ_ONCE(cfg->escan_info.mz600_sync_active);
++		u16 actual = 0;
++		bool valid = e->datalen == 12 && data &&
++			     READ_ONCE(cfg->escan_info.mz600_generation_enabled);
++		if (valid)
++			actual = get_unaligned_le16((u8 *)data + 8);
++		if (!valid || !expected || actual != expected) {
++			brcmf_info("MZ600_V29_STALE_TERMINAL_REJECT expected=%u actual=%u valid=%u\n",
++				   expected, actual, valid);
++			return 0;
++		}
++		brcmf_info("MZ600_V29_TERMINAL_GENERATION_ACCEPT id=%u\n", actual);
++	}
++	brcmf_info("MZ600_V29_EVENT69 status=%d datalen=%u\n",
++		    status, e->datalen);
+ 
+ 	if (status == BRCMF_E_STATUS_ABORT)
+ 		goto exit;
+@@ -3675,6 +3775,21 @@
+ 			goto exit;
+ 		}
+ 		bss_info_le = &escan_result_le->bss_info_le;
++		brcmf_info("MZ600_V29_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\n",
++			   le32_to_cpu(bss_info_le->version),
++			   le32_to_cpu(bss_info_le->length),
++			   le16_to_cpu(escan_result_le->bss_count));
++		{
++			u32 bl = le32_to_cpu(bss_info_le->length);
++			u32 ioff = le16_to_cpu(bss_info_le->ie_offset);
++			u32 ilen = le32_to_cpu(bss_info_le->ie_length);
++			bool ok = (ioff <= bl && ilen <= bl - ioff);
++			brcmf_info("MZ600_V29_BSS_META ssid_len=%u hidden=%u chanspec=0x%04x ctl_ch=%u ie_bounds_ok=%u ie_len=%u\n",
++				   bss_info_le->SSID_len,
++				   bss_info_le->SSID_len == 0,
++				   le16_to_cpu(bss_info_le->chanspec),
++				   bss_info_le->ctl_ch, ok, ilen);
++		}
+ 
+ 		if (brcmf_p2p_scan_finding_common_channel(cfg, bss_info_le))
+ 			goto exit;
+@@ -3736,8 +3851,44 @@
+ 	return 0;
+ }
+ 
++static s32 brcmf_mz600_v20_alternative_event(struct brcmf_if *ifp,
++		const struct brcmf_event_msg *e, void *data)
++{
++	if (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++		brcmf_info("MZ600_V29_ALT_EVENT code=%u status=%u reason=%u datalen=%u\n",
++			   e->event_code, e->status, e->reason, e->datalen);
++	return 0;
++}
++
+ static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
+ {
++	if (cfg->pub->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++		u32 mask = mz600_v20_extra_events;
++
++		if (mask & BIT(0))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_SCAN_COMPLETE,
++					brcmf_mz600_v20_alternative_event);
++		if (mask & BIT(1))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_SCAN_CONFIRM_IND,
++					brcmf_mz600_v20_alternative_event);
++		if (mask & BIT(2))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_RESET_COMPLETE,
++					brcmf_mz600_v20_alternative_event);
++		if (mask & BIT(3))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_QUIET_START,
++					brcmf_mz600_v20_alternative_event);
++		if (mask & BIT(4))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_RADIO,
++					brcmf_mz600_v20_alternative_event);
++		if (mask & BIT(5))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_QUIET_END,
++					brcmf_mz600_v20_alternative_event);
++		if (mask & BIT(6))
++			brcmf_fweh_register(cfg->pub, BRCMF_E_CHANNEL_ADOPTED,
++					brcmf_mz600_v20_alternative_event);
++		brcmf_info("MZ600_V29_EXTRA_EVENT_MASK=%u Event69_always=1\n", mask);
++	}
++
+ 	brcmf_fweh_register(cfg->pub, BRCMF_E_ESCAN_RESULT,
+ 			    brcmf_cfg80211_escan_handler);
+ 	cfg->escan_info.escan_state = WL_ESCAN_STATE_IDLE;
+@@ -7007,6 +7158,9 @@
+ 	u32 i, j;
+ 	u32 total;
+ 	u32 chaninfo;
++	u32 diag_2g = 0;
++	u32 diag_5g = 0;
++	u32 diag_other = 0;
+ 
+ 	pbuf = kzalloc(BRCMF_DCMD_MEDLEN, GFP_KERNEL);
+ 
+@@ -7018,7 +7172,120 @@
+ 	err = brcmf_fil_iovar_data_get(ifp, "chanspecs", pbuf,
+ 				       BRCMF_DCMD_MEDLEN);
+ 	if (err) {
++		int saved_err = err;
++		int legacy_rc;
++		u32 max_channels = (BRCMF_DCMD_MEDLEN - sizeof(list->count)) /
++				   sizeof(list->element[0]);
++		u32 count = 0, count_2g = 0, count_5g = 0, count_other = 0;
++		u32 index, legacy_channel;
+ 		bphy_err(drvr, "get chanspecs error (%d)\n", err);
++		/* Diagnostic ONLY. Legacy Motorola DHD uses ioctl 217 and
++		 * sets list->count to output capacity before querying. */
++		memset(pbuf, 0, BRCMF_DCMD_MEDLEN);
++		list->count = cpu_to_le32(max_channels);
++		legacy_rc = brcmf_fil_cmd_data_get(ifp,
++					      BRCMF_C_GET_VALID_CHANNELS,
++					      pbuf, BRCMF_DCMD_MEDLEN);
++		if (!legacy_rc) {
++			count = le32_to_cpu(list->count);
++			if (count <= max_channels) {
++				for (index = 0; index < count; index++) {
++					legacy_channel = le32_to_cpu(list->element[index]);
++					if (legacy_channel >= 1 && legacy_channel <= 14)
++						count_2g++;
++					else if (legacy_channel >= 30 && legacy_channel <= 196)
++						count_5g++;
++					else
++						count_other++;
++				}
++			} else {
++				legacy_rc = -EINVAL;
++			}
++		}
++		brcmf_info("MZ600_5G_DIAG_LEGACY_VALID_CHANNELS original_chanspec_rc=%d legacy_rc=%d total=%u 2g=%u 5g=%u other=%u max=%u\n",
++			   saved_err, legacy_rc, count, count_2g, count_5g,
++			   count_other, max_channels);
++		/* Narrow, non-transmitting fallback for BCM4329 firmware
++		 * which has no 'chanspecs' iovar but reports valid channels.
++		 * No broad device override, no regulatory bypass, no TX. */
++		if (saved_err == -EBADE && !legacy_rc && count > 0 &&
++		    count_5g > 0 && !count_other &&
++		    drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++			/*
++			 * wiphy_register() has already run: NEVER replace
++			 * supported channel flags with orig_flags. Preserve
++			 * the current cfg80211/regdb restrictions and only
++			 * disable frequencies absent from the firmware list.
++			 */
++			band = wiphy->bands[NL80211_BAND_2GHZ];
++			if (band) {
++				for (j = 0; j < band->n_channels; j++) {
++					bool supported = false;
++					for (index = 0; index < count; index++) {
++						if (band->channels[j].hw_value ==
++						    le32_to_cpu(list->element[index])) {
++							supported = true;
++							break;
++						}
++					}
++					if (!supported)
++						band->channels[j].flags |= IEEE80211_CHAN_DISABLED;
++				}
++			}
++			band = wiphy->bands[NL80211_BAND_5GHZ];
++			if (band) {
++				for (j = 0; j < band->n_channels; j++) {
++					bool supported = false;
++					for (index = 0; index < count; index++) {
++						if (band->channels[j].hw_value ==
++						    le32_to_cpu(list->element[index])) {
++							supported = true;
++							break;
++						}
++					}
++					if (!supported)
++						band->channels[j].flags |= IEEE80211_CHAN_DISABLED;
++				}
++			}
++			for (index = 0; index < count; index++) {
++				legacy_channel = le32_to_cpu(list->element[index]);
++				band = legacy_channel <= 14 ?
++					wiphy->bands[NL80211_BAND_2GHZ] :
++					wiphy->bands[NL80211_BAND_5GHZ];
++				if (!band)
++					continue;
++				for (j = 0; j < band->n_channels; j++)
++					if (band->channels[j].hw_value == legacy_channel)
++						break;
++				if (j == band->n_channels)
++					continue;
++				channel = &band->channels[j];
++				if (channel->orig_flags & IEEE80211_CHAN_DISABLED)
++					continue;
++				/* No active TX or initiating radiation on ANY
++				 * legacy channel; cfg80211 regdb may only narrow. */
++				/* Only bandwidth support is unknown in the legacy
++				 * valid-channel list. Do NOT force NO_IR.
++				 * cfg80211 retains country/regdb regulatory limits.
++				 */
++				/* Keep regulatory bits (NO_IR, RADAR,
++				 * DISABLED, etc.) already applied by cfg80211.
++				 * Only narrow unproven legacy bandwidth.
++				 */
++				channel->flags |= IEEE80211_CHAN_NO_HT40 |
++					IEEE80211_CHAN_NO_80MHZ |
++					IEEE80211_CHAN_NO_160MHZ;
++				if (band->band == NL80211_BAND_5GHZ &&
++				    channel->center_freq >= 5260 &&
++				    channel->center_freq <= 5720)
++					channel->flags |= IEEE80211_CHAN_RADAR;
++			}
++			brcmf_info("MZ600_V29_LEGACY_VALID_CHANNEL_FALLBACK chip=4329 fw2g=%u fw5g=%u ht20_only=1\n",
++				   count_2g, count_5g);
++			err = 0;
++			goto fail_pbuf; /* shared free buffer */
++		}
++		err = saved_err;
+ 		goto fail_pbuf;
+ 	}
+ 
+@@ -7042,6 +7309,12 @@
+ 	for (i = 0; i < total; i++) {
+ 		ch.chspec = (u16)le32_to_cpu(list->element[i]);
+ 		cfg->d11inf.decchspec(&ch);
++		if (ch.band == BRCMU_CHAN_BAND_2G)
++			diag_2g++;
++		else if (ch.band == BRCMU_CHAN_BAND_5G)
++			diag_5g++;
++		else
++			diag_other++;
+ 
+ 		if (ch.band == BRCMU_CHAN_BAND_2G) {
+ 			band = wiphy->bands[NL80211_BAND_2GHZ];
+@@ -7121,6 +7394,10 @@
+ 			}
+ 		}
+ 	}
++
++	/* Only counts: no channels, calibration, identity or RF writes. */
++	brcmf_info("MZ600_5G_DIAG_CHANSPECS total=%u 2g=%u 5g=%u other=%u\n",
++		   total, diag_2g, diag_5g, diag_other);
+ 
+ fail_pbuf:
+ 	kfree(pbuf);
+@@ -7645,6 +7922,8 @@
+ 	__le32 bandlist[3];
+ 	u32 n_bands;
+ 	int err, i;
++	struct brcmf_fil_country_le diag_country = {};
++	int diag_country_rc;
+ 
+ 	wiphy->max_scan_ssids = WL_NUM_SCAN_MAX;
+ 	wiphy->max_scan_ie_len = BRCMF_SCAN_IE_LEN_MAX;
+@@ -7730,6 +8009,11 @@
+ 	}
+ 	/* first entry in bandlist is number of bands */
+ 	n_bands = le32_to_cpu(bandlist[0]);
++	/* Firmware band enums only; no MAC, SSID, key or regulatory override. */
++	brcmf_info("MZ600_5G_DIAG_BANDLIST count=%u first=%u second=%u\n",
++		   n_bands,
++		   n_bands >= 1 ? le32_to_cpu(bandlist[1]) : 0,
++		   n_bands >= 2 ? le32_to_cpu(bandlist[2]) : 0);
+ 	for (i = 1; i <= n_bands && i < ARRAY_SIZE(bandlist); i++) {
+ 		if (bandlist[i] == cpu_to_le32(WLC_BAND_2G)) {
+ 			band = kmemdup(&__wl_band_2ghz, sizeof(__wl_band_2ghz),
+@@ -7775,6 +8059,24 @@
+ 	wiphy_ext_feature_set(wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
+ 
+ 	wiphy_read_of_freq_limits(wiphy);
++	brcmf_info("MZ600_5G_DIAG_WIPHY has2g=%u has5g=%u\n",
++		   !!wiphy->bands[NL80211_BAND_2GHZ],
++		   !!wiphy->bands[NL80211_BAND_5GHZ]);
++	/* Read-only DHD country iovar after successful bandlist fetch. */
++	/* Never SET country, force a PHY channel, or modify NVRAM here. */
++	diag_country_rc = brcmf_fil_iovar_data_get(ifp, "country",
++						&diag_country, sizeof(diag_country));
++	if (diag_country_rc) {
++		brcmf_info("MZ600_5G_DIAG_COUNTRY_READ rc=%d\n", diag_country_rc);
++	} else {
++		/* print two code bytes as hex; no board MAC or credentials */
++		brcmf_info("MZ600_5G_DIAG_COUNTRY_READ rc=0 abbrev=%02x%02x ccode=%02x%02x rev=%u\n",
++			   (u8)diag_country.country_abbrev[0],
++			   (u8)diag_country.country_abbrev[1],
++			   (u8)diag_country.ccode[0],
++			   (u8)diag_country.ccode[1],
++			   le32_to_cpu(diag_country.rev));
++	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
+@@ -4,6 +4,8 @@
+  */
+ #include <linux/netdevice.h>
+ 
++#include <linux/module.h>
++#include <brcm_hw_ids.h>
+ #include "brcmu_wifi.h"
+ #include "brcmu_utils.h"
+ 
+@@ -27,6 +29,12 @@
+  * @datalen: length of the data array
+  * @data: event specific data part of the firmware event.
+  */
++/* TEMPORARY experiment; never promote without scan-generation review. */
++static bool mz600_v21_terminal_owner;
++module_param_named(mz600_terminal_owner, mz600_v21_terminal_owner, bool, 0444);
++MODULE_PARM_DESC(mz600_terminal_owner,
++    "LAB ONLY: route unmatched BCM4329 ESCAN SUCCESS to active single scan owner");
++
+ struct brcmf_fweh_queue_item {
+ 	struct list_head q;
+ 	u32 code;
+@@ -271,13 +279,67 @@
+ 
+ 	while ((event = brcmf_fweh_dequeue_event(fweh))) {
+ 		enum brcmf_fweh_event_code code;
++		struct brcmf_if *mz600_scan_owner = NULL;
+ 
+ 		brcmf_fweh_map_fwevt_code(fweh, event->code, &code);
+ 		brcmf_dbg(EVENT, "event %s (%u:%u) ifidx %u bsscfg %u addr %pM\n",
+ 			  brcmf_fweh_event_name(code), code, event->code,
+ 			  event->emsg.ifidx, event->emsg.bsscfgidx,
+ 			  event->emsg.addr);
+-		if (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {
++
++		/*
++		 * LAB ONLY: the firmware's real ESCAN SUCCESS is already
++		 * received and queued; normal interface routing sometimes fails.
++		 * Never fabricate completion or reassign partial/other events.
++		 * Reject P2P/multi-interface use; do not mutate event fields.
++		 */
++		if (mz600_v21_terminal_owner &&
++		    drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++		    event->code == BRCMF_E_ESCAN_RESULT &&
++		    get_unaligned_be16(&event->emsg.version) == 2 &&
++		    get_unaligned_be32(&event->emsg.status) ==
++			BRCMF_E_STATUS_SUCCESS &&
++		    (event->emsg.bsscfgidx >= BRCMF_MAX_IFS ||
++		     !drvr->iflist[event->emsg.bsscfgidx])) {
++			struct brcmf_cfg80211_info *cfg = drvr->config;
++			bool only_primary = true;
++			int n;
++
++			for (n = 1; n < BRCMF_MAX_IFS; n++) {
++				if (drvr->iflist[n]) {
++					only_primary = false;
++					break;
++				}
++			}
++			if (cfg && only_primary && list_is_singular(&cfg->vif_list) &&
++			    READ_ONCE(cfg->scan_request) &&
++			    !READ_ONCE(cfg->int_escan_map) &&
++			    test_bit(BRCMF_SCAN_STATUS_BUSY, &cfg->scan_status) &&
++			    cfg->escan_info.escan_state == WL_ESCAN_STATE_SCANNING &&
++
++cfg->escan_info.ifp == drvr->iflist[0] &&
++			    /*
++			     * Check wire transaction before bypassing the
++			     * missing bsscfg interface; never change bytes.
++			     */
++			    (!READ_ONCE(cfg->escan_info.mz600_generation_enabled) ||
++			     (event->datalen == 12 &&
++			      READ_ONCE(cfg->escan_info.mz600_sync_active) &&
++			      get_unaligned_le16(event->data + 8) ==
++			      READ_ONCE(cfg->escan_info.mz600_sync_active))) &&
++			    drvr->iflist[0] && drvr->iflist[0]->vif &&
++			    drvr->iflist[0]->ndev)
++				mz600_scan_owner = drvr->iflist[0];
++
++			brcmf_info("MZ600_V29_TERMINAL_OWNER_CHECK raw_bsscfg=%u eligible=%u owner_mode=%u\n",
++				   event->emsg.bsscfgidx, !!mz600_scan_owner,
++				   mz600_v21_terminal_owner);
++		}
++		if (event->emsg.bsscfgidx >= BRCMF_MAX_IFS &&
++		    !mz600_scan_owner) {
++			if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++				brcmf_info("MZ600_V29_FWEH_DROP reason=bsscfg code=%u raw_index=%u\n",
++					event->code, event->emsg.bsscfgidx);
+ 			bphy_err(drvr, "invalid bsscfg index: %u\n",
+ 				 event->emsg.bsscfgidx);
+ 			goto event_free;
+@@ -297,6 +359,35 @@
+ 		emsg.ifidx = emsg_be->ifidx;
+ 		emsg.bsscfgidx = emsg_be->bsscfgidx;
+ 
++        /*
++         * V22 diagnosis: the fixed ESCAN result is exactly 12 bytes:
++         * u32 length, u32 version, u16 sync_id, u16 bss_count.
++         * Only numeric, no BSS identities. Never change payload or route.
++         * Access as unaligned little-endian bytes from the queued data.
++         */
++        if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++            event->code == BRCMF_E_ESCAN_RESULT &&
++            emsg.version == 2 &&
++            emsg.status == BRCMF_E_STATUS_SUCCESS) {
++            if (event->datalen >= 12) {
++                const u8 *p = event->data;
++                brcmf_info("MZ600_V29_TERMINAL_SYNC bytes=%u buflen=%u escan_version=%u sync_id=%u bss_count=%u\n",
++                           event->datalen,
++                           get_unaligned_le32(p),
++                           get_unaligned_le32(p + 4),
++                           get_unaligned_le16(p + 8),
++                           get_unaligned_le16(p + 10));
++            } else {
++                brcmf_info("MZ600_V29_TERMINAL_SYNC_UNDERSIZED bytes=%u\n",
++                           event->datalen);
++            }
++        }
++
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++		    event->code == BRCMF_E_ESCAN_RESULT)
++			brcmf_info("MZ600_V29_FWEH_WORKER code=%u status=%u bsscfg=%u\n",
++				   event->code, emsg.status, emsg.bsscfgidx);
++
+ 		brcmf_dbg(EVENT, "  version %u flags %u status %u reason %u\n",
+ 			  emsg.version, emsg.flags, emsg.status, emsg.reason);
+ 		brcmf_dbg_hex_dump(BRCMF_EVENT_ON(), event->data,
+@@ -309,12 +400,21 @@
+ 			goto event_free;
+ 		}
+ 
+-		if (event->code == BRCMF_E_TDLS_PEER_EVENT)
++		if (mz600_scan_owner)
++			ifp = mz600_scan_owner;
++		else if (event->code == BRCMF_E_TDLS_PEER_EVENT)
+ 			ifp = drvr->iflist[0];
+ 		else
+ 			ifp = drvr->iflist[emsg.bsscfgidx];
++		if (mz600_scan_owner)
++			brcmf_info("MZ600_V29_TERMINAL_OWNER_DELIVER status=%u raw_bsscfg=%u\n",
++				   emsg.status, emsg.bsscfgidx);
+ 		err = brcmf_fweh_call_event_handler(drvr, ifp, event->code,
+ 						    &emsg, event->data);
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++		    event->code == BRCMF_E_ESCAN_RESULT)
++			brcmf_info("MZ600_V29_FWEH_DISPATCH code=%u status=%u ifp=%u handler_rc=%d\n",
++				   event->code, emsg.status, !!ifp, err);
+ 		if (err) {
+ 			bphy_err(drvr, "event handler failed (%d)\n",
+ 				 event->code);
+@@ -492,19 +592,61 @@
+ 	datalen = get_unaligned_be32(&event_packet->msg.datalen);
+ 	data = &event_packet[1];
+ 
+-	if (fwevt_idx >= fweh->num_event_codes)
+-		return;
+-
+-	if (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx])
+-		return;
++	if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++		brcmf_info("MZ600_V29_FWEH_INGRESS code=%u status=%u reason=%u datalen=%u subscribed=%u\\n",
++			   fwevt_idx,
++			   get_unaligned_be32(&event_packet->msg.status),
++			   get_unaligned_be32(&event_packet->msg.reason),
++			   datalen,
++			   fwevt_idx < fweh->num_event_codes &&
++			   !!fweh->evt_handler[fwevt_idx]);
++	}
++	if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++	    fwevt_idx == BRCMF_E_ESCAN_RESULT) {
++		u16 version = get_unaligned_be16(&event_packet->msg.version);
++		u8 ifidx = 0, bsscfg = 0;
++		bool has_indices = packet_len >= sizeof(*event_packet);
++		if (has_indices) {
++			ifidx = event_packet->msg.ifidx;
++			bsscfg = event_packet->msg.bsscfgidx;
++		}
++		brcmf_info("MZ600_V29_HEADER code=%u ver=%u ifidx=%u bsscfg=%u has_indices=%u pktlen=%u datalen=%u v1_hdr=%zu v2_hdr=%zu\n",
++			   fwevt_idx, version, ifidx, bsscfg, has_indices,
++			   packet_len, datalen,
++			   sizeof(*event_packet) - 2,
++			   sizeof(*event_packet));
++	}
++	if (fwevt_idx >= fweh->num_event_codes) {
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++			brcmf_info("MZ600_V29_FWEH_DROP reason=invalid_code code=%u datalen=%u pktlen=%u\n",
++				fwevt_idx, datalen, packet_len);
++		return;
++	}
++
++	if (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx]) {
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++			brcmf_info("MZ600_V29_FWEH_DROP reason=unsub code=%u datalen=%u pktlen=%u\n",
++				fwevt_idx, datalen, packet_len);
++		return;
++	}
+ 
+ 	if (datalen > BRCMF_DCMD_MAXLEN ||
+-	    datalen + sizeof(*event_packet) > packet_len)
+-		return;
++	    datalen + sizeof(*event_packet) > packet_len) {
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++			brcmf_info("MZ600_V29_FWEH_DROP reason=bad_length code=%u status=%u datalen=%u pktlen=%u expected=%zu\n",
++				fwevt_idx, get_unaligned_be32(&event_packet->msg.status),
++				datalen, packet_len, datalen + sizeof(*event_packet));
++		return;
++	}
+ 
+ 	event = kzalloc_flex(*event, data, datalen, gfp);
+-	if (!event)
+-		return;
++	if (!event) {
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++			brcmf_info("MZ600_V29_FWEH_DROP reason=alloc code=%u status=%u datalen=%u pktlen=%u\n",
++				fwevt_idx, get_unaligned_be32(&event_packet->msg.status),
++				datalen, packet_len);
++		return;
++	}
+ 
+ 	event->code = fwevt_idx;
+ 	event->datalen = datalen;
+@@ -515,5 +657,10 @@
+ 	memcpy(event->data, data, datalen);
+ 	memcpy(event->ifaddr, event_packet->eth.h_dest, ETH_ALEN);
+ 
++	if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++	    fwevt_idx == BRCMF_E_ESCAN_RESULT)
++		brcmf_info("MZ600_V29_FWEH_ADMIT code=%u status=%u datalen=%u pktlen=%u\n",
++			   fwevt_idx, get_unaligned_be32(&event_packet->msg.status),
++			   datalen, packet_len);
+ 	brcmf_fweh_queue_event(fweh, event);
+ }
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
+@@ -287,6 +287,10 @@
+ 
+ struct escan_info {
+ 	u32 escan_state;
++	/* V24 lab-only: active request generation, per adapter. */
++	u16 mz600_sync_next;
++	u16 mz600_sync_active;
++	bool mz600_generation_enabled;
+ 	u8 *escan_buf;
+ 	struct wiphy *wiphy;
+ 	struct brcmf_if *ifp;

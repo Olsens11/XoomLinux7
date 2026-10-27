@@ -1,0 +1,4 @@
+0001-arm-dts-tegra20-motorola-stingray-board.patch
+0002-arm-tegra-stingray-wlan-mac-atag.patch
+0003-block-partitions-motorola-xoom-bigpart.patch
+0004-wifi-brcmfmac-bcm4329-legacy-compatibility.patch

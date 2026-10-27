@@ -1,0 +1,57 @@
+{
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "kernel_tree": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-bigpart-linux",
+  "series": [
+    {
+      "index": 1,
+      "patch": "0001-arm-dts-tegra20-motorola-stingray-board.patch",
+      "sha256": "63f55f8712734d4cde99baf36481f631d7094e61d43b0eb37863333511ab1e6f",
+      "files": [
+        "arch/arm/boot/dts/nvidia/Makefile",
+        "arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts"
+      ],
+      "status": "source-only board candidate (renamed; not separately booted)"
+    },
+    {
+      "index": 2,
+      "patch": "0002-arm-tegra-stingray-wlan-mac-atag.patch",
+      "sha256": "55be5fd29dd3679c843fe6722b5082b80e06a1e9fd6b260886b5f772104c1c85",
+      "files": [
+        "arch/arm/boot/compressed/atags_to_fdt.c"
+      ],
+      "status": "earlier MAC logic hardware-tested; canonical file not separately booted"
+    },
+    {
+      "index": 3,
+      "patch": "0003-block-partitions-motorola-xoom-bigpart.patch",
+      "sha256": "e58c03a579b95a2c9508f9fff276aab5f2aff360083060e403038151c5d904e5",
+      "files": [
+        "block/partitions/Kconfig",
+        "block/partitions/efi.c"
+      ],
+      "status": "BigPart p8 physically booted; source diff needs submission review"
+    },
+    {
+      "index": 4,
+      "patch": "0004-wifi-brcmfmac-bcm4329-legacy-compatibility.patch",
+      "sha256": "f7c915e7e23bfd54d2c10262049f7d0e61ad43efc6797a49f1b1b825d05619ed",
+      "files": [
+        "drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c",
+        "drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c",
+        "drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h"
+      ],
+      "status": "V29 regulator-preserving source OFFLINE build; physical WiFi evidence belongs to earlier V28"
+    }
+  ],
+  "validation": "all four patches pass sequential clean-base git apply --check and byte-for-byte replay; no fresh compile/run claimed",
+  "unresolved": [
+    "WiFi: after first working normal multichannel scan, repeated ESCAN returned firmware BCME_NOTUP (-4); exact firmware ready/power lifecycle unresolved",
+    "WiFi: race-safe cancel/timeout/duplicate/lifetime and matching event generation; multi-interface and P2P unresolved",
+    "WiFi: V29 regulatory-safe fallback compiled offline; normal V28 12-BSS scan was physically verified but regulatory-safe canonical candidate not independently tested",
+    "WiFi: ordinary association/authentication/DHCP and multidevice validation not yet established",
+    "Board: normal filename and bindings, power supplies, Bluetooth, SDIO and DT validation require separate review/testing",
+    "BigPart: in-memory exact geometry, boot command-line and board selector must be audited for generic kernel maintainability",
+    "Kernel patches do not represent Debian rootfs, firmware, private NVRAM, initramfs, or userspace services",
+    "Candidate still contains diagnostic scaffolding inherited from tests; remove before submission and verify again"
+  ]
+}
