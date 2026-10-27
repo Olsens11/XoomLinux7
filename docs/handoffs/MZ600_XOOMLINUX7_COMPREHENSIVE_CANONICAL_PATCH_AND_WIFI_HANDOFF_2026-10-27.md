@@ -1,3 +1,5 @@
+> **LATEST post-handoff continuation (2026-10-27):** V30 read-only firmware controller-UP / MPC query diagnostic has **compiled offline** against the target kernel; matched WCC and original source hashes verified. [New V30 checkpoint](../research/MZ600_V30_FIRMWARE_UP_MPC_DIAGNOSTIC_OFFLINE_CHECKPOINT_2026-10-27.md) records exact SHA, event-handler audit, measurement design, and the **Surface harness-write safety block**. **No V30 Xoom test was run.** Existing V28 normal first scan and V27 BCME_NOTUP are still the latest physical evidence. Do not treat this handoff's earlier next-step wording as physical test completion.
+
 # XoomLinux7 — comprehensive engineering handoff: native MZ600, BCM4329, and canonical upstream patch series
 
 **Prepared:** 2026-10-27  
