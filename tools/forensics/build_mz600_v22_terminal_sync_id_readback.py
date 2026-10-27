@@ -15,7 +15,7 @@ spec = importlib.util.spec_from_file_location("mz600_v21_builder", PREVIOUS)
 v21 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v21)
 
-v21.base.RESULT = v21.base.ROOT / "v064-2012-oem-escan-v22-20261027"
+v21.base.RESULT = v21.base.ROOT / "v064-2012-oem-escan-v22b-20261027"
 old_instrument = v21.base.instrument_fweh
 old_instrument_scan = v21.base.instrument
 
