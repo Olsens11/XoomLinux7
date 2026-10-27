@@ -53,6 +53,7 @@ def instrument_scan(original):
 \t\t}
 \t}
 \tresults = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;'''
+    after = after.replace(r'\t', '\t')
     if c.count(before) != 1:
         raise RuntimeError("V30 MPC site mismatch")
     c = c.replace(before, after, 1)
