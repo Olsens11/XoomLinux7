@@ -82,7 +82,7 @@ def instrument(original):
 \t    request->channels[0]->center_freq == 5180) {
 \t\t/* V16: one passive 20MHz channel, 500ms dwell, no TX. */
 \t\tparams_le->passive_time = cpu_to_le32(500);
-\t\tbrcmf_info("MZ600_V16_V2_PASSIVE_DWELL_MS=500 encoded_chanspec=0x%04x d11io=%u\n",
+\t\tbrcmf_info("MZ600_V16_V2_PASSIVE_DWELL_MS=500 encoded_chanspec=0x%04x d11io=%u\\n",
 \t\t\t   le16_to_cpu(params_le->channel_list[0]),
 \t\t\t   cfg->d11inf.io_type);
 \t}
@@ -95,7 +95,7 @@ def instrument(original):
     c=replace_once(c,anchor,'''\
 \t\tbrcmf_scan_params_v2_to_v1(&params->params_v2_le, &params_v1->params_le);
 \t\tif (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\t\tbrcmf_info("MZ600_V16_V1_CH36_WIRE chanspec=0x%04x passive_ms=%d scan_type=%u nprobes=%d nchans=%u\n",
+\t\t\tbrcmf_info("MZ600_V16_V1_CH36_WIRE chanspec=0x%04x passive_ms=%d scan_type=%u nprobes=%d nchans=%u\\n",
 \t\t\t    le16_to_cpu(params_v1->params_le.channel_list[0]),
 \t\t\t    le32_to_cpu(params_v1->params_le.passive_time),
 \t\t\t    params_v1->params_le.scan_type,
