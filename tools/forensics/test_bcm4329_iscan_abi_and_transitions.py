@@ -216,6 +216,19 @@ class IscanWireContract(unittest.TestCase):
         self.assertEqual(struct.unpack_from("<I", raw, 4)[0], maxlen)
         self.assertEqual(struct.unpack_from("<I", raw, 0)[0], 0)
 
+    def test_linux7_fwil_get_name_consumes_protocol_buffer(self):
+        # Exact modern Linux7 fwil.c brcmf_create_iovar() copies name+NUL
+        # plus the full get-data len into proto_buf[BRCMF_DCMD_MAXLEN].
+        # Unlike old brcmf_dev_iovar_getbuf(), this get API does not
+        # independently supply short input-paramlen / larger output-buflen.
+        proto_max = 8192
+        name_len = len(b"iscanresults") + 1  # terminal NUL
+        self.assertEqual(name_len, 13)
+        self.assertEqual(proto_max - name_len, 8179)
+        self.assertGreater(name_len + 8192, proto_max)
+        self.assertEqual(name_len + 8179, proto_max)
+        self.assertGreater(8179, 16)  # required minimum result header
+
     def test_abort_payload_length_remains_unverified(self):
         # No ABORT call was found in one older bcmdhd wl_cfg80211.c, but\n        # a separate historical brcmfmac DOES send a 72-byte ABORT.\n        # This test retains the HRI39 acceptance caveat.
         self.assertEqual(WL_SCAN_ACTION_ABORT, 3)
