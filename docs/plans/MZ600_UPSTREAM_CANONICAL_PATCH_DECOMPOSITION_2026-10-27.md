@@ -1,3 +1,5 @@
+> **REVIEW STANDARDS NOW EMBEDDED WITH THE PATCHES:** [`patches/upstream/candidate/SUBMISSION_REQUIREMENTS.md`](../../patches/upstream/candidate/SUBMISSION_REQUIREMENTS.md) is the local, pinned-source normative checklist. For every proposed logical patch, use its G01–G12 acceptance criteria and subsystem-specific gates, keeping accurate OPEN/PARTIAL/PASS test evidence. This plan defines candidate *logical boundaries*, not automatic approval or proof that the existing broad snapshot meets the documented standards.
+
 # Xoom Linux 7 — upstream-oriented logical patch decomposition
 
 **Status 2026-10-27: design and review boundary, NOT a claimed constructed/passing submission series.**
