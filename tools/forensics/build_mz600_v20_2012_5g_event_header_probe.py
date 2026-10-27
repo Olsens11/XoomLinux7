@@ -1,0 +1,442 @@
+#!/usr/bin/env python3
+"""Build a TEMPORARY BCM4329 2012 ESCAN diagnostic, with guaranteed source restoration.
+
+Offline host only. Fails closed unless source, old lab patch and original module
+match recorded checksums. No Xoom connection, firmware transfer, or RF operation.
+"""
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+ROOT = Path("/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025")
+LINUX = ROOT / "v064-bigpart-linux"
+OUT = ROOT / "v064-bigpart-debian-sdroot-build"
+M = LINUX / "drivers/net/wireless/broadcom/brcm80211/brcmfmac"
+SOURCE = M / "cfg80211.c"
+FWEH_SOURCE = M / "fweh.c"
+FWEH_SHA = "4a4c090a81e7c2a954834e98db41633f1cc5dd0a6b739edc5dbfc9b0bcd9f51c"
+KO = M / "brcmfmac.ko"
+PATCH = ROOT / "v064-legacy-passive-only-wiphy-v5-20261026/0005-brcmfmac-bcm4329-legacy-valid-channel-passive-only-fallback.patch"
+RESULT = ROOT / "v064-2012-oem-escan-v20-20261026"
+COMPILER = Path("/home/xoomdev/xoom-linux-rom/toolchains/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-")
+SOURCE_SHA = "1cb2c600fe401245cd218589d4bc3325f9ac0c0a15bd26ed1576c55eb3d85eb8"
+PATCH_SHA = "9ef957fc8c8a8d4843e35666db8d71092d06c92a456d5d17d1521d2125b7575a"
+ORIG_KO = "9fec47bc2771d55bcdb1c36bb7502dffea6a0dd2d94dcff60725f44f3fb2d6eb"
+
+def sha(buf):
+    return hashlib.sha256(buf).hexdigest()
+
+def run(*args, **kw):
+    subprocess.run(args, check=True, **kw)
+
+def replace_once(text, anchor, new):
+    count=text.count(anchor)
+    if count!=1:
+        raise RuntimeError(f"expected unique source anchor (found {count}): {anchor[:90]!r}")
+    return text.replace(anchor, new, 1)
+
+def instrument(original):
+    c=original
+    # Actual brcmfmac scan() entry: fail closed before it takes ownership.
+    anchor='''\tif (!check_vif_up(vif))
+\t\treturn -EIO;
+
+\tif (test_bit(BRCMF_SCAN_STATUS_BUSY, &cfg->scan_status))'''
+    replacement='''\tif (!check_vif_up(vif))
+\t\treturn -EIO;
+
+\t/* V20 controlled single-channel NO_IR PASSIVE diagnostic. */
+\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
+\t\tstruct ieee80211_channel *ch;
+
+\t\tif (request->n_channels != 1 || request->n_ssids != 0 ||
+\t\t    request->ie_len != 0)
+\t\t\treturn -EPERM;
+\t\tch = request->channels[0];
+\t\tif (!ch || ch->center_freq != 5180 || ch->hw_value != 36 ||
+\t\t    !(ch->flags & IEEE80211_CHAN_NO_IR) ||
+\t\t    (ch->flags & (IEEE80211_CHAN_DISABLED |
+\t\t\t\t IEEE80211_CHAN_RADAR)))
+\t\t\treturn -EPERM;
+\t\terr = brcmf_fil_cmd_int_set(vif->ifp,
+\t\t\t\t\tBRCMF_C_SET_PASSIVE_SCAN, 1);
+\t\tif (err) {
+\t\t\tbrcmf_info("MZ600_V20_GLOBAL_PASSIVE_RC=%d\\n", err);
+\t\t\treturn err;
+\t\t}
+\t\tbrcmf_info("MZ600_V20_SCAN_GATE_PASS channel=36 freq=5180 no_ir=1 nssid=0\\n");
+\t}
+
+\tif (test_bit(BRCMF_SCAN_STATUS_BUSY, &cfg->scan_status))'''
+    c=replace_once(c,anchor,replacement)
+
+    # Narrow, source-verified change: instead of the firmware-default -1,
+    # use finite 500ms passive dwell for exactly the gated 5GHz ch36 case.
+    # All other scan behavior is left unchanged.
+    anchor='''\tparams_le->length = cpu_to_le16(length);
+\t/* Adding mask to channel numbers */'''
+    c=replace_once(c,anchor,'''\
+\tif (cfg->pub->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
+\t    n_channels == 1 && n_ssids == 0 &&
+\t    request->channels[0]->center_freq == 5180) {
+\t\t/* V20: one passive 20MHz channel, 500ms dwell, no TX. */
+\t\tparams_le->passive_time = cpu_to_le32(500);
+\t\tbrcmf_info("MZ600_V20_V2_PASSIVE_DWELL_MS=500 encoded_chanspec=0x%04x d11io=%u\\n",
+\t\t\t   le16_to_cpu(params_le->channel_list[0]),
+\t\t\t   cfg->d11inf.io_type);
+\t}
+\tparams_le->length = cpu_to_le16(length);
+\t/* Adding mask to channel numbers */''')
+
+    # Verify the actual V1 command bytes after the old-D11 conversion.
+    anchor='''\t\tbrcmf_scan_params_v2_to_v1(&params->params_v2_le, &params_v1->params_le);
+\t\tkfree(params);'''
+    c=replace_once(c,anchor,'''\
+\t\tbrcmf_scan_params_v2_to_v1(&params->params_v2_le, &params_v1->params_le);
+\t\tif (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\t\tbrcmf_info("MZ600_V20_V1_CH36_WIRE chanspec=0x%04x passive_ms=%d scan_type=%u nprobes=%d nchans=%u\\n",
+\t\t\t    le16_to_cpu(params_v1->params_le.channel_list[0]),
+\t\t\t    le32_to_cpu(params_v1->params_le.passive_time),
+\t\t\t    params_v1->params_le.scan_type,
+\t\t\t    le32_to_cpu(params_v1->params_le.nprobes),
+\t\t\t    le32_to_cpu(params_v1->params_le.channel_num));
+\t\tkfree(params);''')
+
+    anchor='''\terr = brcmf_fil_iovar_data_set(ifp, "escan", params, params_size);
+\tif (err) {'''
+    c=replace_once(c,anchor,'''\
+\terr = brcmf_fil_iovar_data_set(ifp, "escan", params, params_size);
+\tbrcmf_info("MZ600_V20_ESCAN_SET_RC=%d v2=%u\\n",
+\t\t    err, brcmf_feat_is_enabled(ifp, BRCMF_FEAT_SCAN_V2));
+\tif (err) {''')
+
+    # Runtime load parameter selects extra event subscriptions; Event69 is
+    # always registered through the standard ESCAN path.
+    anchor='''#define BRCMF_SCAN_IE_LEN_MAX'''
+    c=replace_once(c,anchor,'''\
+/* Lab-only extra subscriptions, latched before firmware event activation.
+ * Separate bits for historic firmware scan/status codes:
+ * bit0 Event26 SCAN_COMPLETE; bit1 Event45 SCAN_CONFIRM_IND;
+ * bit2 Event35 RESET_COMPLETE; bit3 Event13 QUIET_START;
+ * bit4 Event40 RADIO; bit5 Event14 QUIET_END;
+ * bit6 Event63 CHANNEL_ADOPTED.
+ * Mask0 = stock subscriptions; mask127 = previous V17 broad subscription.
+ * No dynamic mutation of the device event mask while scanning.
+ */
+static unsigned int mz600_v20_extra_events;
+static int mz600_v20_mask_set(const char *val, const struct kernel_param *kp)
+{
+\tunsigned int value;
+\tint err = kstrtouint(val, 0, &value);
+
+\tif (err)
+\t\treturn err;
+\tif (value & ~127U)
+\t\treturn -ERANGE;
+\t*(unsigned int *)kp->arg = value;
+\treturn 0;
+}
+static const struct kernel_param_ops mz600_v20_mask_ops = {
+\t.set = mz600_v20_mask_set,
+\t.get = param_get_uint,
+};
+module_param_cb(mz600_extra_events, &mz600_v20_mask_ops,
+\t\t&mz600_v20_extra_events, 0444);
+MODULE_PARM_DESC(mz600_extra_events,
+\t"BCM4329 lab event subscriptions 0..127 (always retains Event69)");
+
+#define BRCMF_SCAN_IE_LEN_MAX''')
+
+    # Subscribe to alternate firmware scan/status mechanisms WITHOUT faking
+    # cfg80211 completion. This must run before fweh_activate_events.
+    anchor='''static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
+{'''
+    c=replace_once(c,anchor,'''\
+static s32 brcmf_mz600_v20_alternative_event(struct brcmf_if *ifp,
+\t\tconst struct brcmf_event_msg *e, void *data)
+{
+\tif (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\tbrcmf_info("MZ600_V20_ALT_EVENT code=%u status=%u reason=%u datalen=%u\\n",
+\t\t\t   e->event_code, e->status, e->reason, e->datalen);
+\treturn 0;
+}
+
+static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
+{
+\tif (cfg->pub->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
+\t\tu32 mask = mz600_v20_extra_events;
+
+\t\tif (mask & BIT(0))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_SCAN_COMPLETE,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tif (mask & BIT(1))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_SCAN_CONFIRM_IND,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tif (mask & BIT(2))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_RESET_COMPLETE,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tif (mask & BIT(3))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_QUIET_START,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tif (mask & BIT(4))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_RADIO,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tif (mask & BIT(5))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_QUIET_END,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tif (mask & BIT(6))
+\t\t\tbrcmf_fweh_register(cfg->pub, BRCMF_E_CHANNEL_ADOPTED,
+\t\t\t\t\tbrcmf_mz600_v20_alternative_event);
+\t\tbrcmf_info("MZ600_V20_EXTRA_EVENT_MASK=%u Event69_always=1\\n", mask);
+\t}
+''')
+    anchor='''\tstatus = e->status;
+
+\tif (status == BRCMF_E_STATUS_ABORT)'''
+    c=replace_once(c,anchor,'''\
+\tstatus = e->status;
+\tbrcmf_info("MZ600_V20_EVENT69 status=%d datalen=%u\\n",
+\t\t    status, e->datalen);
+
+\tif (status == BRCMF_E_STATUS_ABORT)''')
+
+    anchor='''\t\tbss_info_le = &escan_result_le->bss_info_le;
+
+\t\tif (brcmf_p2p_scan_finding_common_channel'''
+    c=replace_once(c,anchor,'''\
+\t\tbss_info_le = &escan_result_le->bss_info_le;
+\t\tbrcmf_info("MZ600_V20_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\\n",
+\t\t\t   le32_to_cpu(bss_info_le->version),
+\t\t\t   le32_to_cpu(bss_info_le->length),
+\t\t\t   le16_to_cpu(escan_result_le->bss_count));
+
+\t\tif (brcmf_p2p_scan_finding_common_channel''')
+
+    # Privacy-safe metadata for every BSS, even hidden or off-channel.
+    anchor='''\t\tbrcmf_info("MZ600_V20_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\\n",
+\t\t\t   le32_to_cpu(bss_info_le->version),
+\t\t\t   le32_to_cpu(bss_info_le->length),
+\t\t\t   le16_to_cpu(escan_result_le->bss_count));'''
+    c=replace_once(c,anchor,'''\
+\t\tbrcmf_info("MZ600_V20_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\\n",
+\t\t\t   le32_to_cpu(bss_info_le->version),
+\t\t\t   le32_to_cpu(bss_info_le->length),
+\t\t\t   le16_to_cpu(escan_result_le->bss_count));
+\t\t{
+\t\t\tu32 bl = le32_to_cpu(bss_info_le->length);
+\t\t\tu32 ioff = le16_to_cpu(bss_info_le->ie_offset);
+\t\t\tu32 ilen = le32_to_cpu(bss_info_le->ie_length);
+\t\t\tbool ok = (ioff <= bl && ilen <= bl - ioff);
+\t\t\tbrcmf_info("MZ600_V20_BSS_META ssid_len=%u hidden=%u chanspec=0x%04x ctl_ch=%u ie_bounds_ok=%u ie_len=%u\\n",
+\t\t\t\t   bss_info_le->SSID_len,
+\t\t\t\t   bss_info_le->SSID_len == 0,
+\t\t\t\t   le16_to_cpu(bss_info_le->chanspec),
+\t\t\t\t   bss_info_le->ctl_ch, ok, ilen);
+\t\t}''')
+
+    anchor='''\tbss_list = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
+\tif (bss_list->count != 0 &&'''
+    c=replace_once(c,anchor,'''\
+\tbss_list = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
+\tbrcmf_info("MZ600_V20_FINAL_BSS count=%u version=%u\\n",
+\t\t    bss_list->count, bss_list->version);
+\tif (bss_list->count != 0 &&''')
+
+    anchor='''\tscan_request = cfg->scan_request;
+\tcfg->scan_request = NULL;
+
+\ttimer_delete_sync(&cfg->escan_timeout);'''
+    c=replace_once(c,anchor,'''\
+\tbrcmf_info("MZ600_V20_SCAN_COMPLETION aborted=%u fw_abort=%u owned=%u\\n",
+\t\t    aborted, fw_abort, !!cfg->scan_request);
+\tscan_request = cfg->scan_request;
+\tcfg->scan_request = NULL;
+
+\ttimer_delete_sync(&cfg->escan_timeout);''')
+
+    anchor='''\tif (cfg->int_escan_map || cfg->scan_request) {
+\t\tbphy_err(drvr, "timer expired\\n");'''
+    c=replace_once(c,anchor,'''\
+\tif (cfg->int_escan_map || cfg->scan_request) {
+\t\tbrcmf_info("MZ600_V20_ESCAN_WATCHDOG_FIRED\\n");
+\t\tbphy_err(drvr, "timer expired\\n");''')
+    return c
+
+
+def instrument_fweh(original):
+    c=original
+    c=replace_once(c, '#include "brcmu_wifi.h"',
+                      '#include <brcm_hw_ids.h>\n#include "brcmu_wifi.h"')
+    anchor='''\tif (fwevt_idx >= fweh->num_event_codes)
+\t\treturn;
+
+\tif (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx])'''
+    c=replace_once(c,anchor,'''\
+\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
+\t\tbrcmf_info("MZ600_V20_FWEH_INGRESS code=%u status=%u reason=%u datalen=%u subscribed=%u\\\\n",
+\t\t\t   fwevt_idx,
+\t\t\t   get_unaligned_be32(&event_packet->msg.status),
+\t\t\t   get_unaligned_be32(&event_packet->msg.reason),
+\t\t\t   datalen,
+\t\t\t   fwevt_idx < fweh->num_event_codes &&
+\t\t\t   !!fweh->evt_handler[fwevt_idx]);
+\t}
+\tif (fwevt_idx >= fweh->num_event_codes)
+\t\treturn;
+
+\tif (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx])''')
+    # V20 source-only probe: read numeric header version and length first.
+    # Old v1 frames lack the trailing ifidx/bsscfgidx; log these only
+    # if the received bytes contain the full modern frame.
+    anchor='''\tif (fwevt_idx >= fweh->num_event_codes)
+\t\treturn;'''
+    c=replace_once(c,anchor,'''\
+\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
+\t    fwevt_idx == BRCMF_E_ESCAN_RESULT) {
+\t\tu16 version = get_unaligned_be16(&event_packet->msg.version);
+\t\tu8 ifidx = 0, bsscfg = 0;
+\t\tbool has_indices = packet_len >= sizeof(*event_packet);
+\t\tif (has_indices) {
+\t\t\tifidx = event_packet->msg.ifidx;
+\t\t\tbsscfg = event_packet->msg.bsscfgidx;
+\t\t}
+\t\tbrcmf_info("MZ600_V20_HEADER code=%u ver=%u ifidx=%u bsscfg=%u has_indices=%u pktlen=%u datalen=%u v1_hdr=%zu v2_hdr=%zu\\n",
+\t\t\t   fwevt_idx, version, ifidx, bsscfg, has_indices,
+\t\t\t   packet_len, datalen,
+\t\t\t   sizeof(*event_packet) - 2,
+\t\t\t   sizeof(*event_packet));
+\t}
+\tif (fwevt_idx >= fweh->num_event_codes)
+\t\treturn;''')
+
+    # Diagnose validation/queue/worker path for Event69 without any change
+    # to packet acceptance, allocation or dispatch behavior.
+    anchor='''\tif (fwevt_idx >= fweh->num_event_codes)
+\t\treturn;'''
+    c=replace_once(c,anchor,'''\
+\tif (fwevt_idx >= fweh->num_event_codes) {
+\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\t\tbrcmf_info("MZ600_V20_FWEH_DROP reason=invalid_code code=%u datalen=%u pktlen=%u\\n",
+\t\t\t\tfwevt_idx, datalen, packet_len);
+\t\treturn;
+\t}''')
+    anchor='''\tif (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx])
+\t\treturn;'''
+    c=replace_once(c,anchor,'''\
+\tif (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx]) {
+\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\t\tbrcmf_info("MZ600_V20_FWEH_DROP reason=unsub code=%u datalen=%u pktlen=%u\\n",
+\t\t\t\tfwevt_idx, datalen, packet_len);
+\t\treturn;
+\t}''')
+    anchor='''\tif (datalen > BRCMF_DCMD_MAXLEN ||
+\t    datalen + sizeof(*event_packet) > packet_len)
+\t\treturn;'''
+    c=replace_once(c,anchor,'''\
+\tif (datalen > BRCMF_DCMD_MAXLEN ||
+\t    datalen + sizeof(*event_packet) > packet_len) {
+\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\t\tbrcmf_info("MZ600_V20_FWEH_DROP reason=bad_length code=%u status=%u datalen=%u pktlen=%u expected=%zu\\n",
+\t\t\t\tfwevt_idx, get_unaligned_be32(&event_packet->msg.status),
+\t\t\t\tdatalen, packet_len, datalen + sizeof(*event_packet));
+\t\treturn;
+\t}''')
+    anchor='''\tevent = kzalloc_flex(*event, data, datalen, gfp);
+\tif (!event)
+\t\treturn;'''
+    c=replace_once(c,anchor,'''\
+\tevent = kzalloc_flex(*event, data, datalen, gfp);
+\tif (!event) {
+\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\t\tbrcmf_info("MZ600_V20_FWEH_DROP reason=alloc code=%u status=%u datalen=%u pktlen=%u\\n",
+\t\t\t\tfwevt_idx, get_unaligned_be32(&event_packet->msg.status),
+\t\t\t\tdatalen, packet_len);
+\t\treturn;
+\t}''')
+    anchor='''\tbrcmf_fweh_queue_event(fweh, event);'''
+    c=replace_once(c,anchor,'''\
+\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
+\t    fwevt_idx == BRCMF_E_ESCAN_RESULT)
+\t\tbrcmf_info("MZ600_V20_FWEH_ADMIT code=%u status=%u datalen=%u pktlen=%u\\n",
+\t\t\t   fwevt_idx, get_unaligned_be32(&event_packet->msg.status),
+\t\t\t   datalen, packet_len);
+\tbrcmf_fweh_queue_event(fweh, event);''')
+    anchor='''\t\temsg.bsscfgidx = emsg_be->bsscfgidx;'''
+    c=replace_once(c,anchor,'''\
+\t\temsg.bsscfgidx = emsg_be->bsscfgidx;
+\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
+\t\t    event->code == BRCMF_E_ESCAN_RESULT)
+\t\t\tbrcmf_info("MZ600_V20_FWEH_WORKER code=%u status=%u bsscfg=%u\\n",
+\t\t\t\t   event->code, emsg.status, emsg.bsscfgidx);''')
+    anchor='''\t\terr = brcmf_fweh_call_event_handler(drvr, ifp, event->code,
+\t\t\t\t\t\t    &emsg, event->data);
+\t\tif (err) {'''
+    c=replace_once(c,anchor,'''\
+\t\terr = brcmf_fweh_call_event_handler(drvr, ifp, event->code,
+\t\t\t\t\t\t    &emsg, event->data);
+\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
+\t\t    event->code == BRCMF_E_ESCAN_RESULT)
+\t\t\tbrcmf_info("MZ600_V20_FWEH_DISPATCH code=%u status=%u ifp=%u handler_rc=%d\\n",
+\t\t\t\t   event->code, emsg.status, !!ifp, err);
+\t\tif (err) {''')
+    anchor='''\t\tif (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {'''
+    c=replace_once(c,anchor,'''\
+\t\tif (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {
+\t\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
+\t\t\t\tbrcmf_info("MZ600_V20_FWEH_DROP reason=bsscfg code=%u raw_index=%u\\n",
+\t\t\t\t\tevent->code, event->emsg.bsscfgidx);''')
+    return c
+
+def main():
+    if not (LINUX.is_dir() and OUT.is_dir() and M.is_dir()):
+        raise RuntimeError("No matching kernel source/build tree")
+    if not (Path(str(COMPILER)+"gcc").is_file() and PATCH.is_file()):
+        raise RuntimeError("Missing exact compiler or base fallback patch")
+    source=SOURCE.read_bytes()
+    fweh_source=FWEH_SOURCE.read_bytes()
+    original_ko=KO.read_bytes()
+    if sha(source)!=SOURCE_SHA or sha(fweh_source)!=FWEH_SHA or sha(PATCH.read_bytes())!=PATCH_SHA or sha(original_ko)!=ORIG_KO:
+        raise RuntimeError("Source/patch/compiled module SHA changed: refuse")
+    RESULT.mkdir(mode=0o700,exist_ok=True)
+    artifact=RESULT/"brcmfmac-2012-escan-event69-v20.ko"
+    report=RESULT/"offline-build-result.json"
+    if artifact.exists() or report.exists():
+        raise RuntimeError("V20 artifact already exists: refuse overwrite")
+    result={}
+    try:
+        run("patch","--batch","--forward","-p1","-i",str(PATCH),cwd=LINUX)
+        patched=SOURCE.read_text()
+        SOURCE.write_text(instrument(patched))
+        FWEH_SOURCE.write_text(instrument_fweh(fweh_source.decode()))
+        cmd=["make","-C",str(LINUX),"O="+str(OUT),"ARCH=arm",
+             "CROSS_COMPILE="+str(COMPILER),"M="+str(M),"modules","-j2"]
+        with (RESULT/"build.log").open("w") as log:
+            run(*cmd,stdout=log,stderr=subprocess.STDOUT)
+        current=KO.read_bytes()
+        if sha(current)==ORIG_KO:
+            raise RuntimeError("V20 compiled module is identical to baseline!")
+        shutil.copyfile(KO,artifact)
+        result={
+            "outcome":"OFFLINE_V20_ARM_MODULE_BUILT",
+            "module_sha256":sha(current),"module_bytes":len(current),
+            "source_sha256_at_rest":SOURCE_SHA,
+            "fweh_sha256_at_rest":FWEH_SHA,
+            "base_patch_sha256":PATCH_SHA,
+            "no_device_access":True,"no_scan":True,"firmware_stays_private":True
+        }
+    finally:
+        SOURCE.write_bytes(source)
+        FWEH_SOURCE.write_bytes(fweh_source)
+        KO.write_bytes(original_ko)
+        if sha(SOURCE.read_bytes())!=SOURCE_SHA or sha(FWEH_SOURCE.read_bytes())!=FWEH_SHA or sha(KO.read_bytes())!=ORIG_KO:
+            raise RuntimeError("CRITICAL HOST SOURCE/MODULE RESTORE FAILED")
+    if not result:
+        raise RuntimeError("No successful artifact")
+    report.write_text(json.dumps(result,indent=2)+"\n")
+    print(json.dumps(result,indent=2))
+
+if __name__=="__main__":
+    main()
