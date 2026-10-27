@@ -23,7 +23,7 @@ pins = {
     fwil: "770964dcbe004e1df7e7c5faecda90358e44cbd2fd56f25ceb73aaaf6a296f79",
     ko: "9fec47bc2771d55bcdb1c36bb7502dffea6a0dd2d94dcff60725f44f3fb2d6eb",
 }
-compiler = lab / "toolchains/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-"
+compiler = lab.parent / "toolchains/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-"
 def digest(blob): return hashlib.sha256(blob).hexdigest()
 if result.exists():
     raise SystemExit("STOP: review smoke output exists; do not overwrite")
