@@ -224,6 +224,8 @@ static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
 
 def instrument_fweh(original):
     c=original
+    c=replace_once(c, '#include "brcmu_wifi.h"',
+                      '#include <brcm_hw_ids.h>\n#include "brcmu_wifi.h"')
     anchor='''\tif (fwevt_idx >= fweh->num_event_codes)
 \t\treturn;
 
