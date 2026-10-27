@@ -27,7 +27,7 @@ pins = {
     drv / "fweh.c": "4a4c090a81e7c2a954834e98db41633f1cc5dd0a6b739edc5dbfc9b0bcd9f51c",
     drv / "fwil.h": "770964dcbe004e1df7e7c5faecda90358e44cbd2fd56f25ceb73aaaf6a296f79",
     drv / "brcmfmac.ko": "9fec47bc2771d55bcdb1c36bb7502dffea6a0dd2d94dcff60725f44f3fb2d6eb",
-    drv / "wcc/brcmfmac-wcc.ko": "6d3ab647684e6e9fef37caa14ea539bc25f1458f4472d7d0e376a782b364115d",
+    drv / "wcc/brcmfmac-wcc.ko": "76e5becc888c6858b9e892a75e19db7eb27f248373b4e4377da1f66c63683e58",
 }
 if result.exists():
     raise SystemExit("STOP: integration build already exists")
