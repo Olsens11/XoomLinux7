@@ -30,7 +30,7 @@ foreach ($entry in $expected) {
 if (-not ([System.IO.Ports.SerialPort]::GetPortNames() -contains 'COM9')) {
   throw 'STOP: COM9 missing'
 }
-& py -3 -c 'import serial; print("pyserial ready")'
+& py -3 -c "import serial; print('pyserial ready')"
 if ($LASTEXITCODE -ne 0) { throw 'STOP: Python 3 or pyserial unavailable' }
 Write-Host 'STAGED INPUTS VALID. No Xoom commands have been sent by this launcher.'
 Write-Host 'About to run one RAM-only V31 diagnostic with COM9 exclusive access,'
