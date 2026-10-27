@@ -1,3 +1,17 @@
+## 2026-10-27 — versioned patch-series continuity and V20 placement
+
+Owner directs maintaining the **actual ordered BCM4329 integration patch series as work proceeds**, including revising existing patches rather than accumulating unrelated fixes or leaving work only in temporary test modules. Follow the established [kernel patch documentation maintained in xoom-linux/linux](https://github.com/xoom-linux/linux/blob/master/Documentation/process/submitting-patches.rst) and existing project release gates. Keep the previous known-tested patch revisions, dependency/baseline and build/test evidence, and precise supersession history. One logical change per reviewable/bisectable patch, not one patch per test or source file.
+
+| Logical patch track | Current state | Promotion gate |
+| --- | --- | --- |
+| `wifi: brcmfmac` version-aware firmware event parsing + Event69 interface routing | **RESEARCH ONLY**: V19 observed firmware terminal received but `bsscfgidx=1`, NULL interface; some partials `bsscfgidx=140`. [V20 source audit](MZ600_V20_EVENT_HEADER_ABI_SOURCE_AUDIT_2026-10-27.md). Historical version-1 hypothesis unverified. | Physically read raw event header version/length; validate payload alignment; same-module gated compatibility A/B; generic/other interface regressions; then extract smallest complete patch and tests |
+| Early HRI39 `WLC_SCAN`/BSS108 parser and scan lifecycle | Existing independent lab trail, v11 results | Preserve independent protocol/scan-ownership gate; avoid accidentally mixing with 2012 Event69 dispatch change |
+| BCM4329 board resources, MMC/CCCR and BT shared-chip integration | Existing separately tracked DTS/pwrseq/U4/LPO/HCI and SDIO patch experiments | Maintain separate subsystem patches and explicit dependencies; independent multi-device and BT-coexistence tests |
+
+**Current V20 state:** no actual upstream-oriented patch or physical V20 test created; no fabricated revision number or submission claims. Next code change must be logged here with its real patch filename, base, revision, verification and dependencies.
+
+---
+
 ## BCM4329 original-firmware legacy passive scan now physically returned three BSS envelopes — protocol separate from whole-chip patches
 
 [Owner live 2026-10-26 HRI39 WLC_SCAN50 and SCAN_RESULTS51 checkpoint](../checkpoints/MZ600_V064_HRI39_LEGACY_PASSIVE_5GHZ_V7R_FIRMWARE_SCAN_3_BSS_PHYSICAL_PASS_2026-10-26.md) physically proves one channel36 NO_IR passive scan start rc0 and version108 1632B/3 BSS framed response rc0. This does NOT prove BSS individual channels, original firmware event completion, cfg80211 BSS reporting or upstream readiness; current experiment reads results after escan timeout. Whole-chip regulator U4/WL/BT GPIO, 32.768kHz LPO, power-sequence, PMU/ChipCommon and six-field OEM MMC SDIO remain separate logical patch series, not to be conflated with this driver scan-protocol compatibility. All OEM FW/NVRAM overlay and original module hashes restored after experiment. Next in-scope separate brcmfmac firmware compatibility work: validate 124B v108 BSS fields safely and completion event/polling while keeping 109+ parser behavior and regulatory flags.
