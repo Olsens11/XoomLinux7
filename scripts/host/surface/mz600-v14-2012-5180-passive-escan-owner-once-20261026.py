@@ -2,10 +2,10 @@
 """Surface owner-operated V14; original 2012 BCM4329 single ch36 passive ESCAN test.
 
 Run when prior COM9 terminal/tool is disconnected:
-    python mz600-v14-2012-firmware-bandlist-owner-once-20261026.py
+    python mz600-v14-owner-once.py
 Requires Python pyserial; DOES NOT alter boot, installed FW, kernel, or NVRAM.
 Stage two SHA-pinned inputs into Xoom /run, use SHA-guarded transient bind
-overlay and compatible read-only channel listing module, audit rollback.
+overlay and passive-only Event69 diagnostic module, audit rollback.
 Do not repeat a used one-shot or suppress failed preflight guards.
 """
 import base64
@@ -230,7 +230,7 @@ def main():
             print(line[:260], flush=True)
     if rc != 0 or not audit_ok or not transcript_ok:
         raise RuntimeError("Test / rollback incomplete; retain receipt and inspect before any next action")
-    print("V14_2012_FIRMWARE_BANDLIST_TEST_AND_INDEPENDENT_ROLLBACK_PASS",flush=True)
+    print("V14_2012_PASSIVE_SCAN_ATTEMPT_AND_INDEPENDENT_ROLLBACK_PASS",flush=True)
 
 if __name__ == "__main__":
     main()
