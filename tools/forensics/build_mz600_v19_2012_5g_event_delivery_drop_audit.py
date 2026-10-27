@@ -295,7 +295,7 @@ def instrument_fweh(original):
     c=replace_once(c,anchor,'''\
 \tif (fwevt_idx >= fweh->num_event_codes) {
 \t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=invalid_code code=%u datalen=%u pktlen=%u\n",
+\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=invalid_code code=%u datalen=%u pktlen=%u\\n",
 \t\t\t\tfwevt_idx, datalen, packet_len);
 \t\treturn;
 \t}''')
@@ -304,7 +304,7 @@ def instrument_fweh(original):
     c=replace_once(c,anchor,'''\
 \tif (fwevt_idx != BRCMF_E_IF && !fweh->evt_handler[fwevt_idx]) {
 \t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=unsub code=%u datalen=%u pktlen=%u\n",
+\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=unsub code=%u datalen=%u pktlen=%u\\n",
 \t\t\t\tfwevt_idx, datalen, packet_len);
 \t\treturn;
 \t}''')
@@ -315,7 +315,7 @@ def instrument_fweh(original):
 \tif (datalen > BRCMF_DCMD_MAXLEN ||
 \t    datalen + sizeof(*event_packet) > packet_len) {
 \t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=bad_length code=%u status=%u datalen=%u pktlen=%u expected=%zu\n",
+\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=bad_length code=%u status=%u datalen=%u pktlen=%u expected=%zu\\n",
 \t\t\t\tfwevt_idx, get_unaligned_be32(&event_packet->msg.status),
 \t\t\t\tdatalen, packet_len, datalen + sizeof(*event_packet));
 \t\treturn;
@@ -327,7 +327,7 @@ def instrument_fweh(original):
 \tevent = kzalloc_flex(*event, data, datalen, gfp);
 \tif (!event) {
 \t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=alloc code=%u status=%u datalen=%u pktlen=%u\n",
+\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=alloc code=%u status=%u datalen=%u pktlen=%u\\n",
 \t\t\t\tfwevt_idx, get_unaligned_be32(&event_packet->msg.status),
 \t\t\t\tdatalen, packet_len);
 \t\treturn;
@@ -336,21 +336,17 @@ def instrument_fweh(original):
     c=replace_once(c,anchor,'''\
 \tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
 \t    fwevt_idx == BRCMF_E_ESCAN_RESULT)
-\t\tbrcmf_info("MZ600_V19_FWEH_ADMIT code=%u status=%u datalen=%u pktlen=%u\n",
+\t\tbrcmf_info("MZ600_V19_FWEH_ADMIT code=%u status=%u datalen=%u pktlen=%u\\n",
 \t\t\t   fwevt_idx, get_unaligned_be32(&event_packet->msg.status),
 \t\t\t   datalen, packet_len);
 \tbrcmf_fweh_queue_event(fweh, event);''')
-    anchor='''\t\temsg.bsscfgidx = emsg_be->bsscfgidx;
-
-\t\tbrcmf_dbg(EVENT, "  version %u flags %u status %u reason %u\n",'''
+    anchor='''\t\temsg.bsscfgidx = emsg_be->bsscfgidx;'''
     c=replace_once(c,anchor,'''\
 \t\temsg.bsscfgidx = emsg_be->bsscfgidx;
 \t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
 \t\t    event->code == BRCMF_E_ESCAN_RESULT)
-\t\t\tbrcmf_info("MZ600_V19_FWEH_WORKER code=%u status=%u bsscfg=%u\n",
-\t\t\t\t   event->code, emsg.status, emsg.bsscfgidx);
-
-\t\tbrcmf_dbg(EVENT, "  version %u flags %u status %u reason %u\n",''')
+\t\t\tbrcmf_info("MZ600_V19_FWEH_WORKER code=%u status=%u bsscfg=%u\\n",
+\t\t\t\t   event->code, emsg.status, emsg.bsscfgidx);''')
     anchor='''\t\terr = brcmf_fweh_call_event_handler(drvr, ifp, event->code,
 \t\t\t\t\t\t    &emsg, event->data);
 \t\tif (err) {'''
@@ -359,17 +355,15 @@ def instrument_fweh(original):
 \t\t\t\t\t\t    &emsg, event->data);
 \t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
 \t\t    event->code == BRCMF_E_ESCAN_RESULT)
-\t\t\tbrcmf_info("MZ600_V19_FWEH_DISPATCH code=%u status=%u ifp=%u handler_rc=%d\n",
+\t\t\tbrcmf_info("MZ600_V19_FWEH_DISPATCH code=%u status=%u ifp=%u handler_rc=%d\\n",
 \t\t\t\t   event->code, emsg.status, !!ifp, err);
 \t\tif (err) {''')
-    anchor='''\t\tif (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {
-\t\t\tbphy_err(drvr, "invalid bsscfg index: %u\n",'''
+    anchor='''\t\tif (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {'''
     c=replace_once(c,anchor,'''\
 \t\tif (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {
 \t\t\tif (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-\t\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=bsscfg code=%u raw_index=%u\n",
-\t\t\t\t\tevent->code, event->emsg.bsscfgidx);
-\t\t\tbphy_err(drvr, "invalid bsscfg index: %u\n",''')
+\t\t\t\tbrcmf_info("MZ600_V19_FWEH_DROP reason=bsscfg code=%u raw_index=%u\\n",
+\t\t\t\t\tevent->code, event->emsg.bsscfgidx);''')
     return c
 
 def main():
