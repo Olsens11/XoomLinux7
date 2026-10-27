@@ -1,3 +1,5 @@
+> **OWNER CLARIFICATION, 2026-10-27 — INTERPRETATION CORRECTED:** The user **deliberately turned Wi-Fi OFF and back ON during this capture to force a rescan**. This is a material experimental intervention. `wpa_supplicant: CTRL-EVENT-TERMINATING` and its subsequent restart are **consistent with that intentional toggle**, **NOT independently evidence of a malfunctioning OEM scanner**. The earlier `Failed to initiate AP scan` message might also be associated with Wi-Fi transitioning, but the exact toggle timestamp was not captured; correlation and causation cannot be established. Android per-UID +11 scan counter and changing BSS cache likewise span this intentional restart, so this is not an uninterrupted passive observation of normal background scanning. This does not change the measured cache totals or Linux7 V14–V16 Event69 observations. No OEM hardware scan terminal or duration was measured.
+
 # V17 — Stock Xoom MZ604 Wi-Fi observation: results update, repeated scan requests, no captured firmware completion
 
 **Date:** 2026-10-27. **Actual physical OEM Android observation and host-side analysis.** Captured read-only ADB logcat while owner operated Wi-Fi Settings on stock Motorola Xoom. Capture stopped cleanly with exit code 0 after owner said done. No Android root, firmware/USB/scan modification. Distinguish reference MZ604 Wi-Fi variant from experimental Debian MZ600 CDMA.
@@ -23,12 +25,12 @@
 | Wi-Fi enabled | Yes | Yes |
 | Connected to AP | No | No |
 
-These are BSS cache records, not necessarily unique SSIDs. The system scan counter +11 indicates scan requests/counter increments, NOT independently verified 11 successful RF scan completions. The cached results did change. A long Android settings list does NOT mean 31–34 networks share experimental Linux's single 5180 MHz channel.
+These are BSS cache records, not necessarily unique SSIDs. The system scan counter +11 indicates scan requests/counter increments, NOT independently verified 11 successful RF scan completions. The cached results did change; **the user deliberately toggled Wi-Fi during the before/after interval**. A long Android settings list does NOT mean 31–34 networks share experimental Linux's single 5180 MHz channel.
 
 ## Log messages relevant to firmware scan completion
 
-- At tablet time 10-27 07:32:00.600, wpa_supplicant logged: wlan0: Failed to initiate AP scan.
-- At 07:32:34.730, wpa_supplicant logged CTRL-EVENT-TERMINATING; another supplicant PID started at about 07:32:38. This complicates using the spare as a healthy steady-state reference.
+- At tablet time 10-27 07:32:00.600, wpa_supplicant logged: wlan0: Failed to initiate AP scan. **It could have occurred during or around the user's deliberate Wi-Fi OFF/ON transition**, but without an exact toggle timestamp we cannot attribute that message to the toggle or establish a separate fault.
+- At 07:32:34.730, wpa_supplicant logged CTRL-EVENT-TERMINATING; another supplicant PID started at about 07:32:38. **The user subsequently clarified that they deliberately toggled Wi-Fi OFF/ON during the capture**, so this termination/restart is expected and should not be characterized as spontaneous instability; its exact association with the toggle is not timestamp-confirmed.
 - Neither raw logcat nor the last-100-entry Wi-Fi state-machine ring snapshots showed a SCAN_RESULTS_EVENT or CTRL-EVENT-SCAN-RESULTS terminal record. This does NOT prove no scan succeeded; logging and ring retention may be incomplete.
 - WifiStateMachine ring contained many what=147462 (0x24006). Historical AOSP WifiMonitor defines this as SUPPLICANT_STATE_CHANGE_EVENT, NOT scan result completion. what=147461 (0x24005) is SCAN_RESULTS_EVENT; none observed in two tail ring snapshots. The approximately 15-second spacing of what=147462 MUST NOT be interpreted as scan duration or recurrence.
 - Historical AOSP reference: https://android.googlesource.com/platform/frameworks/base/+/fea9df6386d66089b004719f194625e159bb344a/wifi/java/android/net/wifi/WifiStateMachine.java and https://android.googlesource.com/platform/packages/modules/Wifi/+/refs/tags/android-mainline-12.0.0_r122/service/java/com/android/server/wifi/WifiMonitor.java .
@@ -36,7 +38,7 @@ These are BSS cache records, not necessarily unique SSIDs. The system scan count
 
 ## How to interpret user's original hypothesis
 
-Owner noticed security descriptions fill in gradually while scrolling original Android Wi-Fi list and suggested Linux's 10s watchdog might be too short. The Android framework counted +11 system scan requests and its cache changed, which is consistent with repeated requests/cached-result rendering rather than one continuous prolonged RF scan. It does not prove timing of even one scan. Security annotations can appear after result discovery; a hidden SSID normally does not prevent a passive scanner from ending after its scheduled channel dwell.
+Owner noticed security descriptions fill in gradually while scrolling original Android Wi-Fi list and suggested Linux's 10s watchdog might be too short. The Android framework counted +11 system scan requests and its cache changed **across an interval that included a deliberate Wi-Fi OFF/ON cycle**. It is consistent with multiple scan requests and cache changes, but cannot be taken as evidence of uninterrupted regular background scan cadence, scan duration, or spontaneous supplicant failures. It does not prove timing of even one scan. Security annotations can appear after result discovery; a hidden SSID normally does not prevent a passive scanner from ending after its scheduled channel dwell.
 
 On experimental MZ600 V16 using same May2012 4.218.248.44 firmware, all seven received 5GHz channel36 Event69 partial packets occurred within approximately 414ms under explicit passive_time=500ms, then there was a ~10s absence of further partial or terminal, followed by driver watchdog. V15 2GHz on same firmware completed genuinely with Event69 SUCCESS in 179ms. So no demonstrated evidence that Linux needs >10s to gather Wi-Fi security metadata; waiting longer might only delay recovery of stuck firmware state.
 
