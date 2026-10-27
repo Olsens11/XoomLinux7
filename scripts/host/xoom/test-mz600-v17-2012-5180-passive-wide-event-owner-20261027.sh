@@ -69,7 +69,16 @@ msg 'MZ600_V17_PREFLIGHT_START'
 [[ -d /sys/bus/sdio/devices/mmc2:0001:1 ]] || exit 14
 [[ -e /sys/firmware/devicetree/base/mmc@c8000200/wifi@1/local-mac-address ]] || exit 15
 ! mountpoint -q "$F" && ! mountpoint -q "$N" || exit 16
-! grep -Eq '^(brcmfmac_wcc|brcmfmac|brcmutil|bluetooth|hci_uart) ' /proc/modules || exit 17
+! grep -Eq '^(brcmfmac_wcc|brcmfmac|brcmutil) ' /proc/modules || exit 17
+# Loaded but inactive BT stack is preserved (no BT service/HCI traffic).
+! systemctl is-active --quiet bluetooth.service || exit 17
+if [[ -d /sys/class/bluetooth/hci0 ]]; then
+  if hciconfig hci0 2>/dev/null | grep -Fq 'UP RUNNING'; then
+    msg 'MZ600_V17_STOP_BT_HCI_ACTIVE'
+    exit 17
+  fi
+fi
+msg 'MZ600_V17_QUIESCENT_BT_STACK_PRESERVED'
 for srv in NetworkManager wpa_supplicant iwd; do
   ! systemctl is-active --quiet "$srv.service" || exit 18
 done
