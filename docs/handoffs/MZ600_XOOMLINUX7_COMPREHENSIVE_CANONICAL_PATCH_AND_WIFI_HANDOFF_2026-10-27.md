@@ -53,12 +53,12 @@ All following paths are relative to [the current project branch](https://github.
 
 | Item | Verified/project location or role |
 | --- | --- |
-| Source host | Windows desktop `DESKTOP-R16QJD4`, Remote Desktop Commander device ID `2fc5f6ea-20da-436f-8ad8-c5cd59f44870`. |
+| Source host | Windows desktop `DESKTOP-R16QJD4`, discover current Remote Desktop Commander device ID from `list_devices` before use (do not hard-code/publish credentials or device identifiers). |
 | Cross-build environment | Desktop WSL `Ubuntu-22.04`, user `xoomdev`, ARM GNU Toolchain 14.3.Rel1, ARMv7/Cortex-A9 and exact Linux module ABI. |
 | Development project Git checkout | `/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project`. Public GitHub `Olsens11/XoomLinux7`, branch `wip/clean-wifi-bt-usb-20261025`. |
 | Actual kernel source tree | `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-bigpart-linux`. Upstream source commit `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`; read current Git status BEFORE modifying. |
 | brcmfmac sources | `drivers/net/wireless/broadcom/brcm80211/brcmfmac/{cfg80211.c,cfg80211.h,fweh.c,fwil.c,fwil_types.h,feature.c,sdio.c,firmware.c}`. Matched separate `wcc/brcmfmac-wcc.ko` when interface/export CRC changes. |
-| Device control / host | Microsoft Surface Book 2 `SURFACE-BOOK-2`, Remote Desktop Commander device ID `bf441b48-041b-4940-b629-8b441339e80a`. Runs Windows native Python/PowerShell and connects USB serial COM9 to the Xoom. |
+| Device control / host | Microsoft Surface Book 2 `SURFACE-BOOK-2`, discover current Remote Desktop Commander device ID from `list_devices` before use (do not hard-code/publish credentials or device identifiers). Runs Windows native Python/PowerShell and connects USB serial COM9 to the Xoom. |
 | Target DUT | **Replacement/test** Motorola Xoom MZ600, Tegra2, BCM4329 rev/B1 combo, Linux `7.0.0-next-20260422+`, Debian 12.15 armhf. In testing root access over COM9 (not an always-on guarantee; preflight). |
 | Test artefacts on Surface | `C:\Users\olsen\xoom-linux-rom\captures\MZ600-<VERSION>-...\\`; each test owns its own guarded runner, private transcript, receipt JSON and consumed `.attempted` marker. |
 | Desktop temporary LAN transfer | Desktop WSL→`C:\Users\olsen\AppData\Local\Temp\mz600-<fresh-ID>`→temporary Python HTTP on **port 43157**→Surface PowerShell `Invoke-WebRequest`. Historical desktop IPv4 `192.168.0.125`; verify before use. |
