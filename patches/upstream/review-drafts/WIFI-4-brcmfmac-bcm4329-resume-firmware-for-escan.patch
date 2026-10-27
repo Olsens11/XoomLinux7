@@ -1,0 +1,70 @@
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
+@@ -66,8 +66,9 @@
+ #define BRCMF_C_GET_GET_PKTCNTS			137
+ #define BRCMF_C_GET_BANDLIST			140
+ #define BRCMF_C_SET_SCB_TIMEOUT			158
+ #define BRCMF_C_GET_ASSOCLIST			159
++#define BRCMF_C_GET_UP				162
+ #define BRCMF_C_GET_PHYLIST			180
+ #define BRCMF_C_SET_SCAN_CHANNEL_TIME		185
+ #define BRCMF_C_SET_SCAN_UNASSOC_TIME		187
+ #define BRCMF_C_SCB_DEAUTHENTICATE_FOR_REASON	201
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -1500,8 +1500,39 @@
+ exit:
+ 	return err;
+ }
+ 
++/* BCM4329 firmware may bring its interface down while MPC is enabled.
++ * Leave the idle MPC policy intact and restore firmware readiness when
++ * another station scan is requested.
++ */
++static s32 brcmf_bcm4329_prepare_escan(struct brcmf_if *ifp)
++{
++	u32 up;
++	s32 err;
++
++	if (ifp->drvr->bus_if->chip != BRCM_CC_4329_CHIP_ID ||
++	    ifp->ifidx || ifp->bsscfgidx || !ifp->vif ||
++	    ifp->vif->wdev.iftype != NL80211_IFTYPE_STATION)
++		return 0;
++
++	err = brcmf_fil_cmd_int_get(ifp, BRCMF_C_GET_UP, &up);
++	if (err || up == 1)
++		return err;
++	if (up != 0)
++		return -EIO;
++
++	err = brcmf_fil_cmd_int_set(ifp, BRCMF_C_UP, 1);
++	if (err)
++		return err;
++
++	err = brcmf_fil_cmd_int_get(ifp, BRCMF_C_GET_UP, &up);
++	if (err)
++		return err;
++
++	return up == 1 ? 0 : -EIO;
++}
++
+ static s32
+ brcmf_do_escan(struct brcmf_if *ifp, struct cfg80211_scan_request *request)
+ {
+ 	struct brcmf_cfg80211_info *cfg = ifp->drvr->config;
+@@ -1514,8 +1545,13 @@
+ 	escan->wiphy = cfg->wiphy;
+ 	escan->escan_state = WL_ESCAN_STATE_SCANNING;
+ 
+ 	brcmf_scan_config_mpc(ifp, 0);
++	err = brcmf_bcm4329_prepare_escan(ifp);
++	if (err) {
++		brcmf_scan_config_mpc(ifp, 1);
++		return err;
++	}
+ 	results = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
+ 	results->version = 0;
+ 	results->count = 0;
+ 	results->buflen = WL_ESCAN_RESULTS_FIXED_SIZE;
