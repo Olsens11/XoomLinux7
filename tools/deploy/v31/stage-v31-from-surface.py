@@ -12,6 +12,7 @@ import importlib.util
 HOME = Path(r"C:\Users\olsen\xoom-linux-rom\captures\MZ600-V31-CONDITIONAL-UP-20261027")
 owner_path = HOME / "mz600-v31-owner-once.py"
 installer = Path(__file__).with_name("install-v31-provisional.sh")
+restore = Path(__file__).with_name("restore-before-v31.sh")
 STAGE = "/run/xoom-v31-install"
 items = [
     (HOME / "mz600-v31-escan-event69.ko", 354392,
@@ -24,7 +25,7 @@ items = [
      "5d4bdb6c56777e4a1eb27b08600a2782a76b563891dfd18afc163c8462d73834",
      STAGE+"/brcmfmac4329-sdio.bin", "FIRMWARE"),
 ]
-if not owner_path.is_file() or not installer.is_file():
+if not owner_path.is_file() or not installer.is_file() or not restore.is_file():
     raise SystemExit("STOP: verified original transport or installer script missing")
 spec = importlib.util.spec_from_file_location("v31_owner_transport", owner_path)
 owner = importlib.util.module_from_spec(spec)
@@ -48,6 +49,7 @@ response=owner.command("install -d -m 0700 "+STAGE,"__V31_STAGE_DIR_END__",20)
 for path,raw,dest,tag in payloads:
     owner.upload(path,raw,dest,"INSTALL_"+tag)
 owner.upload(installer,source,STAGE+"/install-v31-provisional.sh","INSTALL_SCRIPT")
+owner.upload(restore,restore.read_bytes(),STAGE+"/restore-v31.sh","RESTORE_SCRIPT")
 cmd = ("chmod 0700 "+STAGE+"/install-v31-provisional.sh; "
        "bash "+STAGE+"/install-v31-provisional.sh --check; "
        "printf 'V31_DRY_RUN_RC=%s__\\n' \"$?\"")
