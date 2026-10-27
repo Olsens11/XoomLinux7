@@ -94,13 +94,13 @@ def wifi_sources():
         baseline(FILES["header"]).decode()).encode()
     # Current candidate reflects fully normal cfg80211 scanning. Strictly
     # disallow resurrected lab-only scan policy in final generated source.
-    assert "controlled single-channel NO_IR PASSIVE" not in cfg
-    assert "BRCMF_C_SET_PASSIVE_SCAN, 1" not in cfg
-    assert "passive_time = cpu_to_le32(500)" not in cfg
-    assert "MZ600_V29_LEGACY_VALID_CHANNEL_FALLBACK" in cfg
-    assert "channel->flags |= IEEE80211_CHAN_NO_HT40" in cfg
-    assert "mz600_generation" in cfg
-    assert "BRCMF_E_ESCAN_RESULT" in fweh
+    assert b"controlled single-channel NO_IR PASSIVE" not in cfg
+    assert b"BRCMF_C_SET_PASSIVE_SCAN, 1" not in cfg
+    assert b"passive_time = cpu_to_le32(500)" not in cfg
+    assert b"MZ600_V29_LEGACY_VALID_CHANNEL_FALLBACK" in cfg
+    assert b"channel->flags |= IEEE80211_CHAN_NO_HT40" in cfg
+    assert b"mz600_generation" in cfg
+    assert b"BRCMF_E_ESCAN_RESULT" in fweh
     return {FILES["wifi"]:(original,cfg),
             FILES["event"]:(baseline(FILES["event"]),fweh),
             FILES["header"]:(baseline(FILES["header"]),hdr)}
