@@ -1,3 +1,9 @@
+## 2026-10-27 — V23 alternate ESCAN sync IDs: hardware PASS, per-generation correctness gate OPEN
+
+[Physical V23 checkpoint](../checkpoints/MZ600_V23_ALTERNATE_ESCAN_SYNC_IDS_FIRMWARE_ECHO_PHYSICAL_PASS_2026-10-27.md) establishes on original 2012 BCM4329 firmware that alternate host-generated IDs `0x1235` and `0x1236` are separately accepted and echoed in genuine Event69 SUCCESS fixed payload. Under existing lab-only owner fallback, both scans completed normally and original installed system restored. Combined with V22b's `0x1234` result, **using returned sync_id as transaction identity is now evidence-grounded.** Still required for production gate: *within one loaded device lifetime* per-scan unique ID, stale/late/duplicate terminal rejection, scan abort and timeout race, reset/teardown, 16-bit wrap, P2P/multiif isolation, older/modern firmware regression, cross-band and multiple Xooms. No upstream patch/signed-off commit yet, and no change to on-chip firmware.
+
+---
+
 ## 2026-10-27 — V21 terminal-only routing physical gate PASSED; upstream review gates still OPEN
 
 [Six-trial physical V21 checkpoint](../checkpoints/MZ600_V21_TERMINAL_OWNER_LAB_SWITCH_AB_PHYSICAL_PASS_2026-10-27.md) established that a **real** Event69 version2 status0 can be delivered to the active Linux scan owner on BCM4329 when the decoded firmware bsscfg index points to no valid interface: owner-mode ON triggered and completed cfg80211 scan normally for `bsscfg=1` (1642ms, three BSS) and `bsscfg=16` (1232ms, three BSS). Matching OFF negative control with `bsscfg=16` lost the terminal and waited 10476ms for watchdog. Four other native-routing trials behaved according to index0 and must not be misattributed to the fallback. All six cleanup checks and final independent original-runtime postflight passed.
