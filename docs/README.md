@@ -1,3 +1,7 @@
+> **LATEST 2026-10-27 — LEGACY BCM4329 ESCAN TRANSACTION IDs VERIFIED:** [V23 host-chosen 0x1235/0x1236 firmware echo physical checkpoint](checkpoints/MZ600_V23_ALTERNATE_ESCAN_SYNC_IDS_FIRMWARE_ECHO_PHYSICAL_PASS_2026-10-27.md). Both real Event69 SUCCESS IDs matched Linux request, both invalid-index events were correctly delivered by V21 lab fallback, 3 userspace BSS in 1.8/1.7s, watchdog-free, final original runtime check PASS. Earlier [V22b 0x1234 echo](checkpoints/MZ600_V22B_TERMINAL_SYNC_ID_ECHO_PHYSICAL_PASS_2026-10-27.md). Production per-scan generation/race/multiif correctness remains OPEN; only tested lab module, no firmware or persistent installation change. Consult [design RFC](research/MZ600_V21_TO_UPSTREAM_EVENT69_COMPLETION_MODEL_2026-10-27.md).
+
+---
+
 > **LATEST 2026-10-27 V21 SCAN COMPLETION PROOF:** [V21 six-trial Event69 terminal-owner physical checkpoint](checkpoints/MZ600_V21_TERMINAL_OWNER_LAB_SWITCH_AB_PHYSICAL_PASS_2026-10-27.md). Two genuine firmware success events with unresolved interface indices **were delivered through an enabled lab-only terminal-owner correction** and produced normal Linux cfg80211 scan completion and 3 BSS each. One OFF negative control timed out. All original runtime rollback checks PASS. This is a proven lab mechanism, **not an upstream-ready patch**. Use [canonical cross-host transfer SOP](process/DESKTOP_SURFACE_XOOM_ARTIFACT_TRANSFER.md).
 
 # Documentation router
