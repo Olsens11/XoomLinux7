@@ -1,3 +1,5 @@
+> **V20 SOURCE REVIEW 2026-10-27:** [Versioned event-header ABI audit and guarded V20 plan](../research/MZ600_V20_EVENT_HEADER_ABI_SOURCE_AUDIT_2026-10-27.md) now confirms current Linux7 `fweh.c` reads bsscfgidx and sets event data offset assuming the modern header without checking event version first; historical Broadcom v1 lacks those last two bytes. Crucially V19 never measured version, and potential 2-byte payload alignment must be audited before enabling any fallback. SOURCE-ONLY; no V20 build, module or Xoom scan has yet occurred.
+
 # XoomLinux7 / Motorola Xoom MZ600 — complete V19 → V20 engineering handoff
 
 **Canonical continuity snapshot: 2026-10-27, after actual V19 physical experiments. Active branch: `wip/clean-wifi-bt-usb-20261025` in `Olsens11/XoomLinux7`.**
