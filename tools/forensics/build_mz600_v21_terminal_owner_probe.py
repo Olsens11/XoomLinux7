@@ -71,7 +71,7 @@ MODULE_PARM_DESC(mz600_terminal_owner,
 \t\t\t\t\tbreak;
 \t\t\t\t}
 \t\t\t}
-\t\t\tif (cfg && only_primary && cfg->vif_cnt == 1 &&
+\t\t\tif (cfg && only_primary && list_is_singular(&cfg->vif_list) &&
 \t\t\t    READ_ONCE(cfg->scan_request) &&
 \t\t\t    !READ_ONCE(cfg->int_escan_map) &&
 \t\t\t    test_bit(BRCMF_SCAN_STATUS_BUSY, &cfg->scan_status) &&
@@ -100,7 +100,7 @@ MODULE_PARM_DESC(mz600_terminal_owner,
 \t\telse
 \t\t\tifp = drvr->iflist[emsg.bsscfgidx];
 \t\tif (mz600_scan_owner)
-\t\t\tbrcmf_info("MZ600_V21_TERMINAL_OWNER_DELIVER status=%u raw_bsscfg=%u\n",
+\t\t\tbrcmf_info("MZ600_V21_TERMINAL_OWNER_DELIVER status=%u raw_bsscfg=%u\\n",
 \t\t\t\t   emsg.status, emsg.bsscfgidx);''')
     return c
 
