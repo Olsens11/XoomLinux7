@@ -27,7 +27,7 @@ RECEIPT = ROOT / "mz600-v13-owner-receipt.json"
 SENTINEL = ROOT / "mz600-v13-owner-attempted.marker"
 FW_SHA = "5d4bdb6c56777e4a1eb27b08600a2782a76b563891dfd18afc163c8462d73834"
 KO_SHA = "ff19d91726f406468d6cc9516d43a851f6a7a22d403259094ae376041671db29"
-SH_SHA = "bf153048a98289f2ed248cf6f44c2de19b4664b12129291db35872717bfabb41"
+SH_SHA = "ed0a130fd584e607da438b7a429d7b24c88ff30d82d36ab6b97df82d02afc9d8"
 BASE_FW = "d61983946b1e733e4c75dbe6841ac0f1250ebed2e3ee9058cdfdbbba3ba37c93"
 BASE_NV = "a8715bb1ebe3c6e69c40781d58207326b71721dea4594acb8d37e935acef76cb"
 BASE_KO = "9fec47bc2771d55bcdb1c36bb7502dffea6a0dd2d94dcff60725f44f3fb2d6eb"
@@ -97,7 +97,7 @@ def root_probe():
         if body_start < 0 or body_end < 0:
             raise RuntimeError("Could not isolate exact device preflight")
         body = result[body_start+len(start):body_end]
-        if not re.search(r"(?m)^0\\s*$", body):
+        if not re.search(r"(?m)^0\s*$", body):
             raise RuntimeError("COM9 session was not root")
         for marker in ("7.0.0-next-20260422+", "/dev/mmcblk0p8 ext4",
                        "NO_WLAN0", "NO_BRCM_BT", "FW_UNMOUNTED",
