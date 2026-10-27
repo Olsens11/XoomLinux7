@@ -27,7 +27,7 @@ RECEIPT = ROOT / "mz600-v17-owner-receipt.json"
 SENTINEL = ROOT / "mz600-v17-owner-attempted.marker"
 FW_SHA = "5d4bdb6c56777e4a1eb27b08600a2782a76b563891dfd18afc163c8462d73834"
 KO_SHA = "d8ccb6f7077d54db0fa95e90debcd0e06494c9acd8e539eabebb7abde68233c7"
-SH_SHA = "7a1ac31a8d14b39af2c1803700a8f81a011f1c9cb2dedc6f8e424fd9dd6b27d3"
+SH_SHA = "f9381b12e090884482b7186b4466f7f8516ff64259a1a43b56ab1b83c02f66e2"
 BASE_FW = "d61983946b1e733e4c75dbe6841ac0f1250ebed2e3ee9058cdfdbbba3ba37c93"
 BASE_NV = "a8715bb1ebe3c6e69c40781d58207326b71721dea4594acb8d37e935acef76cb"
 BASE_KO = "9fec47bc2771d55bcdb1c36bb7502dffea6a0dd2d94dcff60725f44f3fb2d6eb"
@@ -82,7 +82,9 @@ def root_probe():
         query = (
             "echo " + start + "; id -u; uname -r; findmnt -n -o SOURCE,FSTYPE /; "
             "test ! -e /sys/class/net/wlan0 && echo NO_WLAN0; "
-            "grep -Eq '^(brcmfmac_wcc|brcmfmac|brcmutil|bluetooth|hci_uart) ' /proc/modules || echo NO_BRCM_BT; "
+            "grep -Eq '^(brcmfmac_wcc|brcmfmac|brcmutil) ' /proc/modules || echo NO_BRCM_WIFI; "
+            "if systemctl is-active --quiet bluetooth.service; then echo BT_SERVICE_ACTIVE; else echo BT_SERVICE_INACTIVE; fi; "
+            "if test -d /sys/class/bluetooth/hci0; then if hciconfig hci0 2>/dev/null | grep -Fq 'UP RUNNING'; then echo BT_HCI_UP; else echo BT_HCI_DOWN; fi; else echo BT_HCI_DOWN; fi; "
             "mountpoint -q /lib/firmware/brcm/brcmfmac4329-sdio.bin || echo FW_UNMOUNTED; "
             "mountpoint -q /lib/firmware/brcm/brcmfmac4329-sdio.txt || echo NV_UNMOUNTED; "
             "sha256sum /lib/firmware/brcm/brcmfmac4329-sdio.bin "
@@ -100,7 +102,7 @@ def root_probe():
         if not re.search(r"(?m)^0\s*$", body):
             raise RuntimeError("COM9 session was not root")
         for marker in ("7.0.0-next-20260422+", "/dev/mmcblk0p8 ext4",
-                       "NO_WLAN0", "NO_BRCM_BT", "FW_UNMOUNTED",
+                       "NO_WLAN0", "NO_BRCM_WIFI", "BT_SERVICE_INACTIVE", "BT_HCI_DOWN", "FW_UNMOUNTED",
                        "NV_UNMOUNTED", BASE_FW, BASE_NV, BASE_KO):
             if marker not in body:
                 raise RuntimeError("Xoom baseline mismatch: " + marker)
