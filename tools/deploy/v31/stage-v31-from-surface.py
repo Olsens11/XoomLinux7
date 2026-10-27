@@ -50,7 +50,7 @@ for path,raw,dest,tag in payloads:
 owner.upload(installer,source,STAGE+"/install-v31-provisional.sh","INSTALL_SCRIPT")
 cmd = ("chmod 0700 "+STAGE+"/install-v31-provisional.sh; "
        "bash "+STAGE+"/install-v31-provisional.sh --check; "
-       "printf 'V31_DRY_RUN_RC=%s__\n' \"$?\"")
+       "printf 'V31_DRY_RUN_RC=%s__\\n' \"$?\"")
 result = owner.command(cmd, "__V31_STAGE_DRY_RUN_END__", 40)
 if "V31_INSTALL_PREFLIGHT_PASS" not in result or "V31_DRY_RUN_RC=0__" not in result:
     raise SystemExit("STOP: staged file checks passed; installer dry-run did NOT pass. Preserve stage and inspect on COM9")
