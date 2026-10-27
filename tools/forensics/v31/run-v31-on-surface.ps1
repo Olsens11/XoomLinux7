@@ -58,7 +58,7 @@ try {
   Assert-ShaSize (Join-Path $root "mz600-v31-oem2012.bin") $firmwareHash 264140
   Assert-ShaSize (Join-Path $root "brcmfmac-wcc-matched-v31.ko") $wccHash 5892
   Assert-ShaSize (Join-Path $root "mz600-v31-escan-event69.ko") $moduleHash 354392
-  Assert-ShaSize (Join-Path $root "mz600-v31-normal-scan.sh") $shellHash 11386
+  Assert-ShaSize (Join-Path $root "mz600-v31-normal-scan.sh") $shellHash 11426
   Assert-ShaSize (Join-Path $root "mz600-v31-owner-once.py") $hostHash 19753
 } finally {
   if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Force -Recurse }
