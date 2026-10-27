@@ -1,3 +1,11 @@
+## 2026-10-27 — V21 terminal-only routing physical gate PASSED; upstream review gates still OPEN
+
+[Six-trial physical V21 checkpoint](../checkpoints/MZ600_V21_TERMINAL_OWNER_LAB_SWITCH_AB_PHYSICAL_PASS_2026-10-27.md) established that a **real** Event69 version2 status0 can be delivered to the active Linux scan owner on BCM4329 when the decoded firmware bsscfg index points to no valid interface: owner-mode ON triggered and completed cfg80211 scan normally for `bsscfg=1` (1642ms, three BSS) and `bsscfg=16` (1232ms, three BSS). Matching OFF negative control with `bsscfg=16` lost the terminal and waited 10476ms for watchdog. Four other native-routing trials behaved according to index0 and must not be misattributed to the fallback. All six cleanup checks and final independent original-runtime postflight passed.
+
+This proves the **narrow lab mechanism**, NOT that the firmware indices are corrupt or that the lab `mz600_terminal_owner` switch meets proper general Linux semantics. Retain precise patch modeling and prove scanner generation identity, cancel/timeout/lifetime races, decoded event alignment and interface scope, generic variants, 2.4GHz, Bluetooth coexistence and multi-device acceptance before promoting a small coherent `brcmfmac` production patch. No firmware/NVRAM edits, no kernel flash, no upstream submission or signoff. The Desktop→Surface transfer SOP is now formalized at [docs/process/DESKTOP_SURFACE_XOOM_ARTIFACT_TRANSFER.md](../process/DESKTOP_SURFACE_XOOM_ARTIFACT_TRANSFER.md) and was used for this successful V21 transfer.
+
+---
+
 ## 2026-10-27 — V21 upstream-quality intent: distinguish a proven lab workaround from the lasting fix
 
 The owner reaffirms that this research must produce **a correctly modeled, reviewable, bisectable Linux kernel compatibility patch**, not just a BCM4329-specific override that makes `iw scan` appear to work once.
