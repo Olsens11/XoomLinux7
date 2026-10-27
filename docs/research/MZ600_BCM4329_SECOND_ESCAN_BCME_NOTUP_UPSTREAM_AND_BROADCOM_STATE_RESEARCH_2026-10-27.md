@@ -1,3 +1,5 @@
+> **2026-10-27 LAB DIAGNOSTIC BUILD UPDATE:** [V30 offline/blocked-hardware checkpoint](MZ600_V30_FIRMWARE_UP_MPC_DIAGNOSTIC_OFFLINE_CHECKPOINT_2026-10-27.md). The source-restoring exact-ABI, V29 regulatory-preserving read-only WLC_GET_UP/MPC probe compiled and restored original sources; core SHA `c064cd5c23c50d423e1c09be106e61633bdf35ef57046d00f211e10659223738`. The remote Surface script-writing operation was **blocked by a safety check**; no physical V30 measurement or hardware state change occurred. Continue under an authorized deployment path; do not claim confirmed firmware UP/DOWN state or send resets.
+
 # BCM4329 second ESCAN `BCME_NOTUP` — upstream and Broadcom source comparison
 
 **Date:** 2026-10-27. **Research-only; no device, firmware, or kernel module changed.** This memo follows the comprehensive MZ600 handoff and V27/V28 physical checkpoints. It is designed to select a **single high-information** hardware observation, not guess another workaround.
