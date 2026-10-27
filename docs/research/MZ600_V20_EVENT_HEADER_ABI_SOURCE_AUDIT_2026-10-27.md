@@ -1,3 +1,11 @@
+## 2026-10-27 — V20 source and exact-ABI offline build PASSED; physical header version still unknown
+
+Owner successfully ran guarded PowerShell source-only one-shot on DESKTOP-R16QJD4; Python builder `tools/forensics/build_mz600_v20_2012_5g_event_header_probe.py` committed and pushed as `3f825be717e16f6b9aeb677e5b677595a53ebde8`, SHA256 `7287ed6f619f94fb5da3a795c1c6ccd222d2ac29b8d9ffe1c69b249579701b45`. Host repository checker reported 659 entries, errors=0. Subsequent guarded offline build performed on development desktop, **exit code 0**: exact Linux 7 ARM `brcmfmac-2012-escan-event69-v20.ko` 349176 bytes SHA256 `4ddce3565c79d96a6c040b94a1fd76e00d62d6360f15f2fb898dfa7eadf09a8c`. Source and original module restoration assertions passed: `cfg80211.c` SHA `1cb2c600fe401245cd218589d4bc3325f9ac0c0a15bd26ed1576c55eb3d85eb8`, `fweh.c` SHA `4a4c090a81e7c2a954834e98db41633f1cc5dd0a6b739edc5dbfc9b0bcd9f51c`, baseline legacy patch SHA `9ef957fc8c8a8d4843e35666db8d71092d06c92a456d5d17d1521d2125b7575a`.
+
+**Important limitation:** `has_indices` in the V20 log reports only that packet length covers the modern indices' byte positions; old v1 payload data may occupy those positions. Actual firmware header version still not measured. This module is diagnostic-only: no interface-remap or header-payload correction added, no physical V20 scan, no module deployed, no firmware/boot changes, no production patch extracted. Next prepare new uniquely marked guarded read-only-on-ABI test runner with independent rollback to capture actual numeric `MZ600_V20_HEADER` version and framing; do not rerun V18/V19 consumed trial IDs. Need a separate safety review of logger bounds and packet layout before hardware test. No upstream submission.
+
+---
+
 # MZ600 V20 — event-header ABI source audit and guarded experiment design (2026-10-27)
 
 Status: SOURCE AUDIT ONLY. No V20 module built, no Xoom radio test, no production compatibility change.
