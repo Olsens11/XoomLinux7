@@ -1,6 +1,6 @@
 #requires -Version 5.1
 <#
-Owner-operated Motorola Xoom MZ600 V31 read-only firmware-UP/MPC diagnostic.
+Owner-operated Motorola Xoom MZ600 V31 conditional WLC_UP diagnostic.
 Run on SURFACE-BOOK-2 after starting the standard temporary desktop HTTP
 file server on LAN port 43157. Only RAM/module temporary state on Xoom.
 #>
@@ -28,7 +28,7 @@ function Assert-ShaSize {
 }
 if ($env:COMPUTERNAME -ne "SURFACE-BOOK-2") { throw "STOP: wrong host" }
 if (Test-Path -LiteralPath $root) { throw "STOP: V31 directory exists. Do not overwrite or reuse trial" }
-if (-not (Test-Path -LiteralPath $old -PathType Container)) { throw "STOP: private V28 source directory missing" }
+if (-not (Test-Path -LiteralPath $old -PathType Container)) { throw "STOP: private V30 source directory missing" }
 if (-not ([System.IO.Ports.SerialPort]::GetPortNames() -contains "COM9")) { throw "STOP: COM9 unavailable" }
 $fwOld = Join-Path $old "mz600-v30-oem2012.bin"
 $wccOld = Join-Path $old "brcmfmac-wcc-matched-v30.ko"
@@ -46,7 +46,7 @@ try {
   Invoke-WebRequest -UseBasicParsing -Uri $coreUri -OutFile $core
   Assert-ShaSize $core $moduleHash 354392
   Invoke-WebRequest -UseBasicParsing -Uri "$raw/mz600-v31-normal-scan.sh" -OutFile $bash
-  Assert-ShaSize $bash $shellHash 11386
+  Assert-ShaSize $bash $shellHash 11426
   Invoke-WebRequest -UseBasicParsing -Uri "$raw/mz600-v31-owner-once.py" -OutFile $runner
   Assert-ShaSize $runner $hostHash 19753
   New-Item -ItemType Directory -Path $root | Out-Null
