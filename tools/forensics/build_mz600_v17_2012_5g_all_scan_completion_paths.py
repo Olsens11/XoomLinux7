@@ -159,6 +159,18 @@ static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
 
 \tif (status == BRCMF_E_STATUS_ABORT)''')
 
+    anchor='''\t\tbss_info_le = &escan_result_le->bss_info_le;
+
+\t\tif (brcmf_p2p_scan_finding_common_channel'''
+    c=replace_once(c,anchor,'''\
+\t\tbss_info_le = &escan_result_le->bss_info_le;
+\t\tbrcmf_info("MZ600_V17_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\\n",
+\t\t\t   le32_to_cpu(bss_info_le->version),
+\t\t\t   le32_to_cpu(bss_info_le->length),
+\t\t\t   le16_to_cpu(escan_result_le->bss_count));
+
+\t\tif (brcmf_p2p_scan_finding_common_channel''')
+
     # Privacy-safe metadata for every BSS, even hidden or off-channel.
     anchor='''\t\tbrcmf_info("MZ600_V17_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\\n",
 \t\t\t   le32_to_cpu(bss_info_le->version),
@@ -180,17 +192,6 @@ static void brcmf_init_escan(struct brcmf_cfg80211_info *cfg)
 \t\t\t\t   le16_to_cpu(bss_info_le->chanspec),
 \t\t\t\t   bss_info_le->ctl_ch, ok, ilen);
 \t\t}''')
-    anchor='''\t\tbss_info_le = &escan_result_le->bss_info_le;
-
-\t\tif (brcmf_p2p_scan_finding_common_channel'''
-    c=replace_once(c,anchor,'''\
-\t\tbss_info_le = &escan_result_le->bss_info_le;
-\t\tbrcmf_info("MZ600_V17_EVENT69_PARTIAL bss_ver=%u bss_len=%u count=%u\\n",
-\t\t\t   le32_to_cpu(bss_info_le->version),
-\t\t\t   le32_to_cpu(bss_info_le->length),
-\t\t\t   le16_to_cpu(escan_result_le->bss_count));
-
-\t\tif (brcmf_p2p_scan_finding_common_channel''')
 
     anchor='''\tbss_list = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
 \tif (bss_list->count != 0 &&'''
