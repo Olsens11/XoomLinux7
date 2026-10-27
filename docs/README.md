@@ -1,3 +1,5 @@
+> **LATEST 2026-10-27 V21 SCAN COMPLETION PROOF:** [V21 six-trial Event69 terminal-owner physical checkpoint](checkpoints/MZ600_V21_TERMINAL_OWNER_LAB_SWITCH_AB_PHYSICAL_PASS_2026-10-27.md). Two genuine firmware success events with unresolved interface indices **were delivered through an enabled lab-only terminal-owner correction** and produced normal Linux cfg80211 scan completion and 3 BSS each. One OFF negative control timed out. All original runtime rollback checks PASS. This is a proven lab mechanism, **not an upstream-ready patch**. Use [canonical cross-host transfer SOP](process/DESKTOP_SURFACE_XOOM_ARTIFACT_TRANSFER.md).
+
 # Documentation router
 
 > **2026-10-27 CANONICAL CROSS-COMPUTER PROCEDURE:** [Desktop → Surface → Xoom standard SHA-verified artifact transfer](process/DESKTOP_SURFACE_XOOM_ARTIFACT_TRANSFER.md), derived from verified V17–V19 commands; use for all further module tests. Related [development workflow](process/DEVELOPMENT_WORKFLOW.md).
