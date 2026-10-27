@@ -86,7 +86,7 @@ MODULE_PARM_DESC(mz600_terminal_owner,
 \t\t\t\t   mz600_v21_terminal_owner);
 \t\t}
 \t\tif (event->emsg.bsscfgidx >= BRCMF_MAX_IFS &&
-\t\t    !mz600_scan_owner) {'''.replace(r'\t','\t'))
+\t\t    !mz600_scan_owner) {'''.replace(r'\t','\t').lstrip('\\'))
 
     anchor = '''\t\tif (event->code == BRCMF_E_TDLS_PEER_EVENT)
 \t\t\tifp = drvr->iflist[0];
