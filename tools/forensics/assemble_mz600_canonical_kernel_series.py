@@ -11,6 +11,7 @@ import difflib
 import hashlib
 import importlib.util
 import json
+import sys
 from pathlib import Path
 import re
 import shutil
@@ -108,8 +109,20 @@ def wifi_sources():
 def main():
     if git("rev-parse","HEAD").decode().strip()!=BASE:
         raise SystemExit("STOP: kernel base tree changed")
+    refresh=sys.argv[1:]==["--refresh"]
+    if len(sys.argv)>1 and not refresh:
+        raise SystemExit("STOP: only explicit --refresh option is supported")
     if DEST.exists():
-        raise SystemExit("STOP: existing canonical candidate; use an explicit reviewed replacement revision")
+        if not refresh:
+            raise SystemExit("STOP: candidate exists; use explicit --refresh after review")
+        old_manifest=json.loads((DEST/"candidate-manifest.json").read_text())
+        if old_manifest["base"]!=BASE or [x["patch"] for x in old_manifest["series"]]!=NAMES:
+            raise SystemExit("STOP: candidate manifest differs")
+        for item in old_manifest["series"]:
+            if sha((DEST/item["patch"]).read_bytes())!=item["sha256"]:
+                raise SystemExit("STOP: manually edited candidate patch must be reconciled first")
+    elif refresh:
+        raise SystemExit("STOP: no existing candidate for refresh")
     # Prevent silent changes in the authoritative source artifacts.
     if sha((TREE/FILES["wifi"]).read_bytes()) != \
        "1cb2c600fe401245cd218589d4bc3325f9ac0c0a15bd26ed1576c55eb3d85eb8":
@@ -126,6 +139,9 @@ def main():
         "")
     dt=dt.replace("Motorola Xoom (Stingray MZ600 minimal USB diagnostic)",
                   "Motorola Xoom (Stingray)")
+    # Formatting only: remove whitespace that Linux git apply/checkpatch rejects.
+    dt=re.sub(r"^ +\t", "\t", dt, flags=re.MULTILINE)
+    dt="\n".join(line.rstrip() for line in dt.splitlines())+"\n"
     makefile=(TREE/FILES["makefile"]).read_text()
     old="tegra20-motorola-stingray-clean-usb.dtb"
     assert makefile.count(old)==1
@@ -139,6 +155,11 @@ def main():
         wifi_sources(),
     ]
 
+    # Whitespace normalization only; do not change runtime code semantics.
+    final_wifi=steps[3]
+    for rel,(before,after) in list(final_wifi.items()):
+        after=(("\n".join(line.rstrip() for line in after.decode().splitlines())+"\n").encode())
+        final_wifi[rel]=(before,after)
     rendered=[]
     for files in steps:
         rendered.append("".join(patch_hunk(rel,*value) for rel,value in files.items()))
@@ -160,7 +181,7 @@ def main():
             for rel,(_,after) in group.items():
                 assert (target/rel).read_bytes()==after,rel
     # Only once checks pass: create the standalone canonical candidates.
-    DEST.mkdir(parents=True)
+    DEST.mkdir(parents=True,exist_ok=refresh)
     for name,body in zip(NAMES,rendered):
         (DEST/name).write_text(body)
     (DEST/"series").write_text("\n".join(NAMES)+"\n")
@@ -185,7 +206,7 @@ def main():
       ],
     }
     (DEST/"candidate-manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
-    print("CANONICAL_CANDIDATE_SERIES_CREATED")
+    print("CANONICAL_CANDIDATE_SERIES_REFRESHED" if refresh else "CANONICAL_CANDIDATE_SERIES_CREATED")
     for item in manifest["series"]:
         print(item["index"],item["patch"],item["sha256"][:16],item["status"])
     print("CLEAN_UPSTREAM_APPLICATION_PASS")
