@@ -17,6 +17,12 @@ spec.loader.exec_module(v21)
 
 v21.base.RESULT = v21.base.ROOT / "v064-2012-oem-escan-v22-20261027"
 old_instrument = v21.base.instrument_fweh
+old_instrument_scan = v21.base.instrument
+
+def instrument_scan_v22(original):
+    return old_instrument_scan(original).replace("MZ600_V21_", "MZ600_V22_")
+
+v21.base.instrument = instrument_scan_v22
 
 def instrument_event_with_sync(original):
     c = old_instrument(original).replace("MZ600_V21_", "MZ600_V22_")
