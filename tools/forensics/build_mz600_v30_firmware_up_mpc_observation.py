@@ -61,7 +61,7 @@ static void mz600_v30_read_fw_state(struct brcmf_if *ifp, const char *where)
     c=base.replace_once(c,anchor,'''\
 		err = brcmf_fil_iovar_int_set(ifp, "mpc", mpc);
 		if (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
-			brcmf_info("MZ600_V30_MPC_SET value=%d rc=%d\n", mpc, err);
+			brcmf_info("MZ600_V30_MPC_SET value=%d rc=%d\\n", mpc, err);
 		if (err) {''')
     # Caller traces: actual scan entry, MPC before/after, firmware request.
     anchor='''\tescan->escan_state = WL_ESCAN_STATE_SCANNING;'''
