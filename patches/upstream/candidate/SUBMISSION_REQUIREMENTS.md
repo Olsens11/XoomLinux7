@@ -1,0 +1,71 @@
+# Xoom Linux 7 — canonical patch-series requirements and acceptance ledger
+
+**Working rules for every revision of this series.** These requirements live **beside the kernel patch files** so a future maintainer or agent can work without reconstructing standards from conversation history. **Do not copy this document into a Linux source patch, commit message or `series` file.** The kernel diffs must remain focused on code, bindings and the actual technical problem.
+
+**Source of authority:** [`xoom-linux/linux` pinned baseline `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`](https://github.com/xoom-linux/linux/tree/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3), audited on **2026-10-27**. These are requirements and explicit project working rules, **not evidence that our code already complies**. Before sending anything to maintainers, recheck the documentation and `MAINTAINERS` in the *actual receiving branch*; specific requirements may change.
+
+**Important status distinction:** [`series`](series) currently names **four broad, clean-applying source-integration snapshot patches**. It is **not an upstream-ready logical review series**. [The decomposition plan](../../../docs/plans/MZ600_UPSTREAM_CANONICAL_PATCH_DECOMPOSITION_2026-10-27.md) calls for smaller, coherent Wi-Fi changes and potentially independently routed board/storage patches. Do not submit the current four patches or treat them as prerequisites for the reconstructed review series. Do not rename a lab patch into a submitted patch.
+
+## 1. Mandatory upstream documentation (at the exact pinned commit)
+
+| Document | Requirements for this work |
+| --- | --- |
+| [README](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/README) | Explicitly directs AI coding assistants to read `Documentation/process/coding-assistants.rst`, along with process, coding, licensing and developer documentation. |
+| [AI coding assistants](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/coding-assistants.rst) | GPL-2.0-compatible contributions; appropriate SPDX; **AI agents MUST NOT insert a `Signed-off-by` trailer.** Only the human contributor can review/certify the Developer Certificate of Origin (DCO) and take responsibility. AI contributions **should** include `Assisted-by: AGENT_NAME:MODEL_VERSION [SPECIALIZED_TOOLS]`; standard git/compiler/editor tools need not be named. Do not invent human review or identity. |
+| [Submitting patches](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/submitting-patches.rst) | Exactly one **logical** issue per patch; explain the bug/user impact, observable evidence, change and technical justification in a **self-contained** commit message. Follow subsystem prefixes, proper tags and maintainers. No one should have to read an earlier Vxx patch, chat transcript or external experiment to understand it. |
+| [Posting patches](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/5.Posting.rst) | Reconstruct the final source history logically, not chronologically. **Every prefix of the series should build and run**, permitting meaningful bisection. Avoid changes that add unused infrastructure until much later, unrelated formatting, and needless micro-patches. When incomplete, mark as RFC instead of claiming readiness. |
+| [Coding style](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/coding-style.rst) | Standard kernel whitespace, indentation, naming, error paths and documentation. `checkpatch.pl` complements, not replaces, review. |
+| [Submission checklist](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/submit-checklist.rst) | Verify includes, locking/barriers, relevant Kconfig combinations, `checkpatch.pl`, `sparse`, `checkstack`, kernel/API docs where relevant, warnings, build options, runtime/locking/fault tests and portability. Record what was actually run, not a generic “passes all standards.” |
+| [License rules](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/license-rules.rst) | Preserve source provenance/copyright, GPL-2.0 compatibility and appropriate SPDX expressions. Audit the origin of any borrowed Motorola/Broadcom code. |
+| [Devicetree binding submission](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/devicetree/bindings/submitting-patches.rst) | **New binding YAML or `include/dt-bindings` changes belong in a separate earlier patch**; every DTS compatible must be documented in bindings. Run `make dt_binding_check` and `make dtbs_check`. DTS patches generally come **at the end** of the relevant series; route through the SoC/DT maintainers. New DT binding schema is normally dual-licensed, preferably `(GPL-2.0-only OR BSD-2-Clause)`. |
+| [SoC maintainer handbook](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/maintainer-soc.rst) | Tegra platform/board updates follow SoC submaintainer workflow. Check cross-tree dependencies and stability of the DT ABI; SoC/DTS submission may be separate from wireless or block patches. |
+| [Networking maintainer handbook](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/process/maintainer-netdev.rst) and [MAINTAINERS](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/MAINTAINERS) | Check the **correct wireless-specific** maintainer tree and mailing lists; do not assume all drivers/net patches go directly to generic netdev. Use `scripts/get_maintainer.pl` on each final patch. Route block, ARM/SoC and DT patches to their respective maintainers. |
+| [Regulatory subsystem](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/Documentation/networking/regulatory.rst) | Preserve effective cfg80211/regdb country, channel, transmit, power and DFS restrictions. A firmware-supported channel list **does not grant transmit authorization**. Neither force `NO_IR` permanently nor clear regulatory flags to bypass restrictions. |
+
+## 2. Rules for the review series itself
+
+1. **One logical change, not one milestone.** A standalone Wi-Fi channel-enumeration fix, an ESCAN transaction-lifetime fix and an Event 69 owner-routing fix warrant separate patches **if each is correct and bisectable separately**. If two are indivisible for correctness, combine those two—not all BCM4329 features. The experimental V21–V29 evolution must **never** be reflected as stacked dependencies.
+2. **One canonical member per logical issue.** When refined, revise that original patch in the working review series. Do not add cleanup/fixup patches just to conceal earlier trial-and-error. New members require a genuinely distinct problem. Each patch must apply from the chosen original upstream base plus only preceding *logical* patches.
+3. **Buildable series prefixes.** Run a clean-series `git am` / `git apply --check`, compile and reason about runtime effects at each prefix; don't introduce structures with broken callers, dead code or invalid symbols. For BCM4329 changes touching shared structures, build core and matched WCC from the **same** source tree; do not bypass module version CRCs.
+4. **No lab scaffolding in the final code.** Remove `MZ600_Vxx_` diagnostics, broad event subscriptions, test-only module/sysfs toggles, fixed channel36/5180MHz selection, forced passive mode and fixed 500ms dwell. Maintain only minimal upstream-appropriate diagnostics.
+5. **Kernel vs device installation boundaries.** Source patches do not carry private firmware, NVRAM/calibration, personal MACs, SSIDs, passwords, ARM modules, eMMC flashing commands, Debian p8 filesystem, or local host transfer scripts. Track reproducible nonkernel components in separate deployment manifests.
+6. **Evidence must correspond to the *exact patch source*.** The physical V28 normal scan (12 BSS) does not prove the distinct V29 regulatory-preserving revision passed hardware tests. A broad snapshot passing `git apply` does not prove its reconstructed bisectable series boots. Annotate these differences honestly.
+7. **Safe work:** no irreversible flash, replacing factory radio identity, bypassing regulatory limits, or upstream submission during source review. Preserve original boot/data and verified rollback.
+
+## 3. Required acceptance checks for *every* future patch
+
+Copy a row into each proposed review patch's ledger, filling in commit SHA, test logs, output hashes and reviewer results. **Unknown means OPEN—not PASS.**
+
+| ID | Requirement | How to establish evidence | State as of 2026-10-27 |
+| --- | --- | --- | --- |
+| G01 | Verified target and provenance | Exact receiving tree and base commit, intended path changes, source lineage, licensing/SPDX | **Partial** — pinned xoom-linux base, no final receiving tree |
+| G02 | Minimal logical scope | A single technical motivation, standalone commit explanation, no test-version history or unrelated rewrites | **Open** — Wi-Fi snapshot ~680 lines and overbroad |
+| G03 | Patch application and bisectability | `git am` clean from base, then compile each prefix; no unintended behavioral regression | **Partial** — broad snapshot `git apply` only |
+| G04 | Linux style and static checks | `git diff --check`, `scripts/checkpatch.pl`, `sparse`, `make checkstack`, warnings, appropriate static analyzers | **Open** |
+| G05 | Build coverage | Exact ARM kernel/DTB/matched modules, `=y/=m/=n` as applicable, key Kconfig options and portability | **Partial** — lab exact-ABI modules, not final review series |
+| G06 | API, concurrency and lifecycle | Strict lengths/endianness, generation identity, cancellation, watchdog/late event, duplicate, teardown, multi-interface, power management | **Open** |
+| G07 | Regulatory and Wi-Fi functionality | Effective per-channel/regdom/DFS permissions, repeated normal scans, permitted association/authentication/DHCP | **Partial** — initial V28 multi-channel scan, repeat ESCAN fails |
+| G08 | DT binding compliance | Document compatible strings, separate bindings if needed, `dt_binding_check`, `dtbs_check`, correct SoC tree/ordering | **Open** |
+| G09 | Hardware and regressions | Final exact series boots on target, boot/BigPart/USB/SDIO/BT, original state rollback, other Xoom models/firmware | **Open** for exact final series |
+| G10 | Maintainer routing | Run `get_maintainer.pl`, determine wireless vs SoC vs block vs DT recipients and branch, self-contained cover | **Open** |
+| G11 | Attribution, licensing and human DCO | Human reviews full source and DCO, adds **human** `Signed-off-by`; appropriate `Assisted-by` with model; SPDX and code origin checked | **Open** — **AI must not sign off** |
+| G12 | No hidden deployment dependencies | Document kernel vs firmware/rootfs/bootimage requirements separately, exclude credentials/personal identifiers | **Partial** |
+
+## 4. Patch-by-patch scope and individual blockers
+
+| Planned subject | Required source-specific conditions | Present evidence / gate |
+| --- | --- | --- |
+| **WIFI-1:** fallback for `WLC_GET_VALID_CHANNELS` | Bounds-check firmware enumeration; preserve original + effective cfg80211 regulatory restrictions; no blanket `NO_IR` workaround; no ESCAN event changes | V29 revised source compiled offline; this exact code not physically verified |
+| **WIFI-2:** ESCAN scan-generation validation | Host-generated ID in request, validate genuine terminal payload and active scan lifetime, reject stale/duplicate/aborted completions and wrap; correct lock ordering | Firmware echoed host-selected IDs in V22/V23; lifecycle/races not proven |
+| **WIFI-3:** Event 69 active-owner attribution | Only genuine terminal with validated active transaction; do not globally remap arbitrary `bsscfgidx` or synthetic `scan_done`, preserve partial events/P2P | Physically proved a scoped owner route in V21 and V23; upstream-safe edge cases open. Combine WIFI-2/3 only if truly indivisible |
+| **WIFI-4:** second ESCAN ready-state error | Identify exact reason for firmware `BCME_NOTUP`, correct it minimally, retest repeated normal scans | Unsolved; do not invent a patch |
+| **BOOT / BOARD / STORAGE:** MAC ATAG, Stingray DT and BigPart | Prove separate functional motivation, vendor ATAG validity, DT schema and binding prerequisites, BigPart opt-in/generic safety | Partial physical evidence, final source series unverified |
+
+## 5. Update discipline
+
+- Review this document **before changing any canonical patch**. Link to its gate IDs in the internal PR/checkpoint; never put internal checklist references into the submitted Linux diff.
+- After each edit, record precisely which gate gained evidence, its exact source SHA/command/test log and whether the run was offline or physical. Keep failed evidence and distinct revisions separately in `docs/checkpoints/` without creating incremental upstream patch-stack members.
+- Refresh the series ordering, diff hashes and cover letters **only when** the individual logical source changes are coherent. A new patch count is not a new test version.
+- No invented review/approval, `Tested-by` acknowledgements or human DCO signoffs. **Submission only with explicit owner authorization**.
+
+**Next work:** construct a clean, fine-grained source review series and evaluate it against G01–G12. The existing four-patch snapshot is kept as a reproducible integration reference, not silently declared compliant.
