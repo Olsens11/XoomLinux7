@@ -37,6 +37,7 @@ checksha "$original_nv" "$NV" || stop 'original NVRAM SHA mismatch'
 checksha "$new_core" "$STAGE/brcmfmac.ko" || stop 'missing/bad staged V31 core'
 checksha "$new_wcc" "$STAGE/brcmfmac-wcc.ko" || stop 'missing/bad staged V31 WCC'
 checksha "$new_fw" "$STAGE/brcmfmac4329-sdio.bin" || stop 'missing/bad staged OEM firmware'
+[[ -s "$STAGE/restore-v31.sh" ]] || stop 'missing rollback helper'
 modinfo -F vermagic "$STAGE/brcmfmac.ko" | grep -Fq "$K " || stop 'wrong module ABI'
 [[ $(stat -c %s "$STAGE/brcmfmac.ko") == 354392 ]] || stop 'bad core size'
 [[ -d /sys/bus/sdio/devices/mmc2:0001:1 ]] || stop 'BCM4329 not present'
@@ -52,6 +53,7 @@ cp -a "$CORE" "$BACKUP/brcmfmac.ko"
 cp -a "$WCC" "$BACKUP/brcmfmac-wcc.ko"
 cp -a "$FW" "$BACKUP/brcmfmac4329-sdio.bin"
 cp -a "$NV" "$BACKUP/brcmfmac4329-sdio.txt"
+install -m 0700 "$STAGE/restore-v31.sh" "$BACKUP/restore-v31.sh"
 checksha "$original_core" "$BACKUP/brcmfmac.ko" || stop 'backup failed'
 checksha "$original_wcc" "$BACKUP/brcmfmac-wcc.ko" || stop 'backup failed'
 checksha "$original_fw" "$BACKUP/brcmfmac4329-sdio.bin" || stop 'backup failed'
