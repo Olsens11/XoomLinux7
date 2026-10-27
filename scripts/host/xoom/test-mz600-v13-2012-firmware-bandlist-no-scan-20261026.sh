@@ -81,6 +81,7 @@ oksha "$BF" "$F" && oksha "$BN" "$N" && oksha "$BO" "$O" &&
 [[ "$(stat -c %s "$FW")" == 264140 &&
    "$(stat -c %s "$MOD")" == 343200 ]] || exit 20
 msg 'MZ600_V13_FIRMWARE_AND_MODULE_VERIFIED_NVRAM_UNCHANGED'
+LOG_LINE_BEFORE="$(dmesg | wc -l)"
 : > "$ONCE"
 ARMED=1
 STATE=FIRMWARE_OVERLAY
@@ -110,7 +111,8 @@ else
   msg 'MZ600_V13_WLAN0_ABSENT'
 fi
 msg 'MZ600_V13_FIRMWARE_BAND_DIAGNOSTICS_BEGIN'
-dmesg | grep -E 'MZ600_5G_DIAG_(BANDLIST|CHANSPECS|WIPHY|LEGACY_VALID_CHANNELS)|MZ600_5G_LEGACY_PASSIVE_ONLY_FALLBACK|Firmware: BCM4329|brcmf_construct_chaninfo.*error|brcmf_bus_started.*failed' | tail -14 | sed -E 's/([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}/[private-mac]/g' || true
+msg "MZ600_V13_DMESG_LINES_BEFORE=$LOG_LINE_BEFORE"
+dmesg | awk -v first="$LOG_LINE_BEFORE" 'NR>first' | grep -E 'MZ600_5G_DIAG_(BANDLIST|CHANSPECS|WIPHY|LEGACY_VALID_CHANNELS)|MZ600_5G_LEGACY_PASSIVE_ONLY_FALLBACK|Firmware: BCM4329|brcmf_construct_chaninfo.*error|brcmf_bus_started.*failed' | tail -14 | sed -E 's/([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}/[private-mac]/g' || true
 msg 'MZ600_V13_FIRMWARE_BAND_DIAGNOSTICS_END'
 msg 'MZ600_V13_NO_SCAN_NO_LINK_UP_NO_ASSOCIATION'
 PASS=1
