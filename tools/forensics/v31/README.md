@@ -48,4 +48,4 @@ When done, close the Desktop HTTP server with **Ctrl+C**. Results stay privately
 
 **Success standard:** two accepted ESCAN requests, two real Event69 terminal SUCCESS events with distinct IDs 4661/4662 (or independently verified expected generation), `cfg80211_scan_done(aborted=0)` twice, ordinary iw scan success, no watchdog, original runtime SHA and independent preflight PASS. The command need only be issued on the firmware DOWN branch. No ordinary association/authentication/IP was tested.
 
-**Important:** This is a reversible diagnostic, not automatic approval for upstream patches or firmware replacement. Any permanent solution must satisfy [G01–G12](../../patches/upstream/candidate/SUBMISSION_REQUIREMENTS.md) and independently preserve proper power management, multidevice behavior and Bluetooth coexistence.
+**Important:** This is a reversible diagnostic, not automatic approval for upstream patches or firmware replacement. Any permanent solution must satisfy [G01–G12](../../../patches/upstream/candidate/SUBMISSION_REQUIREMENTS.md) and independently preserve proper power management, multidevice behavior and Bluetooth coexistence.
