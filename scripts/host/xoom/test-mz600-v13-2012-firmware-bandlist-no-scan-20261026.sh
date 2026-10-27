@@ -16,12 +16,17 @@ CF='5d4bdb6c56777e4a1eb27b08600a2782a76b563891dfd18afc163c8462d73834'
 CM='ff19d91726f406468d6cc9516d43a851f6a7a22d403259094ae376041671db29'
 STATE=PREFLIGHT
 PASS=0
+ARMED=0
 msg() { printf '%s\n' "$*"; }
 oksha() { printf '%s  %s\n' "$1" "$2" | sha256sum -c - >/dev/null 2>&1; }
 cleanup() {
   rc=$?
   trap - EXIT INT TERM
   set +e
+  if (( ARMED == 0 )); then
+    msg "MZ600_V13_PREFLIGHT_STOP_NO_STATE_CHANGED rc=$rc"
+    exit "$rc"
+  fi
   msg "MZ600_V13_CLEANUP_START rc=$rc state=$STATE"
   if [[ -e /sys/class/net/wlan0 ]]; then
     timeout -k 2s 8s ip link set wlan0 down >/dev/null 2>&1
@@ -77,6 +82,7 @@ oksha "$BF" "$F" && oksha "$BN" "$N" && oksha "$BO" "$O" &&
    "$(stat -c %s "$MOD")" == 343200 ]] || exit 20
 msg 'MZ600_V13_FIRMWARE_AND_MODULE_VERIFIED_NVRAM_UNCHANGED'
 : > "$ONCE"
+ARMED=1
 STATE=FIRMWARE_OVERLAY
 timeout -k 2s 12s mount --bind "$FW" "$F"
 mountpoint -q "$F" && oksha "$CF" "$F" || exit 21
