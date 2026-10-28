@@ -10,7 +10,7 @@
   "strict_checkpatch": "0 errors 0 warnings 0 checks",
   "build_config": "CONFIG_MOTOROLA_XOOM_BIGPART=y",
   "source_efi_object_build": "PASS enabled revised object SHA256 0fd9e46240b9706010aadc40b8019073012819ca14a5b642900e7529e6614ac6",
-  "full_nine_build": "INITIAL_V1_PASS_20261028T081302Z; REVISED_V2_SOURCE_507eb069_FRESH_BUILD_IN_PROGRESS",
+  "full_nine_build": "INITIAL_V1_PASS_20261028T081302Z; REVISED_V2_SOURCE_507eb069_FULL_ARM_ZIMAGE_DTBS_MODULES_PASS_20261028T083459Z",
   "optin_kernel_command_line": "gpt xoom_bigpart=1",
   "native_tegra_alternate_gpt": "card.ext_csd.sectors - two eMMC boot partitions - 1",
   "physical_test_of_exact_review_source": false,

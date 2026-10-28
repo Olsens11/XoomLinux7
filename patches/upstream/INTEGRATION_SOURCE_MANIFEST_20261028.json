@@ -32,7 +32,7 @@
       "series": "patches/upstream/review-storage-bigpart-20261028/series",
       "members": 1,
       "owner": "Block partitions/GPT maintainers; consult target get_maintainer.pl",
-      "gate": "Revised STORAGE-01 source checkpatch 0/0/0; arm EFI object with config y and default-disabled identical object PASS; nine-source v1 full ARM PASS, revised v2 full build underway. Exact-source physical and mainline acceptance OPEN"
+      "gate": "Revised STORAGE-01 source checkpatch 0/0/0; arm EFI object with config y and default-disabled identical object PASS; nine-source v1 and revised v2 full ARM zImage/DTBs/modules builds PASS; exact-source physical and mainline acceptance OPEN. Exact-source physical and mainline acceptance OPEN"
     }
   ],
   "previous_tested_seven_source": {
@@ -83,7 +83,16 @@
     "patch_count": 9,
     "source_replay": "PASS",
     "source_tip": "507eb069df819cb5cc801ad8be096f70d9ca7609",
-    "full_arm_build": "REVISED_V2_FRESH_BUILD_IN_PROGRESS",
+    "full_arm_build": "PASS_REVISED_NINE_ARM_ZIMAGE_DTBS_MODULES_2026-10-28T08:34:59Z",
+    "full_arm_build_source_commit": "507eb069df819cb5cc801ad8be096f70d9ca7609",
+    "full_arm_build_log": "DESKTOP-R16QJD4 /home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/qa-nine-review-v2-build-log-20261028.txt",
+    "full_arm_build_artifacts_sha256": {
+      "zImage": "570c98f1ce187f33c46cc671bb54b0e7b4837756bbec97ef721f8b4c998a5cf1",
+      "tegra20-motorola-stingray.dtb": "c70d22c06efa3607f132027588c6c6cd34518a4c1e1dff83c125cfa25409f5aa",
+      "tegra20-motorola-wingray.dtb": "4144940f352b437c340c5d37f5a4c9dcc711024ef9785746ff3bd2d1f8bab3ff",
+      "brcmfmac.ko": "5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26",
+      "brcmfmac-wcc.ko": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9"
+    },
     "kernel_config": "CONFIG_MOTOROLA_XOOM_BIGPART=y",
     "required_boot_args": "gpt xoom_bigpart=1 (not automatically present in installed image)",
     "storage_patch_sha256": "4051ca979a8b61af13eb49a8e7351722dcdabd44eb85d9e9bc509911a69568eb",

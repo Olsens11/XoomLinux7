@@ -18,7 +18,7 @@ The guarded path requires Stingray root compatible, the exact disk capacity and 
 
 - This patch is **not** a DT binding. The former `motorola,xoom-bigpart` DTS opt-in is **not** in the clean Stingray board review; hardware DT must not be used as an undocumented kernel policy switch.
 - The separate [8-patch review-form baseline](../INTEGRATION_SOURCE_MANIFEST_20261028.json) comprises 3 DT + 1 ARM/ATAG + 4 Wi-Fi patches. This STORAGE-01 patch can apply independently to the pristine base, or **once** after those eight changes. Do not apply the historic `candidate/0003-block-partitions-motorola-xoom-bigpart.patch` alongside it.
-- The standalone source patch passed exact clean source replay, `git diff --check` and strict `checkpatch.pl` (0/0/0). `block/partitions/efi.o` compiled with the Kconfig enabled. A separate clean **nine-patch ARM build** is under verification and must be recorded by its actual result.
+- The standalone source patch passed exact clean source replay, `git diff --check` and strict `checkpatch.pl` (0/0/0). `block/partitions/efi.o` compiled with the Kconfig enabled. The exact revised nine-patch `507eb069...` ARM `zImage dtbs modules` build **PASS** (2026-10-28 08:34:59 UTC); exact five artifact hashes appear in the [integration manifest](../INTEGRATION_SOURCE_MANIFEST_20261028.json).
 - `tools/tests/test_xoom_bigpart_geometry.py` checks the literal factory extents, proposed arithmetic, disjoint ranges, protected p1..p7 and alternate GPT arithmetic. **It is not a C runtime/kernel or storage-fault-injection test.**
 
 ## Unresolved upstream acceptance and safety questions
