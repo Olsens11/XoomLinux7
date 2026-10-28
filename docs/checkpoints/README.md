@@ -1,3 +1,5 @@
+> **2026-10-28 FASTBOOT REBOOT PRIORITY INVESTIGATION:** [Tegra PMC vs Xoom gpio-restart: high-priority hardware reset likely explains missing fastboot](MZ600_FASTBOOT_REBOOT_GPIO_PRIORITY_ROOT_CAUSE_CANDIDATE_2026-10-28.md). Original bit30 definition and Linux mode argument checked, standalone guarded GPIO unbind preflight script authored; **no live fix/test yet, no flash.**
+
 > **2026-10-28 COMPLETE INSTALLATION-CHAPTER HANDOFF:** [Canonical comprehensive next-session entry point](../handoffs/MZ600_XOOMLINUX7_PREINSTALLATION_CHAPTER_COMPLETE_HANDOFF_2026-10-28.md). Includes exact private artifact names/hashes, full device geometry, backup state, rescue-SD one-shot caution, nine-source build, version-locked recovery plan, and chronological restart order. Existing immutable experiment checkpoints below remain source evidence.
 
 > **2026-10-28 LINUX BOOTLOADER REBOOT PHYSICAL TEST:** [Reboot syscall accepted but fastboot never enumerated; normal Linux recovered](MZ600_REBOOT2_BOOTLOADER_PHYSICAL_NORMAL_LINUX_FALLBACK_2026-10-28.md). Validated rescue SD is staged for one-shot cold backup when SD-root Stage-B eventually runs. No p7/p8/p6 write or flash.
