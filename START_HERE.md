@@ -1,5 +1,8 @@
 # START HERE — XoomLinux7
 
+> **LATEST PHYSICAL MILESTONE — 2026-10-28: NINE-PATCH LINUX 7 + FULL BOOKWORM P10 BOOT PASS.** [First live exact-review kernel USB COM9 login proof, all 1GiB p10 Debian filesystem hashes and TWRP fsck, temporary fastboot boot only](docs/checkpoints/MZ600_NINE_REVIEW_LINUX7_P10_BOOKWORM_FIRST_PHYSICAL_BOOT_PASS_2026-10-28.md). The 1GiB new Debian filesystem is installed in **p10** (remaining p10 unexpanded); p7 original V31 and p8 working fallback **untouched**, p6 TWRP BigPart retained. Actual COM9 `xoom-mz600 login:` verified; **logged-in uname, new BigPart runtime geometry, Wi-Fi/BT/modules remain OPEN**. Older notes claiming nine-review Linux not booted or p10 empty are historical. Next use owner credential for serial login and run non-destructive runtime checks.
+
+
 > **LATEST PHYSICAL MILESTONE — 2026-10-28:** [Original TWRP 2.8.6.0 BigPart successfully written to MZ600 p6 only, exact SHA readback and independent reboot into installed recovery PASS; eMMC p8/p9/p10 BigPart sector mapping and root ADB PASS, Debian p8 read-only ext4 mount PASS](docs/checkpoints/MZ600_TWRP_286_BIGPART_P6_INSTALL_AND_PERSISTENT_BOOT_PASS_2026-10-28.md). Old p6 rollback safely retained; clean nine-patch Linux and new Debian NOT installed. Next: disposable p8 cold-image restore/fsck rehearsal, then temporary nine-patch exact-source boot. Internal RW mounting/repair/backup-restore untested; recovery automatically mounts rescue SD RW, later remounted RO.
 
 
