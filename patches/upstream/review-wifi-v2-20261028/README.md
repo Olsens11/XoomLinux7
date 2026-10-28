@@ -57,7 +57,7 @@ See also `candidate/SUBMISSION_REQUIREMENTS.md` (G01–G12) and `docs/checkpoint
 | G08 DT | Not applicable to these wireless-only diffs; the distinct Stingray platform snapshots have their **own outstanding binding/style defects** |
 | G09 regressions | Physical pass belongs to **different V31 laboratory binary**, not this rebuilt 3-patch clean source; exact MZ600/MZ602/MZ604 tests OPEN |
 | G10 recipients | Initial `get_maintainer.pl` audit exists, but actual wireless receiving tree and recipient review OPEN |
-| G11 DCO / attribution | AI work must carry `Assisted-by`, licensing must be checked; **AI MUST NOT insert a `Signed-off-by`**, and the human author alone may certify the DCO. Draft placeholder authorship is not an eligible submission identity |
+| G11 DCO / attribution | The project guidance says AI work **should** include `Assisted-by`; licensing must be checked. **AI MUST NOT insert a `Signed-off-by`**; only the human contributor can certify the DCO. Draft placeholder authorship is not an eligible submission identity |
 | G12 boundaries | Private firmware, device identity, credentials, system images, flashing, and package setup remain outside these kernel diffs; deployment-only requirements must be documented independently |
 
 **Decision:** preserve this three-member source series as the best current RFC and improve existing members in-place when tests reveal defects. Do not append V31/V32 experimental fixup patches. Do not submit, claim exact-source physical success, flash the Xoom, or substitute general kernel conventions for the pinned project's explicit instructions.
