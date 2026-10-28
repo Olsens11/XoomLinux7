@@ -1,3 +1,5 @@
+> **LATER EXACT NINE-PATCH PHYSICAL AUDIT, 2026-10-28:** [Formal per-commit review, hashes, live Wi-Fi and G01–G12 gaps](../../docs/checkpoints/MZ600_REVIEW9_EXACT_PATCH_WIFI_BACKEND_FORMAL_AUDIT_2026-10-28.md) with [internal bug reports](../../docs/bugs/README.md). All four WIFI-01–04 pass `checkpatch --no-signoff` 0/0/0 and physically match loaded modules, but 5GHz PHY is absent, station telemetry unsupported and regulatory/power output requires reconciliation. No exact-source scan lifecycle acceptance, no new upstream patch fix; human DCO/posting remains on hold. Previously marked “5GHz connected” based on SSID is not evidence of RF frequency.
+
 # XoomLinux7 — Maintainer-routed source-review inventory
 
 **Working snapshot:** 2026-10-28 UTC; branch `wip/clean-wifi-bt-usb-20261025`. **NOT SUBMITTED. NOT HUMAN SIGNED. NOT COMPLETE.**

@@ -1,3 +1,5 @@
+> **SUBSEQUENT NINE-PATCH VALIDATION EVIDENCE, 2026-10-28:** [Formal source/build/hardware test](docs/checkpoints/MZ600_REVIEW9_EXACT_PATCH_WIFI_BACKEND_FORMAL_AUDIT_2026-10-28.md) and [three internal Wi-Fi issue reports](docs/bugs/README.md) supersede earlier inference that an SSID with “5G” meant a 5GHz radio. Actual association is **2.4GHz 2462MHz**; advertised 5GHz band absent. Preserve live COM9/Wi-Fi, no regulatory forcing or unattended scan/reload. Full patch lifecycle testing and human DCO still OPEN.
+
 > **NEWEST DATED STATE SNAPSHOT AS OF 2026-10-28:** Begin with [docs/ACTIVE_TEST_STATE.md](docs/ACTIVE_TEST_STATE.md), then its linked dated checkpoints. This replaces older state labels below, **not** the safety/engineering rules. At every experiment, record hypothesis, exact source/firmware hashes, test commands, actual PASS/FAIL/OPEN evidence, rollback, and next one-variable discriminator; synchronize both runtime state files, indexes and [status](docs/status.md) in the same commit. Conversation memory is not evidence.
 
 # XoomLinux7 agent operating contract
