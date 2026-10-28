@@ -1,27 +1,27 @@
 {
   "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
-  "tip": "ec8ad75a2f4413c6cda45c11f5271f83dccc5dfa",
+  "tip": "6f570bbf306b6d11d5ba1e82a3fd7eda7896c6fe",
   "patches": [
     {
       "patch": "0001-dt-bindings-arm-tegra-document-Motorola-Xoom-variant.patch",
-      "sha256": "70db8985aa508261044f9ddb0dfec7ee98bc6e15c177b6e10601a3eb60e21a09",
-      "checkpatch_exit": 1,
-      "summary": "total: 0 errors, 1 warnings, 0 checks, 13 lines checked",
-      "findings_sample": "WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n#6: \nThe Tegra board schema does not describe the existing Wingray root compatible tuple, and a new Stingray variant uses the same Xoom family fallback.\n\ntotal: 0 errors, 1 warnings, 0 checks, 13 lines checked\n\nNOTE: For some of the reported defects, checkpatch may be able to\n      mechanically convert to the typical style using --fix or --fix-inplace.\n\n/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project/patches/upstream/review-stingray-dt-20261028/0001-dt-bindings-arm-tegra-document-Motorola-Xoom-variant.patch has style problems, please review.\n\nNOTE: If any of the errors are false positives, please report\n      them to the maintainer, see CHECKPATCH in MAINTAINERS.\n"
+      "sha256": "9aafe68f5f43a9659ad4680bc7daf793f68624ebdc6404e6608cbf414950b6c6",
+      "checkpatch_exit": 0,
+      "summary": "total: 0 errors, 0 warnings, 0 checks",
+      "source_diff_identical_to_initial_dt_three_commit_review": true
     },
     {
       "patch": "0002-ARM-dts-tegra20-share-Xoom-hardware-with-board-varia.patch",
-      "sha256": "e32a1b7fed0b525ff2ea25444414b5cbd7f51ce022f4cfaaa65e26a1784b0fd8",
+      "sha256": "2139f8f72e1a4b8ac1acf30c59634b6625aba2c545ed605a26fc1aa3f520e3fc",
       "checkpatch_exit": 1,
-      "summary": "total: 418 errors, 379 warnings, 0 checks, 3419 lines checked",
-      "findings_sample": "WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n#7: \nWingray and Stingray use the same Xoom board electronics, but their top-level identifiers and USB operating modes differ.\n\nWARNING: added, moved or deleted file(s), does MAINTAINERS need updating?\n#1738: \nnew file mode 100644\n\nERROR: code indent should use tabs where possible\n#1764: FILE: arch/arm/boot/dts/nvidia/tegra20-motorola-xoom.dtsi:22:\n+        serial0 = &uartb; /* Console */$\n\nWARNING: please, no spaces at the start of a line\n#1764: FILE: arch/arm/boot/dts/nvidia/tegra20-motorola-xoom.dtsi:22:\n+        serial0 = &uartb; /* Console */$\n\nERROR: trailing whitespace\n#1832: FILE: arch/arm/boot/dts/nvidia/tegra20-motorola-xoom.dtsi:90:\n+^I/* $\n\nERROR: trailing whitespace\n#1833: FILE: arch/arm/boot/"
+      "summary": "total: 0 errors, 1 warning (generic added/copied file MAINTAINERS reminder), 0 checks",
+      "source_diff_identical_to_initial_dt_three_commit_review": true
     },
     {
       "patch": "0003-ARM-dts-tegra20-add-Motorola-Xoom-Stingray-variant.patch",
-      "sha256": "622496d8869ed8460782333985668845715cef04a9484da2276135c7b542c3a1",
+      "sha256": "3cba29803549bbe782647c0b79b390852a11ffa66136827d77bdc4ffb0784df5",
       "checkpatch_exit": 1,
-      "summary": "total: 0 errors, 2 warnings, 0 checks, 25 lines checked",
-      "findings_sample": "WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n#6: \nThe MZ600 Stingray tablet shares the existing Xoom base hardware with Wingray but identifies as Stingray and exposes its Tegra USB interface in peripheral mode.\n\nWARNING: added, moved or deleted file(s), does MAINTAINERS need updating?\n#30: \nnew file mode 100644\n\ntotal: 0 errors, 2 warnings, 0 checks, 25 lines checked\n\nNOTE: For some of the reported defects, checkpatch may be able to\n      mechanically convert to the typical style using --fix or --fix-inplace.\n\n/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project/patches/upstream/review-stingray-dt-20261028/0003-ARM-dts-tegra20-add-Motorola-Xoom-Stingray-variant.patch has style problems, please review.\n\nNOTE: If any of the errors are false"
+      "summary": "total: 0 errors, 1 warning (generic added/copied file MAINTAINERS reminder), 0 checks",
+      "source_diff_identical_to_initial_dt_three_commit_review": true
     }
   ],
   "dtbs_compile": "PASS isolated ARM O= build, both Wingray and Stingray",
@@ -32,5 +32,8 @@
   "dtbs_check": "OPEN",
   "human_signoff": "NOT PROVIDED",
   "physical_test_of_exact_DTS": "NOT RUN",
-  "storage_opt_in": "separate review, not included"
+  "storage_opt_in": "separate review, not included",
+  "patch_format": "git format-patch -C -3; detect 99% copy Wingray DTS to common Xoom DTSI",
+  "source_equivalence": "git diff original DT tip ec8ad75a2f... versus new canonical tip 6f570bbf... empty",
+  "validation_note": "Check structural copy-aware git diff -C --check; without -C plain diff misclassifies inherited contents as newly added, causing false whitespace failures. Generic MAINTAINERS file-add warning remains; pinned get_maintainer.pl resolves Tegra + DT owners."
 }

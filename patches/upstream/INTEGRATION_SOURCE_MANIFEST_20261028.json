@@ -11,14 +11,14 @@
       "series": "patches/upstream/review-stingray-dt-20261028/series",
       "members": 3,
       "owner": "Tegra SoC / Devicetree",
-      "gate": "DT whitespace and binding checks OPEN"
+      "gate": "Copy-aware structural git diff -C --check PASS; checkpatch per DT patch 0/0/0, 0/1/0, 0/1/0 (MAINTAINERS file addition reminders); dt_binding_check and dtbs_check OPEN"
     },
     {
       "track": "BOOT/ARM",
       "series": "patches/upstream/review-arm-atag-20261028/series",
       "members": 1,
       "owner": "ARM architecture with Tegra review",
-      "gate": "ATAG source build and target correctness OPEN"
+      "gate": "Standalone BOOT-01 zImage build PASS; eight-source integrated build PASS; ATAG bounds and target correctness OPEN"
     },
     {
       "track": "WIFI",
@@ -31,10 +31,19 @@
   "tested_replay": {
     "date_utc": "2026-10-28",
     "result": "PASS",
-    "source_tip": "04c79f228ae4f6153ec544e042b1fffbf66ad33d",
+    "source_tip": "abd3ebc8a7684243b6e7920704dff0f080aa84f3",
     "commit_count": 8,
     "reference_checkpoint": "docs/checkpoints/MZ600_UPSTREAM_REVIEW_FORM_SOURCE_REPLAY_2026-10-28.md",
-    "full_eight_source_build": "NOT YET TESTED"
+    "full_eight_source_build": "PASS_FRESH_ARM_ZIMAGE_DTBS_MODULES_2026-10-28_T03:29:02Z",
+    "full_eight_source_build_commit": "abd3ebc8a7684243b6e7920704dff0f080aa84f3",
+    "full_eight_source_build_log": "DESKTOP-R16QJD4 /home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/qa-all-eight-copyaware-build-log-20261028.txt",
+    "full_eight_source_artifact_sha256": {
+      "zImage": "b2d1f2d09f9af399f5b23544b2cf0d4a8630ae52012d58cc6838ec5871d7e471",
+      "tegra20-motorola-stingray.dtb": "c70d22c06efa3607f132027588c6c6cd34518a4c1e1dff83c125cfa25409f5aa",
+      "tegra20-motorola-wingray.dtb": "4144940f352b437c340c5d37f5a4c9dcc711024ef9785746ff3bd2d1f8bab3ff",
+      "brcmfmac.ko": "5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26",
+      "brcmfmac-wcc.ko": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9"
+    }
   },
   "previous_tested_seven_source": {
     "result": "FULL_ARM_ZIMAGE_DTBS_MODULES_PASS",

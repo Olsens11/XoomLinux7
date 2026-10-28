@@ -1,0 +1,2 @@
+# These are literal format-patch emails; validate their applied source diff separately.
+*.patch -whitespace

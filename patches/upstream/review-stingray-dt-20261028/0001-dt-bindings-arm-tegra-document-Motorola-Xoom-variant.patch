@@ -1,11 +1,14 @@
-From 303810fb426e208e32e94939fb7c4f7635553b6c Mon Sep 17 00:00:00 2001
+From 6a934f67836abcafb47d765f723ec7615f9f690b Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 21:38:45 -0400
 Subject: [PATCH 1/3] dt-bindings: arm: tegra: document Motorola Xoom variants
 
-The Tegra board schema does not describe the existing Wingray root compatible tuple, and a new Stingray variant uses the same Xoom family fallback.
+The Tegra board schema does not describe the existing Wingray root
+compatible tuple. The new Stingray variant uses the same Xoom family
+fallback.
 
-Document both board variants and their common Motorola Xoom and Tegra20 compatible entries without modifying any hardware description.
+Document both board variants and their common Motorola Xoom and
+Tegra20 compatible entries without changing the hardware description.
 
 Assisted-by: ChatGPT:GPT-6
 ---
@@ -30,3 +33,6 @@ index ca311262c..d507efb2a 100644
        - description: Motorola Mot based Device family
          items:
            - enum:
+-- 
+2.34.1
+

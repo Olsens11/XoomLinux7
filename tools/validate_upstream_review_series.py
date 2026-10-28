@@ -42,6 +42,16 @@ def main() -> None:
     for folder_name, count in TRACKS:
         folder = source / folder_name
         patches = inspect_series(folder, count)
+        if folder_name == "review-stingray-dt-20261028":
+            manifest = json.loads((folder / "manifest.json").read_text())
+            if [x["patch"] for x in manifest["patches"]] != [p.name for p in patches]:
+                raise ValueError("Stingray DT series differs from manifest order")
+            for p, item in zip(patches, manifest["patches"]):
+                actual = hashlib.sha256(p.read_bytes()).hexdigest()
+                if actual != item["sha256"]:
+                    raise ValueError(f"{p.name}: DT SHA256 mismatch")
+                print("PATCH_HASH_PASS", p.name, actual)
+            continue
         if folder_name == "review-arm-atag-20261028":
             manifest = json.loads((folder / "manifest.json").read_text())
             if manifest["source_patch"] != patches[0].name or manifest["patch_sha256"] != hashlib.sha256(patches[0].read_bytes()).hexdigest():

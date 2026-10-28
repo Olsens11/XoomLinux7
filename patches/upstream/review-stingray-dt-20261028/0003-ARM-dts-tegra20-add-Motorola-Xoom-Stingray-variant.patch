@@ -1,11 +1,14 @@
-From ec8ad75a2f4413c6cda45c11f5271f83dccc5dfa Mon Sep 17 00:00:00 2001
+From 6f570bbf306b6d11d5ba1e82a3fd7eda7896c6fe Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 21:38:45 -0400
 Subject: [PATCH 3/3] ARM: dts: tegra20: add Motorola Xoom Stingray variant
 
-The MZ600 Stingray tablet shares the existing Xoom base hardware with Wingray but identifies as Stingray and exposes its Tegra USB interface in peripheral mode.
+The MZ600 Stingray tablet shares the Xoom hardware with Wingray but
+uses a Stingray root compatible and USB peripheral operating mode.
 
-Describe only these variant-specific differences, and build its DTB. Keep the Motorola BigPart eMMC opt-in outside this board-enablement patch pending separate bindings and storage review.
+Describe only those variant-specific properties and build its DTB.
+Keep BigPart eMMC opt-in outside board enablement pending independent
+binding and storage review.
 
 Assisted-by: ChatGPT:GPT-6
 ---
@@ -50,3 +53,6 @@ index 000000000..7376c65e3
 +&{/usb-phy@c5000000} {
 +	dr_mode = "peripheral";
 +};
+-- 
+2.34.1
+

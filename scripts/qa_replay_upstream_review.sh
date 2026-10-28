@@ -39,7 +39,7 @@ apply_series() {
    echo "PATCH $(basename "$patch")"
    sha256sum "$patch"
    git -C "$W" am "$patch"
-   if ! git -C "$W" diff HEAD^ HEAD --check; then
+   if ! git -C "$W" diff -C HEAD^ HEAD --check; then
      echo "DIFF_CHECK_OPEN $file"; style_open=1
    fi
    if ! "$W/scripts/checkpatch.pl" --no-tree --no-signoff --strict "$patch" > "$O/checkpatch-$file.txt" 2>&1; then
