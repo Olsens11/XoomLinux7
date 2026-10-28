@@ -1,4 +1,4 @@
-From cbabd574b2fdf37707d09311c0ffdd915520ced8 Mon Sep 17 00:00:00 2001
+From 833f8d6937063c3c6f3c0bf28f681e468e516652 Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 21:33:44 -0400
 Subject: [PATCH 3/4] wifi: brcmfmac: recover BCM4329 ESCAN terminals for
@@ -93,3 +93,6 @@ index 1cff4ba76..56c015a32 100644
  			ifp = drvr->iflist[0];
  		else
  			ifp = drvr->iflist[emsg.bsscfgidx];
+-- 
+2.34.1
+

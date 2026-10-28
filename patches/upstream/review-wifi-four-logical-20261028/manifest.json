@@ -7,28 +7,30 @@
   "patches": [
     {
       "file": "0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch",
-      "sha256": "a5277c703d35b41e30896679919107ca506ef8375040f6fb5fbf2b9c229eee5f",
+      "sha256": "2cfbe7f859c64940751559de1d771440c34b618873e7a257525f6d485a089e87",
       "work_item": "WIFI-01"
     },
     {
       "file": "0002-wifi-brcmfmac-reject-stale-BCM4329-ESCAN-completions.patch",
-      "sha256": "19d5ccde0d791fb8371ad43341682ab958c63cfc0944b9f65cb56637226fbeb2",
+      "sha256": "8790c3387ba61e2877397b1913cc62aacb749368fff23471f0af55587e5bd27e",
       "work_item": "WIFI-02"
     },
     {
       "file": "0003-wifi-brcmfmac-recover-BCM4329-ESCAN-terminals-for-ac.patch",
-      "sha256": "832898c334858136f2b1cace21e1447cbf2ef3f7c98dea49c8ae263cd8117823",
+      "sha256": "8df69a1bbfa01d1a04b300ab022112348f92cc74666b5e19391ba7c9d3ed65a2",
       "work_item": "WIFI-03",
       "depends_on": "WIFI-02"
     },
     {
       "file": "0004-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch",
-      "sha256": "b18be951051ab13c455e5a330742c0ea06fba5861c2355e1ca2dde758ca924db",
+      "sha256": "e1ec4f5436776020c4900496a5b2dbf23d34f3433b2d3338575db159a5390e85",
       "work_item": "WIFI-04"
     }
   ],
   "human_signed": false,
   "physically_tested_clean_source": false,
   "multi_interface_race_tested": false,
-  "actual_submission": false
+  "actual_submission": false,
+  "canonical_format_patch_source_commit": "24d9a3f1ccafb34285a16f9aa6da6651b555fd48",
+  "format_patch_generated": "2026-10-28, from four independent git am commits; final Git source diff versus three-patch Wi-Fi tip is empty"
 }

@@ -16,6 +16,8 @@ Historical Surface one-shot scripts may embed absolute machine paths or network 
 
 ## Milestone-to-upstream integration gate (mandatory, 2026-10-27)
 
+**Review-source packaging preflight:** After every canonical review patch or `series` edit, run `python3 tools/validate_upstream_review_series.py` for LF-delimited ordering, manifest hashes and patch-stream integrity; run `bash -n scripts/qa_replay_upstream_review.sh` on tool changes. Then apply every member on a pinned clean kernel tree and run source-level `git diff --check` plus `checkpatch.pl`. Do not confuse a clean outer project `git diff --check` with checking a literal email-format patch's *applied* kernel diff. Re-run clean per-prefix ARM builds and full integration when source hunks change; metadata-only re-exports require equivalence and integrity rechecks. Record any failed attempts, exact tested revisions, and whether a reusable script was executed or only inspected.
+
 **Objective:** Keep the full BCM4329/Wi-Fi/Bluetooth/SDIO/board implementation continuously reviewable. Do not defer patch reconstruction until completion of a whole-chip feature. A successful experiment is *evidence*, not automatically an upstream patch or a qualification of unrelated source.
 
 For **every materially new result** (positive or negative physical finding, validated source fix, clean-build/replay milestone, firmware/board interface discovery, or newly rejected hypothesis), close the work in the **same development session / same documentation change**:

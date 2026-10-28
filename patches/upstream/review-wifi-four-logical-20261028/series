@@ -1,1 +1,4 @@
-0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch\n0002-wifi-brcmfmac-reject-stale-BCM4329-ESCAN-completions.patch\n0003-wifi-brcmfmac-recover-BCM4329-ESCAN-terminals-for-ac.patch\n0004-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch\n
+0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch
+0002-wifi-brcmfmac-reject-stale-BCM4329-ESCAN-completions.patch
+0003-wifi-brcmfmac-recover-BCM4329-ESCAN-terminals-for-ac.patch
+0004-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch

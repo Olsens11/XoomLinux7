@@ -1,4 +1,4 @@
-From e9a545a59b4941a124a8d6436145a9f4f3a81871 Mon Sep 17 00:00:00 2001
+From d9e04def3c315d7e3eab13119487db06526f20cc Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 21:33:43 -0400
 Subject: [PATCH 2/4] wifi: brcmfmac: reject stale BCM4329 ESCAN completions
@@ -85,3 +85,6 @@ index 6ceb30142..6af1282ff 100644
  	u8 *escan_buf;
  	struct wiphy *wiphy;
  	struct brcmf_if *ifp;
+-- 
+2.34.1
+

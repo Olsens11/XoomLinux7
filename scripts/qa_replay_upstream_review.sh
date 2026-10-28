@@ -4,6 +4,7 @@
 # Required: KERNEL_REPO, CONFIG_BASE, OUT_ROOT, CROSS_COMPILE.
 set -euo pipefail
 P="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+python3 "$P/tools/validate_upstream_review_series.py"
 BASE=2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3
 : "${KERNEL_REPO:?set KERNEL_REPO to an existing Linux kernel Git repository}"
 : "${CONFIG_BASE:?set CONFIG_BASE to a proven kernel .config}"

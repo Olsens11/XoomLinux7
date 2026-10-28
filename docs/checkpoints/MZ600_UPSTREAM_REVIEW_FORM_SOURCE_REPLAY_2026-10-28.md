@@ -38,6 +38,14 @@ The **two Broadcom module hashes exactly match** the earlier complete build of t
 
 All four sequential Wi-Fi prefixes compiled (source commits: `1ffe51ac0`, `e25a455b3`, `8547eb87d`, `8d3406a4a`). The reusable `scripts/qa_replay_upstream_review.sh` helper was **syntax-checked with `bash -n`**, but not separately executed end-to-end; this checkpoint's actual commands were the equivalent one-shot and resumed QA scripts on the Desktop. Stored RFC email patches are exempted from Git's *outer repository* whitespace scan via local `.gitattributes`; **each applied kernel-source prefix still underwent `git diff --check`**, and the actual patch files underwent `checkpatch.pl`. The DTS moved-content style failure remains open; successful builds do not override the `git diff --check` failure in that earlier review commit. The review source intentionally omits the separate ATAG and BigPart source changes, so this output cannot yet be treated as a reproduction of the installed MZ600 p8 boot.
 
+## Canonical patch-stream packaging qualification
+
+After the initial source build, the alternate four-patch `series` text was found to contain **literal escaped `\\n` sequences rather than real newlines**. Its manual shell-glob replay succeeded, but the series-driven automation would have failed. This was corrected to four actual LF-delimited entries, without changing kernel source.
+
+The corrected patch files were then replayed in an additional pristine Linux worktree, generating `24d9a3f1ccafb34285a16f9aa6da6651b555fd48`. `git diff` against the prior three-patch Wi-Fi tip was **empty**. All four messages were regenerated using real `git format-patch` commits, preserving the same code and including the corrected commit descriptions; each regenerated patch passed strict `checkpatch.pl` with **0 errors / 0 warnings / 0 checks**. The published four-way manifest was rehashed from these exact regenerated streams.
+
+A new stdlib-only `tools/validate_upstream_review_series.py` now validates both 3-DT and 4-Wi-Fi series ordering, actual LF delimiters, complete patch files and Wi-Fi SHA256 manifest correspondence. Its own check passed for all seven patches. The reusable `scripts/qa_replay_upstream_review.sh` calls that validator before any worktree or build action. Its syntax was checked via `bash -n`. **This new reusable script has not itself completed a fresh end-to-end run yet**; this milestone's source compilation/build provenance remains the separately logged equivalent manual replay. The patch-stream metadata re-export leaves its compiled source identical.
+
 ## What remains open (no inferred passes)
 
 - **Platform:** DTS inherited style; DT schema/ABI checks; exact board source physically booted; MZ600 vs Wingray variant behavior.

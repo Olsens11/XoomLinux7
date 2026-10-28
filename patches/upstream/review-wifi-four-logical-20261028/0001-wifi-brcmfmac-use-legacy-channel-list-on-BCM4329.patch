@@ -1,4 +1,4 @@
-From d8b406609f90da6b446a047b99879a93b954e07d Mon Sep 17 00:00:00 2001
+From db5de0db758dbf5fc14de879907262ffa4858987 Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 20:49:33 -0400
 Subject: [PATCH 1/4] wifi: brcmfmac: use legacy channel list on BCM4329
@@ -109,3 +109,6 @@ index 0b55d4458..52b09309e 100644
  		goto fail_pbuf;
  	}
  
+-- 
+2.34.1
+
