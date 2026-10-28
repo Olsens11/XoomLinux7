@@ -1,5 +1,8 @@
 # XoomLinux7 — comprehensive handoff: hardware fastboot restored, cold BigPart p8 preserved on microSD and Surface
 
+> **NEWER PHYSICAL RESULT (2026-10-28):** [TWRP 2.8.6.0 BigPart installed to replacement MZ600 p6 under explicit owner authorization, exact p6 readback and persistent recovery boot PASS](../checkpoints/MZ600_TWRP_286_BIGPART_P6_INSTALL_AND_PERSISTENT_BOOT_PASS_2026-10-28.md). Earlier statements below saying no p6 flash and targeting TWRP 3.1.1-0 are **historical and superseded**. Original p6 backup intact, p8/p9/p10 untouched. Current runtime is installed recovery with SD remounted read-only; next disposable cold-p8 restore/fsck test and exact-source nine-review temporary Linux boot.
+
+
 **Date:** 2026-10-28 (America/New_York). **Device:** experimental *replacement* Motorola Xoom MZ600 Stingray CDMA, **not** the protected original Xoom.
 
 **Project:** [Olsens11/XoomLinux7](https://github.com/Olsens11/XoomLinux7), branch `wip/clean-wifi-bt-usb-20261025`. This handoff supersedes the **last-known-status** assertions in the earlier [preinstallation handoff](MZ600_XOOMLINUX7_PREINSTALLATION_CHAPTER_COMPLETE_HANDOFF_2026-10-28.md), but that handoff, the kernel source manifests, original physical observations, and safety/workflow documents remain essential historical authority.

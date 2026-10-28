@@ -1,5 +1,8 @@
 # XoomLinux7 conversation and engineering handoffs
 
+> **LATEST PHYSICAL MILESTONE — 2026-10-28:** [Original TWRP 2.8.6.0 BigPart successfully written to MZ600 p6 only, exact SHA readback and independent reboot into installed recovery PASS; eMMC p8/p9/p10 BigPart sector mapping and root ADB PASS, Debian p8 read-only ext4 mount PASS](../checkpoints/MZ600_TWRP_286_BIGPART_P6_INSTALL_AND_PERSISTENT_BOOT_PASS_2026-10-28.md). Old p6 rollback safely retained; clean nine-patch Linux and new Debian NOT installed. Next: disposable p8 cold-image restore/fsck rehearsal, then temporary nine-patch exact-source boot. Internal RW mounting/repair/backup-restore untested; recovery automatically mounts rescue SD RW, later remounted RO.
+
+
 > **CURRENT COMPREHENSIVE HANDOFF 2026-10-28 — RESUME HERE:** [MZ600 hardware fastboot restored and cold p8 verified on both SD and private Surface; nine-review kernel and test Debian provenance; TWRP 3.1.1-0 status; step-by-step copy-only ext4/restore then recovery RAM-boot qualification](MZ600_XOOMLINUX7_FASTBOOT_COLD_P8_VERIFIED_HANDOFF_2026-10-28.md). Next task **offline third disposable copy for ext4 free-block mismatch analysis/restore proof**, not repeat SD backup. Historical preinstallation chapter and 10:41 failure links below remain reference only.
 
 > **LATEST REBOOT-TO-FASTBOOT ATTEMPT 2026-10-28 10:41 EDT:** [One-shot GPIO-unbind physically PASS; fastboot FAIL; Linux unreachable afterward](../checkpoints/MZ600_GPIO_PMC_UNBIND_FASTBOOT_PHYSICAL_HANG_2026-10-28.md). This **supersedes** earlier successful *read-only preflight* as the current hardware access state. No flash; physical owner rescue required before continuing.
