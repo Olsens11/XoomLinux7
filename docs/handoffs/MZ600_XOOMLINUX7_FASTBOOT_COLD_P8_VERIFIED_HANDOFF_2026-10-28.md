@@ -49,7 +49,7 @@
 
 ## Where all the evidence resides
 
-**Surface** (`SURFACE-BOOK-2`): directly connected USB cable, Windows fastboot and COM9, private raw backup directory `C:\Users\olsen\xoom-linux-rom\private-backups\MZ600-V31-PREFLASH-20261028\`, pre-existing p6 recovery backup under `...\private-backups\replacement-mz600-2026-10-25\`, and exact local scripts under `...\inspection\`.
+**Surface** (`SURFACE-BOOK-2`): directly connected USB cable, Windows fastboot and COM9, private raw backup directory `%USERPROFILE%\xoom-linux-rom\private-backups\MZ600-V31-PREFLASH-20261028\`, pre-existing p6 recovery backup under `...\private-backups\replacement-mz600-2026-10-25\`, and exact local scripts under `...\inspection\`.
 
 - `inspection/MZ600-StageB-Fastboot-Boot-ColdP8-20261028.ps1` — exact device, image byte count and SHA guard, only `fastboot boot`, physically executed PASS.
 - `inspection/MZ600-P8-Cold-Verify-Root-Preflight-20261028.py` — genuine root UID0, original internal p8 root and 10-partition BigPart geometry, SD unmounted; **physical PASS**.
@@ -105,7 +105,7 @@ The *non-BigPart recovery* sees factory p8 only 256MiB, p9 ~169MiB, p10 beginnin
 
 ## Previous live backups and firmware/device preservation
 
-The Surface also preserves eight earlier **live source** images, independently rehashed and with redundant GPT-sector/header evidence. Directory: `C:\Users\olsen\xoom-linux-rom\private-backups\MZ600-V31-PREFLASH-20261028\`:
+The Surface also preserves eight earlier **live source** images, independently rehashed and with redundant GPT-sector/header evidence. Directory: `%USERPROFILE%\xoom-linux-rom\private-backups\MZ600-V31-PREFLASH-20261028\`:
 
 | Image | Bytes | SHA256 |
 | --- | ---: | --- |
@@ -181,7 +181,7 @@ Available historical Wingray BigPart TWRP 2.x releases and older kernel patches 
 ### Gate 1 (COMPLETED): private off-device cold p8 backup transfer, verification and cleanup
 
 - Original temporary on-Xoom RO SD path was `/run/mz600-p8-cold-inspect-ro/var/backups/MZ600-V31-P8-COLD-20261028/p8-cold.img`; the source was independently SHA-verified and **later unmounted**. On next access verify its mountpoint state first, do not assume still mounted.
-- **DONE:** copied 1GiB directly from SD RO mount to unique Surface private directory `C:\Users\olsen\xoom-linux-rom\private-backups\MZ600-V31-P8-COLD-20261028\p8-cold.img`, preserving old live `MZ600-V31-PREFLASH-20261028\p8.img` untouched.
+- **DONE:** copied 1GiB directly from SD RO mount to unique Surface private directory `%USERPROFILE%\xoom-linux-rom\private-backups\MZ600-V31-P8-COLD-20261028\p8-cold.img`, preserving old live `MZ600-V31-PREFLASH-20261028\p8.img` untouched.
 - **DONE:** dedicated one-time public-key-pinned HTTPS receiver and COM9 sender were created as `inspection/MZ600-Cold-P8-TLS-Receiver-20261028.py` and `MZ600-Cold-P8-TLS-Sender-COM9-20261028.py`; source was the SD RO file (not live p8). Both reported PASS, HTTP 200 and exit 0. Listener terminated. Sensitive token/keys and raw image stayed on authorized hosts.
 - **DONE:** Surface reopened and SHA-256 rehashed full 1,073,741,824B file, exact `a5726126eb55ff54045dd565b1bdcff07e246aa679ee485448363f78a82f4346`. Copied SD reports `RESULT.txt` (171B), `SHA256SUMS` (78B), `e2fsck-readonly.txt` (437B) and metadata; source SD copy intact. `inspection/MZ600-Cold-P8-SD-ReadOnly-Unmount-20261028.py` subsequently unmounted SD RO.
 - **DONE:** `backup-transfer-verification.json` records private capture/transport and hash verification. Keep both SD original and Surface copy immutable, and consider additional independent storage. **Next task is Gate 2 copy-only filesystem/restore validation**, not another cold backup.
@@ -213,8 +213,8 @@ Available historical Wingray BigPart TWRP 2.x releases and older kernel patches 
 
 - **Desktop Commander** tools are available through `functions.exec`: discover `mcp__Remote_Desktop_Commander__list_devices`, `start_process`, `read_process_output`, `read_file`, `write_file`, `edit_block`, etc. Tool names normalized on `tools`; inspect `ALL_TOOLS` for schemas. Run `list_devices({})` before selecting Surface or Desktop. Do **not** run `functions.exec` in parallel with other tools.
 - Desktop WSL: invoke `wsl.exe -d Ubuntu-22.04 -- <command>` on `DESKTOP-R16QJD4`; root when necessary `wsl.exe -d Ubuntu-22.04 -u root -- <command>`. Complex PowerShell/WSL nested quoting can cause breakage; write small `.sh` via WSL UNC to exact private source tree and invoke it explicitly. Read/commit public docs in `/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project`.
-- Surface: physical Xoom USB serial port `COM9`; fastboot executable in installed Google Platform Tools, detect actual location. Existing `C:\Users\olsen\xoom-linux-rom\downloads\Start-Xoom-USB-Console.ps1` allows owner root auth. **One COM9 serial owner at a time**; Ctrl+] releases existing interactive console. Python 3.13 and `pyserial` available. Check prompt and exact MZ600 identity before sending commands; don't record password.
-- Surface cold-backup guarded probes are under `C:\Users\olsen\xoom-linux-rom\inspection\`, including the passing `MZ600-Cold-P8-Independent-SD-SHA-20261028.py`, later pinned-TLS receiver/sender, metadata capture and successful RO-SD-unmount script. Their PIDs are historical. **For the immediate offline investigation prefer the verified Surface `MZ600-V31-P8-COLD-20261028\p8-cold.img`**, not a new device mount or COM9 transaction. Use exact private paths and preserve source evidence.
+- Surface: physical Xoom USB serial port `COM9`; fastboot executable in installed Google Platform Tools, detect actual location. Existing `%USERPROFILE%\xoom-linux-rom\downloads\Start-Xoom-USB-Console.ps1` allows owner root auth. **One COM9 serial owner at a time**; Ctrl+] releases existing interactive console. Python 3.13 and `pyserial` available. Check prompt and exact MZ600 identity before sending commands; don't record password.
+- Surface cold-backup guarded probes are under `%USERPROFILE%\xoom-linux-rom\inspection\`, including the passing `MZ600-Cold-P8-Independent-SD-SHA-20261028.py`, later pinned-TLS receiver/sender, metadata capture and successful RO-SD-unmount script. Their PIDs are historical. **For the immediate offline investigation prefer the verified Surface `MZ600-V31-P8-COLD-20261028\p8-cold.img`**, not a new device mount or COM9 transaction. Use exact private paths and preserve source evidence.
 - **No auto/background actions remain promised or guaranteed**; continue only in actual future turn with freshly verified device state. Do not claim task completeness from a file name or previous tool PID. Preserve all milestones as evidence in sanitized GitHub docs with references and update `START_HERE.md`, README/handoff indices and `runtime/PROJECT_STATE.env`.
 - **Avoid publishing** passwords, private raw binary images, OTP/factory MAC, device full serial, SSID/PSK, HCD/firmware/NVRAM, proprietary backup data and remote authentication material. Source code, redacted facts and hashes may be committed. Never automatically `Signed-off-by` another person's kernel patch.
 
