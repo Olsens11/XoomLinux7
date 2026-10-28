@@ -1,0 +1,111 @@
+From cf24ccc66fe915bd5d7d6df0fc94d4ec6713ee88 Mon Sep 17 00:00:00 2001
+From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
+Date: Tue, 27 Oct 2026 20:49:33 -0400
+Subject: [PATCH 1/3] wifi: brcmfmac: use legacy channel list on BCM4329
+
+Some older BCM4329 firmware rejects the 'chanspecs' iovar with
+BCME_UNSUPPORTED, while WLC_GET_VALID_CHANNELS returns valid
+firmware channel numbers. Without a fallback, the advertised wiphy
+channels are incomplete and ordinary 2.4/5 GHz scans fail.
+
+On precisely that firmware error and chipset, consume the bounded
+legacy channel list. Disable channels not reported by firmware and
+constrain bandwidth to 20 MHz. Never enable a channel or clear
+regulatory/DFS restrictions established by cfg80211. Do not alter
+the normal chanspec path or any other Broadcom device.
+
+A BCM4329 V31 laboratory build with related legacy fallback completed
+normal scans, WPA2 and internet access on a Motorola Xoom MZ600.
+This cleaned source variant requires its own physical validation.
+
+Assisted-by: ChatGPT:GPT-6 [Desktop Commander]
+---
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c    | 68 ++++++++++++++++++-
+ 1 file changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 0b55d4458..52b09309e 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -6992,6 +6992,68 @@ static void brcmf_update_bw40_channel_flag(struct ieee80211_channel *channel,
+ 	}
+ }
+ 
++/* Older BCM4329 firmware exposes a channel-number list, not 'chanspecs'.
++ * Keep existing cfg80211 restrictions and assume only 20 MHz support.
++ */
++static int brcmf_bcm4329_legacy_channels(struct brcmf_cfg80211_info *cfg,
++					 u8 *pbuf)
++{
++	struct brcmf_pub *drvr = cfg->pub;
++	struct brcmf_if *ifp = brcmf_get_ifp(drvr, 0);
++	struct wiphy *wiphy = cfg_to_wiphy(cfg);
++	struct brcmf_chanspec_list *list = (void *)pbuf;
++	struct ieee80211_supported_band *band;
++	u32 count, max_count, chan, i, j, k;
++	bool supported;
++	int err;
++
++	max_count = (BRCMF_DCMD_MEDLEN - sizeof(list->count)) /
++		    sizeof(list->element[0]);
++	memset(pbuf, 0, BRCMF_DCMD_MEDLEN);
++	list->count = cpu_to_le32(max_count);
++	err = brcmf_fil_cmd_data_get(ifp, BRCMF_C_GET_VALID_CHANNELS,
++				     pbuf, BRCMF_DCMD_MEDLEN);
++	if (err)
++		return err;
++
++	count = le32_to_cpu(list->count);
++	if (!count || count > max_count)
++		return -EINVAL;
++	for (i = 0; i < count; i++) {
++		chan = le32_to_cpu(list->element[i]);
++		if (!((chan >= 1 && chan <= 14) ||
++		      (chan >= 30 && chan <= 196)))
++			return -EINVAL;
++	}
++
++	for (i = 0; i < NUM_NL80211_BANDS; i++) {
++		band = wiphy->bands[i];
++		if (!band || (i != NL80211_BAND_2GHZ &&
++			      i != NL80211_BAND_5GHZ))
++			continue;
++		for (j = 0; j < band->n_channels; j++) {
++			supported = false;
++			for (k = 0; k < count; k++) {
++				if (band->channels[j].hw_value ==
++				    le32_to_cpu(list->element[k])) {
++					supported = true;
++					break;
++				}
++			}
++			if (!supported) {
++				band->channels[j].flags |= IEEE80211_CHAN_DISABLED;
++				continue;
++			}
++			/* Never clear regulatory, passive or DFS restrictions. */
++			band->channels[j].flags |= IEEE80211_CHAN_NO_HT40 |
++				IEEE80211_CHAN_NO_80MHZ |
++				IEEE80211_CHAN_NO_160MHZ;
++		}
++	}
++
++	return 0;
++}
++
+ static int brcmf_construct_chaninfo(struct brcmf_cfg80211_info *cfg,
+ 				    u32 bw_cap[])
+ {
+@@ -7018,7 +7080,11 @@ static int brcmf_construct_chaninfo(struct brcmf_cfg80211_info *cfg,
+ 	err = brcmf_fil_iovar_data_get(ifp, "chanspecs", pbuf,
+ 				       BRCMF_DCMD_MEDLEN);
+ 	if (err) {
+-		bphy_err(drvr, "get chanspecs error (%d)\n", err);
++		if (err == -EBADE &&
++		    drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++			err = brcmf_bcm4329_legacy_channels(cfg, pbuf);
++		else
++			bphy_err(drvr, "get chanspecs error (%d)\n", err);
+ 		goto fail_pbuf;
+ 	}
+ 
