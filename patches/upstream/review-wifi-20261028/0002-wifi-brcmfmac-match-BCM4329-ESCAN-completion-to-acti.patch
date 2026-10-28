@@ -1,0 +1,171 @@
+From 9f3632e54d81e69afba0e8a582eca2a3822ad907 Mon Sep 17 00:00:00 2001
+From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
+Date: Tue, 27 Oct 2026 20:45:36 -0400
+Subject: [PATCH 2/3] wifi: brcmfmac: match BCM4329 ESCAN completion to active
+ scan
+
+Older BCM4329 firmware returns real ESCAN results, but its final
+successful Event 69 sometimes carries a bsscfg index that has no
+corresponding interface. The generic worker drops the completion,
+leaving cfg80211 waiting for a scan that actually finished.
+
+Give each normal primary-station BCM4329 scan a 16-bit sync ID.
+Accept successful terminal messages only when their fixed payload
+matches the current request. If the terminal has an unmapped bsscfg
+index, route it to the *sole* primary STA only while the matching
+cfg80211 scan is active. Do not reroute partial results, connection
+events, multiple-interface scans or unsolicited messages.
+
+The generation check and selective routing are a single scan
+completion-lifetime operation; separating them would expose a
+scan-owner fallback without transaction identity.
+
+The corresponding V31 lab path completed repeated real Event 69
+scans and WPA2 data traffic on MZ600, but this cleaned patch
+still needs explicit physical, cancellation and race testing.
+
+Assisted-by: ChatGPT:GPT-6 [Desktop Commander]
+---
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c    | 27 +++++++++++-
+ .../broadcom/brcm80211/brcmfmac/cfg80211.h    |  2 +
+ .../broadcom/brcm80211/brcmfmac/fweh.c        | 42 ++++++++++++++++++-
+ 3 files changed, 68 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 474b1a972..388d6d5ce 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -1485,7 +1485,11 @@ brcmf_run_escan(struct brcmf_cfg80211_info *cfg, struct brcmf_if *ifp,
+ 	}
+ 
+ 	params->action = cpu_to_le16(WL_ESCAN_ACTION_START);
+-	params->sync_id = cpu_to_le16(0x1234);
++	if (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++	    cfg->scan_request && ifp->ifidx == 0 && ifp->bsscfgidx == 0)
++		params->sync_id = cpu_to_le16(cfg->escan_info.bcm4329_sync_id);
++	else
++		params->sync_id = cpu_to_le16(0x1234);
+ 
+ 	err = brcmf_fil_iovar_data_set(ifp, "escan", params, params_size);
+ 	if (err) {
+@@ -1513,6 +1517,15 @@ brcmf_do_escan(struct brcmf_if *ifp, struct cfg80211_scan_request *request)
+ 	escan->ifp = ifp;
+ 	escan->wiphy = cfg->wiphy;
+ 	escan->escan_state = WL_ESCAN_STATE_SCANNING;
++	if (ifp->drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++	    cfg->scan_request && ifp->ifidx == 0 && ifp->bsscfgidx == 0) {
++		u16 id = escan->bcm4329_sync_next + 1;
++
++		if (!id)
++			id = 1;
++		escan->bcm4329_sync_next = id;
++		escan->bcm4329_sync_id = id;
++	}
+ 
+ 	brcmf_scan_config_mpc(ifp, 0);
+ 	results = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
+@@ -3640,6 +3653,18 @@ brcmf_cfg80211_escan_handler(struct brcmf_if *ifp,
+ 	bool aborted;
+ 
+ 	status = e->status;
++	if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++	    status == BRCMF_E_STATUS_SUCCESS &&
++	    cfg->scan_request && !cfg->int_escan_map &&
++	    ifp->ifidx == 0 && ifp->bsscfgidx == 0) {
++		const u8 *terminal = data;
++
++		if (!terminal || e->datalen != 12 ||
++		    get_unaligned_le32(terminal) != 12 ||
++		    get_unaligned_le16(terminal + 8) !=
++			cfg->escan_info.bcm4329_sync_id)
++			return 0;
++	}
+ 
+ 	if (status == BRCMF_E_STATUS_ABORT)
+ 		goto exit;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
+index 6ceb30142..6af1282ff 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.h
+@@ -287,6 +287,8 @@ enum wl_escan_state {
+ 
+ struct escan_info {
+ 	u32 escan_state;
++	u16 bcm4329_sync_next;
++	u16 bcm4329_sync_id;
+ 	u8 *escan_buf;
+ 	struct wiphy *wiphy;
+ 	struct brcmf_if *ifp;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
+index 1cff4ba76..56c015a32 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2012 Broadcom Corporation
+  */
+ #include <linux/netdevice.h>
++#include <brcm_hw_ids.h>
+ 
+ #include "brcmu_wifi.h"
+ #include "brcmu_utils.h"
+@@ -271,13 +272,48 @@ static void brcmf_fweh_event_worker(struct work_struct *work)
+ 
+ 	while ((event = brcmf_fweh_dequeue_event(fweh))) {
+ 		enum brcmf_fweh_event_code code;
++		struct brcmf_if *scan_owner = NULL;
+ 
+ 		brcmf_fweh_map_fwevt_code(fweh, event->code, &code);
+ 		brcmf_dbg(EVENT, "event %s (%u:%u) ifidx %u bsscfg %u addr %pM\n",
+ 			  brcmf_fweh_event_name(code), code, event->code,
+ 			  event->emsg.ifidx, event->emsg.bsscfgidx,
+ 			  event->emsg.addr);
+-		if (event->emsg.bsscfgidx >= BRCMF_MAX_IFS) {
++		/* Legacy ESCAN terminal events can carry an unmapped bsscfg.
++		 * Route only a genuine generation-matching completion to the
++		 * sole active primary STA, never arbitrary link/partial events.
++		 */
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++		    event->code == BRCMF_E_ESCAN_RESULT &&
++		    be16_to_cpu(event->emsg.version) == 2 &&
++		    be32_to_cpu(event->emsg.status) == BRCMF_E_STATUS_SUCCESS &&
++		    event->datalen == 12 &&
++		    (event->emsg.bsscfgidx >= BRCMF_MAX_IFS ||
++		     !drvr->iflist[event->emsg.bsscfgidx])) {
++			struct brcmf_cfg80211_info *cfg = drvr->config;
++			struct brcmf_if *primary = drvr->iflist[0];
++			bool sole_if = true;
++			int n;
++
++			for (n = 1; n < BRCMF_MAX_IFS; n++) {
++				if (drvr->iflist[n]) {
++					sole_if = false;
++					break;
++				}
++			}
++			if (cfg && primary && primary->vif && primary->ndev &&
++			    sole_if && list_is_singular(&cfg->vif_list) &&
++			    READ_ONCE(cfg->scan_request) && !cfg->int_escan_map &&
++			    test_bit(BRCMF_SCAN_STATUS_BUSY, &cfg->scan_status) &&
++			    cfg->escan_info.escan_state == WL_ESCAN_STATE_SCANNING &&
++			    cfg->escan_info.ifp == primary &&
++			    get_unaligned_le32(event->data) == 12 &&
++			    get_unaligned_le16(event->data + 8) ==
++				READ_ONCE(cfg->escan_info.bcm4329_sync_id))
++				scan_owner = primary;
++		}
++		if (event->emsg.bsscfgidx >= BRCMF_MAX_IFS &&
++		    !scan_owner) {
+ 			bphy_err(drvr, "invalid bsscfg index: %u\n",
+ 				 event->emsg.bsscfgidx);
+ 			goto event_free;
+@@ -309,7 +345,9 @@ static void brcmf_fweh_event_worker(struct work_struct *work)
+ 			goto event_free;
+ 		}
+ 
+-		if (event->code == BRCMF_E_TDLS_PEER_EVENT)
++		if (scan_owner)
++			ifp = scan_owner;
++		else if (event->code == BRCMF_E_TDLS_PEER_EVENT)
+ 			ifp = drvr->iflist[0];
+ 		else
+ 			ifp = drvr->iflist[emsg.bsscfgidx];

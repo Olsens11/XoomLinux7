@@ -1,0 +1,88 @@
+From 5549f6d5e3cbbda0872aca8490a73a15e1471990 Mon Sep 17 00:00:00 2001
+From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
+Date: Tue, 27 Oct 2026 20:46:26 -0400
+Subject: [PATCH 3/3] wifi: brcmfmac: restore BCM4329 firmware readiness for
+ ESCAN
+
+After an ordinary ESCAN, legacy BCM4329 firmware can enter
+WLC_GET_UP=0 during normal idle MPC1. Disabling MPC alone before
+the next scan does not bring the firmware UP, and ESCAN fails.
+
+On the primary BCM4329 station only, read firmware UP after
+the existing MPC0 step, request WLC_UP only when the value is
+zero, and verify that the command succeeded. Preserve the idle
+MPC policy and the generic scan path.
+
+The comparable V31 lab implementation physically completed
+two real scans on MZ600. This clean review revision has not
+yet been tested on hardware.
+
+Assisted-by: ChatGPT:GPT-6 [Desktop Commander]
+---
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c    | 33 +++++++++++++++++++
+ .../broadcom/brcm80211/brcmfmac/fwil.h        |  1 +
+ 2 files changed, 34 insertions(+)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 388d6d5ce..ab4677ef2 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -1505,6 +1505,34 @@ brcmf_run_escan(struct brcmf_cfg80211_info *cfg, struct brcmf_if *ifp,
+ 	return err;
+ }
+ 
++/* MPC may leave older BCM4329 firmware down between successive scans. */
++static s32 brcmf_bcm4329_prepare_escan(struct brcmf_if *ifp)
++{
++	u32 up;
++	s32 err;
++
++	if (ifp->drvr->bus_if->chip != BRCM_CC_4329_CHIP_ID ||
++	    ifp->ifidx || ifp->bsscfgidx || !ifp->vif ||
++	    ifp->vif->wdev.iftype != NL80211_IFTYPE_STATION)
++		return 0;
++
++	err = brcmf_fil_cmd_int_get(ifp, BRCMF_C_GET_UP, &up);
++	if (err || up == 1)
++		return err;
++	if (up != 0)
++		return -EIO;
++
++	err = brcmf_fil_cmd_int_set(ifp, BRCMF_C_UP, 1);
++	if (err)
++		return err;
++
++	err = brcmf_fil_cmd_int_get(ifp, BRCMF_C_GET_UP, &up);
++	if (err)
++		return err;
++
++	return up == 1 ? 0 : -EIO;
++}
++
+ static s32
+ brcmf_do_escan(struct brcmf_if *ifp, struct cfg80211_scan_request *request)
+ {
+@@ -1528,6 +1556,11 @@ brcmf_do_escan(struct brcmf_if *ifp, struct cfg80211_scan_request *request)
+ 	}
+ 
+ 	brcmf_scan_config_mpc(ifp, 0);
++	err = brcmf_bcm4329_prepare_escan(ifp);
++	if (err) {
++		brcmf_scan_config_mpc(ifp, 1);
++		return err;
++	}
+ 	results = (struct brcmf_scan_results *)cfg->escan_info.escan_buf;
+ 	results->version = 0;
+ 	results->count = 0;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
+index ab3d6cfcb..263e6d438 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
+@@ -67,6 +67,7 @@
+ #define BRCMF_C_GET_BANDLIST			140
+ #define BRCMF_C_SET_SCB_TIMEOUT			158
+ #define BRCMF_C_GET_ASSOCLIST			159
++#define BRCMF_C_GET_UP				162
+ #define BRCMF_C_GET_PHYLIST			180
+ #define BRCMF_C_SET_SCAN_CHANNEL_TIME		185
+ #define BRCMF_C_SET_SCAN_UNASSOC_TIME		187

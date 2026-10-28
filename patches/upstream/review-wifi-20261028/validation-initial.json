@@ -1,0 +1,30 @@
+{
+  "review_source_tip": "5549f6d5e3cbbda0872aca8490a73a15e1471990",
+  "complete_replay_tip": "e4d5434fbb621e1faca908562112367448b3d568",
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "platform_snapshot_count": 3,
+  "clean_wifi_patch_count": 3,
+  "source_dir": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-replay-clean-20261028",
+  "checkpatch": [
+    {
+      "patch": "0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch",
+      "exit_code": 1,
+      "output_tail": "CHECK: Alignment should match open parenthesis\n#38: FILE: drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:6999:\n+static int brcmf_bcm4329_legacy_channels(struct brcmf_cfg80211_info *cfg,\n+\t\t\t\t\t\t u8 *pbuf)\n\nCHECK: Alignment should match open parenthesis\n#71: FILE: drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:7032:\n+\t\tif (!band || (i != NL80211_BAND_2GHZ &&\n+\t\t\t     i != NL80211_BAND_5GHZ))\n\ntotal: 0 errors, 0 warnings, 2 checks, 80 lines checked\n\nNOTE: For some of the reported defects, checkpatch may be able to\n      mechanically convert to the typical style using --fix or --fix-inplace.\n\n/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project/patches/upstream/review-wifi-20261028/0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch has style problems, please review.\n\nNOTE: If any of the errors are false positives, please report\n      them to the maintainer, see CHECKPATCH in MAINTAINERS.\n"
+    },
+    {
+      "patch": "0002-wifi-brcmfmac-match-BCM4329-ESCAN-completion-to-acti.patch",
+      "exit_code": 0,
+      "output_tail": "total: 0 errors, 0 warnings, 0 checks, 119 lines checked\n\n/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project/patches/upstream/review-wifi-20261028/0002-wifi-brcmfmac-match-BCM4329-ESCAN-completion-to-acti.patch has no obvious style problems and is ready for submission.\n"
+    },
+    {
+      "patch": "0003-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch",
+      "exit_code": 0,
+      "output_tail": "total: 0 errors, 0 warnings, 0 checks, 52 lines checked\n\n/home/xoomdev/xoom-linux-rom/clean-upstream-usb-20261025/project/patches/upstream/review-wifi-20261028/0003-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch has no obvious style problems and is ready for submission.\n"
+    }
+  ],
+  "full_build": "NOT_YET_RUN",
+  "physical": "NOT_YET_TESTED",
+  "DCO": "UNSIGNED RFC",
+  "source_worktrees_modified": false,
+  "Xoom_modified": false
+}

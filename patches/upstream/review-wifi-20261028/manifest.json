@@ -1,0 +1,25 @@
+{
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "tip": "5549f6d5e3cbbda0872aca8490a73a15e1471990",
+  "worktree": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-wifi-review-clean-20261028",
+  "patches": [
+    {
+      "file": "0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch",
+      "bytes": 3956,
+      "sha256": "39f768373044548407867e26dea98929f6b6257b5347cb54e25160df587664c2"
+    },
+    {
+      "file": "0002-wifi-brcmfmac-match-BCM4329-ESCAN-completion-to-acti.patch",
+      "bytes": 6814,
+      "sha256": "4a309806691f5475795c5e5587de853fd9f085852aa1953166295678d3944c4a"
+    },
+    {
+      "file": "0003-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch",
+      "bytes": 3123,
+      "sha256": "d2f46882518a4c024790a9666e6e961df246091944f83be43a615af1154c09ab"
+    }
+  ],
+  "status": "UNSIGNED RFC: clean source not yet hardware tested",
+  "submission_authorized": false,
+  "runtime_modified": false
+}
