@@ -1,0 +1,17 @@
+{
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "review_tip": "93b926b26ec1f2cee9ab7050f21aada982f58eba",
+  "result": "PASS",
+  "exit_code": 0,
+  "seconds": 542.25,
+  "no_prebuilt_objects_reused": true,
+  "output_directory": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028",
+  "binaries": [
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/arch/arm/boot/zImage",
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko",
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/brcmfmac-wcc.ko"
+  ],
+  "hardware_test": "NOT_RUN",
+  "DCO": "UNSIGNED_RFC",
+  "Xoom_modified": false
+}
