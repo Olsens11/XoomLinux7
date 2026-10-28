@@ -1,0 +1,24 @@
+{
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "tip": "2404fdf7ddd69d495b1e6da3924e9da242e58033",
+  "patches": [
+    {
+      "filename": "0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch",
+      "sha256": "02b153f01abe03e6bdb717721c10c1d968c90f24482c2bd3fe1399df02926be4",
+      "checkpatch": "total: 0 errors, 0 warnings, 0 checks, 80 lines checked"
+    },
+    {
+      "filename": "0002-wifi-brcmfmac-match-BCM4329-ESCAN-completion-to-acti.patch",
+      "sha256": "8354e1c4de230540f36e21b224ec0e11bcd4568fe858f1d8c59ced25a18eabca",
+      "checkpatch": "total: 0 errors, 0 warnings, 0 checks, 119 lines checked"
+    },
+    {
+      "filename": "0003-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch",
+      "sha256": "ea690dd6b398b8ae9cf7dddefd9e8a6dfa9a06ae2d12add4a383815b1d01cd1a",
+      "checkpatch": "total: 0 errors, 0 warnings, 0 checks, 52 lines checked"
+    }
+  ],
+  "draft_unattributed": true,
+  "physical_test": "NOT_RUN",
+  "DCO": "human signoff pending"
+}
