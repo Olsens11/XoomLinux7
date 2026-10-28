@@ -1,5 +1,7 @@
 # START HERE — XoomLinux7
 
+> **LATEST PHYSICAL RESULT 2026-10-28 10:44 EDT — TABLET UNREACHABLE:** [Controlled root-authorized temporary GPIO reset unbind physically succeeded; PMC-only reboot did not enter fastboot, did not return to Linux in host observation](docs/checkpoints/MZ600_GPIO_PMC_UNBIND_FASTBOOT_PHYSICAL_HANG_2026-10-28.md). Windows detected no COM9/fastboot, network ping false. **Stop remote reboot/flash; physical power/volume recovery required.** No eMMC write or cold p8 backup. Earlier read-only PASS notes below are historical pre-reboot results.
+
 > **2026-10-28 LATEST LIVE XOOM READ-ONLY RESULT:** [Replacement MZ600 COM9 logged in as xoom, full BigPart geometry and both GPIO/PMC bindings confirmed; public one-shot test on /dev/shm RAM passed --preflight](docs/checkpoints/MZ600_REBOOT_GPIO_PMC_LIVE_UNPRIVILEGED_PREFLIGHT_PASS_2026-10-28.md). Root-only `unbind` remains blocked until authorized sudo; no second reboot or flash.
 
 > **2026-10-28 REBOOT-TO-FASTBOOT INVESTIGATION:** [New source-proven restart priority conflict, guarded no-flash test ready](docs/checkpoints/MZ600_FASTBOOT_REBOOT_GPIO_PRIORITY_ROOT_CAUSE_CANDIDATE_2026-10-28.md). Xoom hardware GPIO reset (priority 200) runs before Tegra PMC reset (priority -128); mode preservation in a hardware-reset transition remains a hypothesis. No second reboot. Current COM9 awaits login, so the reversible test has not been run.

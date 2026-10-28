@@ -1,5 +1,7 @@
 # XoomLinux7 conversation and engineering handoffs
 
+> **LATEST REBOOT-TO-FASTBOOT ATTEMPT 2026-10-28 10:41 EDT:** [One-shot GPIO-unbind physically PASS; fastboot FAIL; Linux unreachable afterward](../checkpoints/MZ600_GPIO_PMC_UNBIND_FASTBOOT_PHYSICAL_HANG_2026-10-28.md). This **supersedes** earlier successful *read-only preflight* as the current hardware access state. No flash; physical owner rescue required before continuing.
+
 > **LATEST PHYSICAL STATUS (2026-10-28):** [COM9 owner-account login and on-device GPIO/PMC preflight](../checkpoints/MZ600_REBOOT_GPIO_PMC_LIVE_UNPRIVILEGED_PREFLIGHT_PASS_2026-10-28.md) PASS. All partition sizes, two reset drivers and G3 priority 200 confirmed live; guarded public script SHA-verified and dry-run on RAM. **Actual root-only unbind/reboot untested**; sudo requires private authorization. Read along with full handoff and prior RCA.
 
 > **CONTINUATION AFTER HANDOFF — OCTOBER 28:** [Fastboot source-level GPIO restart priority conflict](../checkpoints/MZ600_FASTBOOT_REBOOT_GPIO_PRIORITY_ROOT_CAUSE_CANDIDATE_2026-10-28.md): GPIO reset priority 200 outranks PMC -128, potentially losing bootloader scratch mode. A test-only reversible unbind script is prepared; **no physical confirmation or new reboot yet**. Read alongside the comprehensive handoff below.
