@@ -1,0 +1,3 @@
+0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch
+0002-wifi-brcmfmac-match-BCM4329-ESCAN-completion-to-acti.patch
+0003-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch
