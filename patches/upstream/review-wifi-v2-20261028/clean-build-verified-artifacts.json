@@ -1,0 +1,47 @@
+{
+  "kernel_zImage": {
+    "present": true,
+    "size": 5826832,
+    "sha256": "5f42ae44441a051ff6811d5737fe6a86d2b8d2330a8278997b78c4571dd816ae",
+    "path": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/arch/arm/boot/zImage"
+  },
+  "stingray_dtb": {
+    "present": true,
+    "size": 61110,
+    "sha256": "1daba0e41071f373f0e0ac76a1e616c5b50354565afa0845efffedb9c8859f48",
+    "path": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dtb"
+  },
+  "brcmfmac_core": {
+    "present": true,
+    "size": 343016,
+    "sha256": "5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26",
+    "path": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko"
+  },
+  "brcmfmac_wcc": {
+    "present": true,
+    "size": 5916,
+    "sha256": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9",
+    "path": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/brcmfmac-wcc.ko"
+  },
+  "module_symvers": {
+    "present": true,
+    "size": 844612,
+    "sha256": "6e3befe529cfa57cda6c788e1d9d387537ee8a246327dc09a6297e608fad5069",
+    "path": "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-build-20261028/Module.symvers"
+  },
+  "compiler_diagnostic_count": 5,
+  "compiler_diagnostic_samples": [
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-20261028/drivers/gpu/drm/bridge/sii9234.c:821:27: warning: \u2018sii9234_rsen_change\u2019 defined but not used [-Wunused-function]",
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-20261028/drivers/gpu/drm/bridge/sii9234.c:802:27: warning: \u2018sii9234_hpd_change\u2019 defined but not used [-Wunused-function]",
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-20261028/drivers/gpu/drm/bridge/sii9234.c:782:27: warning: \u2018sii9234_mhl_established\u2019 defined but not used [-Wunused-function]",
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-20261028/drivers/gpu/drm/bridge/sii9234.c:740:27: warning: \u2018sii9234_rgnd_ready_irq\u2019 defined but not used [-Wunused-function]",
+    "/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/v064-full-review-v2-20261028/drivers/gpu/drm/bridge/sii9234.c:655:13: warning: \u2018sii9234_cable_in\u2019 defined but not used [-Wunused-function]"
+  ],
+  "kernelrelease_output": "7.0.0-next-20260422+",
+  "full_build": "PASS",
+  "actual_host_device": "DESKTOP-R16QJD4 / WSL Ubuntu-22.04",
+  "fresh_output_directory": true,
+  "firmware_and_Xoom_not_modified": true,
+  "physical_hardware_test_of_exact_clean_source": false,
+  "build_time_seconds": 542.25
+}
