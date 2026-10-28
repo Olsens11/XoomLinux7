@@ -4,6 +4,8 @@
 **Kernel source base:** `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`. This is the reproducible development base, **not a promise that it is the final wireless/SoC receiving-tree base**.
 **Owner's release policy:** All whole-chip components may be developed and validated in upstream-style independently reviewable source commits **now**. Actual posting/submission is held until the full BCM4329 implementation and integration are complete, and separately requires explicit human approval.
 
+**Parallel OS integration track:** [First-boot networking/COM9/tty1 kit](../../packaging/firstboot/README.md) and its [checkpoint](../../docs/checkpoints/MZ600_FIRSTBOOT_WIFI_COM9_SCREEN_KIT_2026-10-28.md) are **not kernel patches** and do not belong in any maintainer series. Firmware and root login credentials stay private; generic Debian packages and user-interface shell code are staged in a separately verified offline bundle. No device deployment has occurred.
+
 ## Two independent products
 
 1. **Maintainer review tracks** are logically scoped, independently versioned source commits and optional cover letters, with no experimental module parameters, binaries, private firmware, credentials, device identity or userspace deployment data. Never append a chronological Vxx fixup to a previously solved issue.

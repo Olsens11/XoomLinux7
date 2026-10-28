@@ -1,0 +1,13 @@
+# Official Debian Bookworm armhf only; installed in a *separate* test root.
+# Dependency closure resolved by the offline apt bundle builder.
+network-manager
+wpasupplicant
+iw
+iproute2
+iputils-ping
+curl
+ca-certificates
+wireless-regdb
+rfkill
+nano
+less

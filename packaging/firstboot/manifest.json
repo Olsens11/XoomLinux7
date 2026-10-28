@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "artifact_track": "OS-FIRSTBOOT-CONNECTIVITY",
+  "kernel_patch_track": "SEPARATE_NOT_AN_UPSTREAM_PATCH",
+  "date_utc": "2026-10-28",
+  "target": "Motorola Xoom MZ600 Debian Bookworm armhf",
+  "kernel_source": "507eb069df819cb5cc801ad8be096f70d9ca7609",
+  "firstboot_rootfs_status": "OVERLAY_STAGED_NO_DISPOSABLE_ROOTFS_OR_BOOT_IMAGE_ASSEMBLED",
+  "private_workspace": "DESKTOP-R16QJD4 WSL /home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025",
+  "offline_debs": {
+    "directory": "firstboot-network-packages-20261028",
+    "package_count": 40,
+    "downloaded_bytes": 9428076,
+    "sha256sum_manifest_sha256": "b76e2f16656d05765c9cf39c7a4b84737f33f4bc257beaee89460cd450bdc0c3",
+    "package_signature_source": "Signed Debian Bookworm armhf archive",
+    "installed_into_target": false,
+    "nmtui_binary_verified": true
+  },
+  "nonprivate_transport_bundle": {
+    "filename": "XoomLinux7-FirstBoot-Online-Console-20261028.tar.gz",
+    "bytes": 9428586,
+    "sha256": "33fd09b232a93c53f630e0af4b22a817f42e1a2627fe72df4a607189f141d544",
+    "location": "private desktop workspace outside GitHub",
+    "contains_private_firmware": false,
+    "contains_root_password": false,
+    "installed_or_booted": false
+  },
+  "rootfs_overlay": {
+    "directory": "firstboot-root-overlay-20261028",
+    "generated": true,
+    "installed": false,
+    "functions": [
+      "xoom-wifi menu",
+      "xoom-wifi status",
+      "xoom-net-check",
+      "xoom-console-check",
+      "disable root/password SSH",
+      "tty1 stay visible"
+    ]
+  },
+  "host_usb_com9": {
+    "directory": "firstboot-host-tools-20261028",
+    "sha256sum_manifest_sha256": "640a7e660f0028fdca2af27c84ca1feb8ea794a5325dd1b01582bbbae785a48d",
+    "windows_powershell_parse": "PASS",
+    "physical_port_test": "NOT_RUN_WITH_NEW_SCRIPT",
+    "tablet_getty": "PRESENT_IN_REFERENCE_IMAGE"
+  },
+  "device_private_firmware": {
+    "directory": "firstboot-private-mz600-firmware-20261028",
+    "files": [
+      "brcmfmac4329-sdio.bin",
+      "brcmfmac4329-sdio.txt"
+    ],
+    "staged": "PRIVATE_COPY_ONLY",
+    "committed_to_git": false,
+    "firmware_runtime_test": "NOT_RUN"
+  },
+  "networking": {
+    "choice": "NetworkManager nmtui text UI",
+    "dhcp": "NetworkManager integrated DHCP",
+    "legacy_proven": "wpa_supplicant@wlan0 + systemd-networkd + timesyncd",
+    "activation": "ONLY_ON_DISPOSABLE_TEST_ROOT_AFTER_DEB_INSTALL",
+    "exclusive_manager_gate": "OPEN",
+    "wifi_association_latency": "KNOWN_399_SECOND_V31_REGRESSION_OPEN"
+  },
+  "screen_console": {
+    "kernel_vt_fbcon_drm": "CONFIG_ENABLED",
+    "reference_getty_tty1": "ENABLED",
+    "physical_panel_fb0": "NOT_PROVEN",
+    "touch_keyboard": "NOT_IMPLEMENTED",
+    "com9_fallback": "PRESERVE"
+  },
+  "test_root_password": {
+    "requested_temporary_password": "OWNER_SUPPLIED_AT_PRIVATE_BUILD",
+    "configured_in_any_rootfs": false,
+    "root_password_in_repository": false,
+    "sshd_root_password_auth": "DISABLED_BY_OVERLAY"
+  },
+  "no_hardware_changes": true,
+  "no_kernel_patch_changes": true,
+  "no_upstream_submission": true
+}
