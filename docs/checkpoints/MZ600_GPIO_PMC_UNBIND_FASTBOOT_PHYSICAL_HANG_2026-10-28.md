@@ -1,7 +1,9 @@
 # MZ600 GPIO-restart bypass: one-shot physical reboot-to-fastboot A/B test — 2026-10-28
 
-**RESULT: FAIL TO ENTER FASTBOOT, NO AUTOMATIC LINUX RETURN OBSERVED.**  
-**Current physical accessibility (10:44 EDT): NO FASTBOOT USB, NO LINUX COM9, NO PING; owner physical intervention may be required.**  
+**RESULT: FAIL TO ENTER FASTBOOT, NO AUTOMATIC LINUX RETURN OBSERVED.**
+
+**Current physical accessibility (10:44 EDT): NO FASTBOOT USB, NO LINUX COM9, NO PING; owner physical intervention may be required.**
+
 **No storage flash, eMMC partition write, cold p8 backup, recovery boot, or temporary Stage-D boot occurred.**
 
 This is a new immutable outcome following [the source-level GPIO priority investigation](MZ600_FASTBOOT_REBOOT_GPIO_PRIORITY_ROOT_CAUSE_CANDIDATE_2026-10-28.md) and [live authenticated read-only dry-run](MZ600_REBOOT_GPIO_PMC_LIVE_UNPRIVILEGED_PREFLIGHT_PASS_2026-10-28.md). Do not assert that the GPIO priority change solved fastboot.
