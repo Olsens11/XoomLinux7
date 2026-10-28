@@ -1,0 +1,14 @@
+{
+  "tegra20-motorola-wingray.dtb": {
+    "new_sha256": "4144940f352b437c340c5d37f5a4c9dcc711024ef9785746ff3bd2d1f8bab3ff",
+    "known_v2_sha256": "c833f45e529dedaa70ff5f79e61f639236748c1be608020206039e1c834b6eef",
+    "byte_equivalent": false,
+    "size": 61056
+  },
+  "tegra20-motorola-stingray.dtb": {
+    "new_sha256": "c70d22c06efa3607f132027588c6c6cd34518a4c1e1dff83c125cfa25409f5aa",
+    "known_v2_sha256": "1daba0e41071f373f0e0ac76a1e616c5b50354565afa0845efffedb9c8859f48",
+    "byte_equivalent": false,
+    "size": 61076
+  }
+}

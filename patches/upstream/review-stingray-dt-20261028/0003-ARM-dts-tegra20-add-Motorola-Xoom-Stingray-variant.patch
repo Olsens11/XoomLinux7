@@ -1,0 +1,52 @@
+From ec8ad75a2f4413c6cda45c11f5271f83dccc5dfa Mon Sep 17 00:00:00 2001
+From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
+Date: Tue, 27 Oct 2026 21:38:45 -0400
+Subject: [PATCH 3/3] ARM: dts: tegra20: add Motorola Xoom Stingray variant
+
+The MZ600 Stingray tablet shares the existing Xoom base hardware with Wingray but identifies as Stingray and exposes its Tegra USB interface in peripheral mode.
+
+Describe only these variant-specific differences, and build its DTB. Keep the Motorola BigPart eMMC opt-in outside this board-enablement patch pending separate bindings and storage review.
+
+Assisted-by: ChatGPT:GPT-6
+---
+ arch/arm/boot/dts/nvidia/Makefile              |  1 +
+ .../dts/nvidia/tegra20-motorola-stingray.dts   | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts
+
+diff --git a/arch/arm/boot/dts/nvidia/Makefile b/arch/arm/boot/dts/nvidia/Makefile
+index e06048771..12ce0b717 100644
+--- a/arch/arm/boot/dts/nvidia/Makefile
++++ b/arch/arm/boot/dts/nvidia/Makefile
+@@ -30,6 +30,7 @@ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+ 	tegra20-motorola-olympus.dtb \
+ 	tegra20-motorola-daytona.dtb \
+ 	tegra20-motorola-wingray.dtb \
++	tegra20-motorola-stingray.dtb \
+ 	tegra20-paz00.dtb \
+ 	tegra20-plutux.dtb \
+ 	tegra20-seaboard.dtb \
+diff --git a/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts b/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts
+new file mode 100644
+index 000000000..7376c65e3
+--- /dev/null
++++ b/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include "tegra20-motorola-xoom.dtsi"
++
++/ {
++	model = "Motorola Xoom (Stingray)";
++	compatible = "motorola,stingray", "motorola,xoom", "nvidia,tegra20";
++};
++
++&{/usb@c5000000} {
++	compatible = "nvidia,tegra20-udc";
++	dr_mode = "peripheral";
++};
++
++&{/usb-phy@c5000000} {
++	dr_mode = "peripheral";
++};
