@@ -133,7 +133,6 @@ upstream approval.
 ## Next
 
 Complete exact nine-source ARM build, repeat disabled-code compilation,
-inspect the new failure paths, and prepare a private, reversible read-only
-MZ600 test plan rather than flashing or risking the persistent p8 system.
+inspect the new failure paths, and follow the [private, reversible read-only MZ600 test plan](../plans/MZ600_STORAGE_BIGPART_REVIEW_SOURCE_RAM_TEST_PLAN_2026-10-28.md), with explicit device authorization before any RAM boot. Do not flash or risk the persistent p8 system.
 Continue to update the storage track and project state at each milestone,
 per the [mandatory development workflow](../process/DEVELOPMENT_WORKFLOW.md).
