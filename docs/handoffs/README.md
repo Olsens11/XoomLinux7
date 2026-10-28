@@ -1,5 +1,7 @@
 # XoomLinux7 conversation and engineering handoffs
 
+> **CURRENT COMPREHENSIVE HANDOFF 2026-10-28 — RESUME HERE:** [MZ600 hardware fastboot restored and cold p8 verified on both SD and private Surface; nine-review kernel and test Debian provenance; TWRP 3.1.1-0 status; step-by-step copy-only ext4/restore then recovery RAM-boot qualification](MZ600_XOOMLINUX7_FASTBOOT_COLD_P8_VERIFIED_HANDOFF_2026-10-28.md). Next task **offline third disposable copy for ext4 free-block mismatch analysis/restore proof**, not repeat SD backup. Historical preinstallation chapter and 10:41 failure links below remain reference only.
+
 > **LATEST REBOOT-TO-FASTBOOT ATTEMPT 2026-10-28 10:41 EDT:** [One-shot GPIO-unbind physically PASS; fastboot FAIL; Linux unreachable afterward](../checkpoints/MZ600_GPIO_PMC_UNBIND_FASTBOOT_PHYSICAL_HANG_2026-10-28.md). This **supersedes** earlier successful *read-only preflight* as the current hardware access state. No flash; physical owner rescue required before continuing.
 
 > **LATEST PHYSICAL STATUS (2026-10-28):** [COM9 owner-account login and on-device GPIO/PMC preflight](../checkpoints/MZ600_REBOOT_GPIO_PMC_LIVE_UNPRIVILEGED_PREFLIGHT_PASS_2026-10-28.md) PASS. All partition sizes, two reset drivers and G3 priority 200 confirmed live; guarded public script SHA-verified and dry-run on RAM. **Actual root-only unbind/reboot untested**; sudo requires private authorization. Read along with full handoff and prior RCA.
