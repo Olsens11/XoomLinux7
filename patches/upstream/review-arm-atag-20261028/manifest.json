@@ -1,0 +1,20 @@
+{
+  "status": "UNSIGNED_ARM_RFC_OPEN_CORRECTNESS_REVIEW",
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "work_item": "BOOT-01",
+  "source_patch": "0001-ARM-tegra-propagate-Stingray-WLAN-MAC-ATAG-to-FDT.patch",
+  "source_commit": "77a356e3c",
+  "patch_sha256": "fb1a5eb6f335025108836fe7456bec46a42c83528c72e316091569f3d2a79934",
+  "source_replay": "git apply legacy RFC on clean pinned base, commit and git format-patch; strict checkpatch 0/0/0",
+  "human_signed": false,
+  "physically_tested_this_exact_source": false,
+  "critical_open": [
+    "ATAG bounds",
+    "board specificity",
+    "FDT capacity/errors",
+    "target tree ownership",
+    "MZ600 exact-source test",
+    "other variants regression"
+  ],
+  "submitted": false
+}

@@ -1,0 +1,2 @@
+# Email-format patch includes literal diff context; validate after git am.
+*.patch -whitespace

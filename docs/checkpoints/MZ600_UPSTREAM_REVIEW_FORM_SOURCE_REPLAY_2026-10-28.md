@@ -46,6 +46,18 @@ The corrected patch files were then replayed in an additional pristine Linux wor
 
 A new stdlib-only `tools/validate_upstream_review_series.py` now validates both 3-DT and 4-Wi-Fi series ordering, actual LF delimiters, complete patch files and Wi-Fi SHA256 manifest correspondence. Its own check passed for all seven patches. The reusable `scripts/qa_replay_upstream_review.sh` calls that validator before any worktree or build action. Its syntax was checked via `bash -n`. **This new reusable script has not itself completed a fresh end-to-end run yet**; this milestone's source compilation/build provenance remains the separately logged equivalent manual replay. The patch-stream metadata re-export leaves its compiled source identical.
 
+## Independent ARM/bootloader factory-MAC review track (BOOT-01)
+
+The existing Motorola WLAN MAC vendor-ATAG source was independently replayed on the pinned upstream base, with draft source commit `77a356e3ca0f17c71bb3afb69898d3ab29ff6461`. Minor continuation indentation and self-contained commit text were normalized. A clean `git format-patch` email patch was generated at [review-arm-atag-20261028](../../patches/upstream/review-arm-atag-20261028/README.md) and its SHA256 `fb1a5eb6f335025108836fe7456bec46a42c83528c72e316091569f3d2a79934` was captured. Strict `checkpatch.pl --no-tree --no-signoff --strict` reports **0 errors, 0 warnings, 0 checks**, no human DCO.
+
+This standalone ARM patch is distinct from the wireless review and the Stingray DTS review. Its original vendor ATAG layout and malformed/truncated payload handling, board scope, `fdt_setprop` capacity and error behavior, ARM maintainer acceptance and exact-source physical boot remain **OPEN**. A separate standalone ARM `zImage` build has been initiated; report its actual outcome only when complete. This BOOT-01 source was **not present** in the earlier fully built 3-DT+4-Wi-Fi tree.
+
+The local [review-series validator](../../tools/validate_upstream_review_series.py) now checks **3 DT + 4 Wi-Fi + 1 ARM = 8** distinct patch streams, correct LF delimiters, unsigned status and BOOT/Wi-Fi manifest SHA256s; **PASS**. No device interaction or upstream submission took place.
+
+## Eight-patch cross-maintainer integration source replay
+
+Replayed the same **three-DT + one-ARM + four-Wi-Fi** `git format-patch` streams in correct order on another pristine pinned kernel worktree, with SHA manifest preflight and individual `git am` for each member. The entire **8-commit source replay PASSED**, clean final Git tip `04c79f228ae4f6153ec544e042b1fffbf66ad33d`, 2026-10-28. The prior Wingray shared-DTS indentation/whitespace failure was recorded but did not prevent source application. All 8 commits are maintainers' distinct logical review domains, **not one mail-ready series**. [Internal integration manifest](../../patches/upstream/INTEGRATION_SOURCE_MANIFEST_20261028.json) captures exact order, tip and missing components. **This eight-patch exact source had not yet completed a full ARM build at the time of the replay**, and does **not include BigPart** or proprietary firmware/rootfs. Do not infer bootability from `git am` success.
+
 ## What remains open (no inferred passes)
 
 - **Platform:** DTS inherited style; DT schema/ABI checks; exact board source physically booted; MZ600 vs Wingray variant behavior.

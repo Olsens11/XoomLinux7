@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 TRACKS = (
     ("review-stingray-dt-20261028", 3),
     ("review-wifi-four-logical-20261028", 4),
+    ("review-arm-atag-20261028", 1),
 )
 
 def inspect_series(folder: Path, expected: int) -> list[Path]:
@@ -41,6 +42,12 @@ def main() -> None:
     for folder_name, count in TRACKS:
         folder = source / folder_name
         patches = inspect_series(folder, count)
+        if folder_name == "review-arm-atag-20261028":
+            manifest = json.loads((folder / "manifest.json").read_text())
+            if manifest["source_patch"] != patches[0].name or manifest["patch_sha256"] != hashlib.sha256(patches[0].read_bytes()).hexdigest():
+                raise ValueError("ARM ATAG source patch/sha256 manifest mismatch")
+            print("PATCH_HASH_PASS", patches[0].name, manifest["patch_sha256"])
+            continue
         if folder_name != "review-wifi-four-logical-20261028":
             continue
         manifest = json.loads((folder / "manifest.json").read_text())

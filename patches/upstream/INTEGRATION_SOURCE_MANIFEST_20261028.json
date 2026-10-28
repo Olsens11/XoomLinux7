@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "purpose": "Internal complete-source integration of independent upstream RFCs; not a single email/maintainer series",
+  "base": {
+    "repository": "xoom-linux/linux",
+    "commit": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3"
+  },
+  "canonical_track_order": [
+    {
+      "track": "BOARD/DT",
+      "series": "patches/upstream/review-stingray-dt-20261028/series",
+      "members": 3,
+      "owner": "Tegra SoC / Devicetree",
+      "gate": "DT whitespace and binding checks OPEN"
+    },
+    {
+      "track": "BOOT/ARM",
+      "series": "patches/upstream/review-arm-atag-20261028/series",
+      "members": 1,
+      "owner": "ARM architecture with Tegra review",
+      "gate": "ATAG source build and target correctness OPEN"
+    },
+    {
+      "track": "WIFI",
+      "series": "patches/upstream/review-wifi-four-logical-20261028/series",
+      "members": 4,
+      "owner": "Broadcom brcmfmac / Linux wireless",
+      "gate": "Exact-source MZ600 RF and multi-interface validation OPEN"
+    }
+  ],
+  "tested_replay": {
+    "date_utc": "2026-10-28",
+    "result": "PASS",
+    "source_tip": "04c79f228ae4f6153ec544e042b1fffbf66ad33d",
+    "commit_count": 8,
+    "reference_checkpoint": "docs/checkpoints/MZ600_UPSTREAM_REVIEW_FORM_SOURCE_REPLAY_2026-10-28.md",
+    "full_eight_source_build": "NOT YET TESTED"
+  },
+  "previous_tested_seven_source": {
+    "result": "FULL_ARM_ZIMAGE_DTBS_MODULES_PASS",
+    "source_commit": "8d3406a4aed456b052a3d815601d4edcffb91f3e",
+    "excludes": "BOOT-01",
+    "matched_brcmfmac_sha256": "5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26",
+    "matched_wcc_sha256": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9"
+  },
+  "excluded_but_required_for_proven_existing_mz600_p8_boot": [
+    {
+      "track": "STORAGE-01",
+      "source": "patches/upstream/candidate/0003-block-partitions-motorola-xoom-bigpart.patch",
+      "reason": "Only broad integration snapshot, changes generic GPT, no approved binding for motorola,xoom-bigpart"
+    },
+    {
+      "track": "nonkernel",
+      "source": "separate local deployment manifests",
+      "reason": "Proprietary firmware, board NVRAM, Debian root, boot image and credentials must not enter public kernel patches"
+    }
+  ],
+  "other_whole_chip_open_tracks": [
+    "SDIO/MMC",
+    "shared regulator/clock/GPIO power sequencing",
+    "Bluetooth HCI/coexistence",
+    "suspend/resume",
+    "FM radio",
+    "other Xoom model regressions",
+    "connection-event 399s association delay"
+  ],
+  "exact_clean_source_physical_test": "NOT_RUN",
+  "human_DCO_signoff": false,
+  "upstream_submission": "NOT_AUTHORIZED_HOLD_UNTIL_WHOLE_CHIP_COMPLETE"
+}

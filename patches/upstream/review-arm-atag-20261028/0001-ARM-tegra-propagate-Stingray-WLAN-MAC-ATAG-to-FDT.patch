@@ -1,0 +1,85 @@
+From 77a356e3ca0f17c71bb3afb69898d3ab29ff6461 Mon Sep 17 00:00:00 2001
+From: XoomLinux7 unsigned RFC draft <rfc-draft@invalid.example>
+Date: Tue, 27 Oct 2026 22:56:39 -0400
+Subject: [PATCH] ARM: tegra: propagate Stingray WLAN MAC ATAG to FDT
+
+Motorola's Stingray bootloader supplies a per-device Wi-Fi MAC through
+vendor ATAG 0x57464d41. Preserve this factory address in the wireless
+SDIO child before brcmfmac probes, rather than inventing a shared MAC.
+
+Validate the tag length and reject multicast, all-zero and known
+placeholder addresses. Leave unrelated FDT nodes unchanged and do not
+invent a fallback when the wireless node is missing.
+
+This RFC source still needs target-board validation, detailed vendor
+ATAG layout and bounds review, and ARM/Tegra maintainer feedback.
+Physical success is not attributed to this regenerated source.
+
+Assisted-by: ChatGPT:GPT-6 [Desktop Commander]
+---
+ arch/arm/boot/compressed/atags_to_fdt.c | 42 +++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/arch/arm/boot/compressed/atags_to_fdt.c b/arch/arm/boot/compressed/atags_to_fdt.c
+index 627752f18..48f2b9630 100644
+--- a/arch/arm/boot/compressed/atags_to_fdt.c
++++ b/arch/arm/boot/compressed/atags_to_fdt.c
+@@ -12,6 +12,46 @@
+ 
+ #define NR_BANKS 16
+ 
++/*
++ * Motorola Stingray's Android bootloader passes its per-device WLAN MAC in
++ * this vendor ATAG. Fold it into the SDIO child before Linux enumerates
++ * brcmfmac, which already uses eth_platform_get_mac_address() to generate
++ * the firmware NVRAM macaddr entry.
++ *
++ * Never fall back to a board-shared, fabricated, or random MAC here.
++ */
++#define ATAG_STINGRAY_MAC 0x57464d41
++#define STINGRAY_WIFI_PATH "/mmc@c8000200/wifi@1"
++
++static void stingray_mac_atag_to_fdt(void *fdt, const struct tag *atag)
++{
++	const unsigned char *mac = (const unsigned char *)&atag->u;
++	unsigned char any = 0;
++	int wifi, i;
++
++	/* 2 header words and 2 payload words provide 6 valid MAC bytes. */
++	if (atag->hdr.size < 4)
++		return;
++
++	for (i = 0; i < 6; i++)
++		any |= mac[i];
++
++	/* Never publish multicast, all-zero, or unprogrammed OEM fallback. */
++	if (!any || (mac[0] & 1))
++		return;
++	if (mac[0] == 0 && mac[1] == 0x90 && mac[2] == 0x4c &&
++	    !mac[3] && !mac[4] && !mac[5])
++		return;
++
++	/* Restrict vendor ATAG processing to Stingray's actual Wi-Fi SDIO. */
++	wifi = fdt_path_offset(fdt, STINGRAY_WIFI_PATH);
++	if (wifi < 0)
++		return;
++
++	/* Fail closed if the FDT cannot be updated; no MAC gets invented. */
++	fdt_setprop(fdt, wifi, "local-mac-address", mac, 6);
++}
++
+ static int node_offset(void *fdt, const char *node_path)
+ {
+ 	int offset = fdt_path_offset(fdt, node_path);
+@@ -201,6 +241,8 @@ int atags_to_fdt(void *atag_list, void *fdt, int total_space)
+ 					initrd_start);
+ 			setprop_cell(fdt, "/chosen", "linux,initrd-end",
+ 					initrd_start + initrd_size);
++		} else if (atag->hdr.tag == ATAG_STINGRAY_MAC) {
++			stingray_mac_atag_to_fdt(fdt, atag);
+ 		} else if (atag->hdr.tag == ATAG_SERIAL) {
+ 			char serno[16+2];
+ 			hex_str(serno, atag->u.serialnr.high);
+-- 
+2.34.1
+

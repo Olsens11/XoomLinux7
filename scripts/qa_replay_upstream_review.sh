@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-2.0-only
-# XoomLinux7: replay review-form DT + Wi-Fi source; never touches a tablet.
+# XoomLinux7: replay review-form DT, ARM ATAG and Wi-Fi sources; never touches a tablet.
 # Required: KERNEL_REPO, CONFIG_BASE, OUT_ROOT, CROSS_COMPILE.
 set -euo pipefail
 P="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -10,6 +10,9 @@ BASE=2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3
 : "${CONFIG_BASE:?set CONFIG_BASE to a proven kernel .config}"
 : "${OUT_ROOT:?set OUT_ROOT to a NEW isolated directory}"
 : "${CROSS_COMPILE:?set CROSS_COMPILE to ARM compiler prefix}"
+JOBS="${JOBS:-4}"
+case "$JOBS" in *[!0-9]*|"") echo "JOBS must be a positive integer" >&2; exit 2 ;; esac
+if test "$JOBS" -lt 1 || test "$JOBS" -gt 8; then echo "JOBS must be 1..8" >&2; exit 2; fi
 test ! -e "$OUT_ROOT" || { echo "Refusing existing OUT_ROOT: $OUT_ROOT" >&2; exit 2; }
 test -f "$CONFIG_BASE"
 test -x "${CROSS_COMPILE}gcc"
@@ -47,17 +50,19 @@ apply_series() {
    echo "COMMIT $(git -C "$W" rev-parse HEAD)"
    if test "$dir" = "$P/patches/upstream/review-wifi-four-logical-20261028"; then
      echo "WIFI_PREFIX_BUILD_START $(git -C "$W" rev-parse --short HEAD)"
-     make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j8 drivers/net/wireless/broadcom/brcm80211/brcmfmac/
+     make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j"$JOBS" drivers/net/wireless/broadcom/brcm80211/brcmfmac/
      echo "WIFI_PREFIX_BUILD_PASS $(git -C "$W" rev-parse --short HEAD)"
    fi
  done < "$dir/series"
 }
 apply_series "$P/patches/upstream/review-stingray-dt-20261028"
 make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" olddefconfig
-make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j8 dtbs
+make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j"$JOBS" dtbs
 echo "DT_BUILD_PASS"
+# Independent ARM bootloader/ATAG review source; not part of wireless patch mail.
+apply_series "$P/patches/upstream/review-arm-atag-20261028"
 apply_series "$P/patches/upstream/review-wifi-four-logical-20261028"
-make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j8 zImage dtbs modules
+make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j"$JOBS" zImage dtbs modules
 echo "FULL_BUILD_PASS"
 git -C "$W" log -7 --format='%h %s' > "$OUT_ROOT/applied-commits.txt"
 for name in arch/arm/boot/zImage arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dtb arch/arm/boot/dts/nvidia/tegra20-motorola-wingray.dtb drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/brcmfmac-wcc.ko; do
