@@ -30,6 +30,8 @@
 
 **Integration source lock:** The [internal integration-source manifest](INTEGRATION_SOURCE_MANIFEST_20261028.json) retains the complete eight-commit build/hashes as a validated historical milestone, and now adds independent STORAGE-01 as a **ninth** patch (revised current clean source tip `507eb069df819cb5cc801ad8be096f70d9ca7609`). Nine-source `git am` replay PASS; storage source strict checkpatch + ARM EFI object PASS; full clean revised nine-source ARM zImage/DTBs/modules build **PASS** (2026-10-28 08:34:59 UTC); hashes in manifest. The new BigPart compile-time feature remains disabled unless enabled in the build config, and a later test boot additionally needs `gpt xoom_bigpart=1`; **no physical MZ600 verification** is implied.
 
+**2026-10-28 installed-build comparison:** [Read-only Stage-D versus current nine-patch review audit](../../docs/checkpoints/MZ600_STAGE_D_INSTALLED_VS_NINE_PATCH_REVIEW_2026-10-28.md). Stage-D uses the Stage-B config, identical to review (not the old embedded-firmware Stage-A config). DTB differences are only model and removed BigPart policy property. Three Broadcom exported CRCs differ between Stage-B and review `Module.symvers` despite identical `uname -r` and 14,030 symbols, requiring exact matched-module qualification. New storage bootargs not present by implication of source build; no device was touched.
+
 ## Series policy and dependencies
 
 - The `candidate/series` four-file integration snapshot is archival; its broad Wi-Fi patch must not become an upstream prerequisite.
