@@ -1,0 +1,28 @@
+{
+  "status": "UNSIGNED_STORAGE_RFC_SOURCE_REPLAY_PASS_HARDWARE_OPEN",
+  "base": "2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3",
+  "work_item": "STORAGE-01",
+  "patch": "0001-block-partitions-add-opt-in-Xoom-BigPart-view.patch",
+  "patch_sha256": "4051ca979a8b61af13eb49a8e7351722dcdabd44eb85d9e9bc509911a69568eb",
+  "standalone_source_commit": "655385d37f3e382e836f90f9cd4230089e1e743a",
+  "integrated_nine_source_commit": "507eb069df819cb5cc801ad8be096f70d9ca7609",
+  "source_replay": "PASS pinned base, 8-patch source + separate storage patch",
+  "strict_checkpatch": "0 errors 0 warnings 0 checks",
+  "build_config": "CONFIG_MOTOROLA_XOOM_BIGPART=y",
+  "source_efi_object_build": "PASS enabled revised object SHA256 0fd9e46240b9706010aadc40b8019073012819ca14a5b642900e7529e6614ac6",
+  "full_nine_build": "INITIAL_V1_PASS_20261028T081302Z; REVISED_V2_SOURCE_507eb069_FRESH_BUILD_IN_PROGRESS",
+  "optin_kernel_command_line": "gpt xoom_bigpart=1",
+  "native_tegra_alternate_gpt": "card.ext_csd.sectors - two eMMC boot partitions - 1",
+  "physical_test_of_exact_review_source": false,
+  "submitted": false,
+  "human_signed": false,
+  "outstanding": [
+    "Review generic EFI GPT parser acceptability",
+    "Runtime fail closed on missing/corrupt GPT",
+    "Device-node ancestry and root-compatible validation",
+    "Boot parameters and 1GiB p8 from clean-source boot",
+    "Different geometry and unrelated disk regression",
+    "Compare against original physically proven BigPart implementation",
+    "No mainline binding or posting approved"
+  ]
+}

@@ -26,9 +26,42 @@
       "members": 4,
       "owner": "Broadcom brcmfmac / Linux wireless",
       "gate": "Exact-source MZ600 RF and multi-interface validation OPEN"
+    },
+    {
+      "track": "STORAGE/BLOCK-GPT",
+      "series": "patches/upstream/review-storage-bigpart-20261028/series",
+      "members": 1,
+      "owner": "Block partitions/GPT maintainers; consult target get_maintainer.pl",
+      "gate": "Revised STORAGE-01 source checkpatch 0/0/0; arm EFI object with config y and default-disabled identical object PASS; nine-source v1 full ARM PASS, revised v2 full build underway. Exact-source physical and mainline acceptance OPEN"
     }
   ],
-  "tested_replay": {
+  "previous_tested_seven_source": {
+    "result": "FULL_ARM_ZIMAGE_DTBS_MODULES_PASS",
+    "source_commit": "8d3406a4aed456b052a3d815601d4edcffb91f3e",
+    "excludes": "BOOT-01",
+    "matched_brcmfmac_sha256": "5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26",
+    "matched_wcc_sha256": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9"
+  },
+  "excluded_but_required_for_proven_existing_mz600_p8_boot": [
+    {
+      "track": "nonkernel",
+      "source": "separate local deployment manifests",
+      "reason": "Proprietary firmware, board NVRAM, Debian root, boot image and credentials must not enter public kernel patches"
+    }
+  ],
+  "other_whole_chip_open_tracks": [
+    "SDIO/MMC",
+    "shared regulator/clock/GPIO power sequencing",
+    "Bluetooth HCI/coexistence",
+    "suspend/resume",
+    "FM radio",
+    "other Xoom model regressions",
+    "connection-event 399s association delay"
+  ],
+  "exact_clean_source_physical_test": "NOT_RUN_NINE_SOURCE_BUILT_ONLY_NO_FLASH",
+  "human_DCO_signoff": false,
+  "upstream_submission": "NOT_AUTHORIZED_HOLD_UNTIL_WHOLE_CHIP_COMPLETE",
+  "previous_eight_source": {
     "date_utc": "2026-10-28",
     "result": "PASS",
     "source_tip": "abd3ebc8a7684243b6e7920704dff0f080aa84f3",
@@ -45,35 +78,31 @@
       "brcmfmac-wcc.ko": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9"
     }
   },
-  "previous_tested_seven_source": {
-    "result": "FULL_ARM_ZIMAGE_DTBS_MODULES_PASS",
-    "source_commit": "8d3406a4aed456b052a3d815601d4edcffb91f3e",
-    "excludes": "BOOT-01",
-    "matched_brcmfmac_sha256": "5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26",
-    "matched_wcc_sha256": "eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9"
+  "current_integration": {
+    "date_utc": "2026-10-28",
+    "patch_count": 9,
+    "source_replay": "PASS",
+    "source_tip": "507eb069df819cb5cc801ad8be096f70d9ca7609",
+    "full_arm_build": "REVISED_V2_FRESH_BUILD_IN_PROGRESS",
+    "kernel_config": "CONFIG_MOTOROLA_XOOM_BIGPART=y",
+    "required_boot_args": "gpt xoom_bigpart=1 (not automatically present in installed image)",
+    "storage_patch_sha256": "4051ca979a8b61af13eb49a8e7351722dcdabd44eb85d9e9bc509911a69568eb",
+    "source_test": "tools/tests/test_xoom_bigpart_geometry.py: 7 offline arithmetic/literal tests PASS",
+    "checkpoint": "docs/checkpoints/MZ600_STORAGE_BIGPART_SUBMISSION_FORM_RFC_2026-10-28.md",
+    "storage_efi_enabled_object_sha256": "0fd9e46240b9706010aadc40b8019073012819ca14a5b642900e7529e6614ac6",
+    "default_disabled_efi_object_sha256": "2da2beb2099715b76ddbe492cce70d4023758d6bbe8b5e3ae4620820b06f1261",
+    "default_disabled_object_matches_previous_eight_source": true,
+    "geometry_and_source_literal_tests": "PASS_7"
   },
-  "excluded_but_required_for_proven_existing_mz600_p8_boot": [
-    {
-      "track": "STORAGE-01",
-      "source": "patches/upstream/candidate/0003-block-partitions-motorola-xoom-bigpart.patch",
-      "reason": "Only broad integration snapshot, changes generic GPT, no approved binding for motorola,xoom-bigpart"
-    },
-    {
-      "track": "nonkernel",
-      "source": "separate local deployment manifests",
-      "reason": "Proprietary firmware, board NVRAM, Debian root, boot image and credentials must not enter public kernel patches"
-    }
-  ],
-  "other_whole_chip_open_tracks": [
-    "SDIO/MMC",
-    "shared regulator/clock/GPIO power sequencing",
-    "Bluetooth HCI/coexistence",
-    "suspend/resume",
-    "FM radio",
-    "other Xoom model regressions",
-    "connection-event 399s association delay"
-  ],
-  "exact_clean_source_physical_test": "NOT_RUN",
-  "human_DCO_signoff": false,
-  "upstream_submission": "NOT_AUTHORIZED_HOLD_UNTIL_WHOLE_CHIP_COMPLETE"
+  "superseded_storage_integration_snapshot": {
+    "source": "patches/upstream/candidate/0003-block-partitions-motorola-xoom-bigpart.patch",
+    "reason": "Old draft included redundant GPT sector override and undocumented DT opt-in; not stacked onto new STORAGE-01"
+  },
+  "previous_nine_source_v1": {
+    "source_tip": "b7d6fadb45a68691bf87837dae0c2d68c2a18c25",
+    "full_arm_build": "PASS_FRESH_2026-10-28T08:13:02Z",
+    "zImage_sha256": "a2b3ddf4294673dde82628be59d96647e470a36599c629df65ff9d5d61b9b5b0",
+    "dtb_and_brcmfmac_hashes": "IDENTICAL_TO_PREVIOUS_EIGHT_SOURCE",
+    "superseded_reason": "More complete fail-closed safety guard for a matching MZ600 eMMC with unexpected geometry"
+  }
 }

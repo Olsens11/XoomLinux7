@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-2.0-only
-# XoomLinux7: replay review-form DT, ARM ATAG and Wi-Fi sources; never touches a tablet.
+# XoomLinux7: replay DT, ARM, Wi-Fi and STORAGE source; never touches a tablet.
 # Required: KERNEL_REPO, CONFIG_BASE, OUT_ROOT, CROSS_COMPILE.
 set -euo pipefail
 P="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -62,9 +62,13 @@ echo "DT_BUILD_PASS"
 # Independent ARM bootloader/ATAG review source; not part of wireless patch mail.
 apply_series "$P/patches/upstream/review-arm-atag-20261028"
 apply_series "$P/patches/upstream/review-wifi-four-logical-20261028"
+apply_series "$P/patches/upstream/review-storage-bigpart-20261028"
+"$W/scripts/config" --file "$O/.config" -e MOTOROLA_XOOM_BIGPART
+make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" olddefconfig
+grep -q "^CONFIG_MOTOROLA_XOOM_BIGPART=y$" "$O/.config"
 make -C "$W" O="$O" ARCH=arm CROSS_COMPILE="$CROSS_COMPILE" -j"$JOBS" zImage dtbs modules
 echo "FULL_BUILD_PASS"
-git -C "$W" log -7 --format='%h %s' > "$OUT_ROOT/applied-commits.txt"
+git -C "$W" log -9 --format='%h %s' > "$OUT_ROOT/applied-commits.txt"
 for name in arch/arm/boot/zImage arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dtb arch/arm/boot/dts/nvidia/tegra20-motorola-wingray.dtb drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko drivers/net/wireless/broadcom/brcm80211/brcmfmac/wcc/brcmfmac-wcc.ko; do
  sha256sum "$O/$name"
 done > "$OUT_ROOT/artifacts.sha256"

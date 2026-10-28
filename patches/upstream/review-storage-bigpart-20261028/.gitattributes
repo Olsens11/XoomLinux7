@@ -1,0 +1,2 @@
+# Patch text includes original quoted context and indentation; check after git am.
+*.patch -whitespace

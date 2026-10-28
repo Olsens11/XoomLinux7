@@ -12,6 +12,7 @@ TRACKS = (
     ("review-stingray-dt-20261028", 3),
     ("review-wifi-four-logical-20261028", 4),
     ("review-arm-atag-20261028", 1),
+    ("review-storage-bigpart-20261028", 1),
 )
 
 def inspect_series(folder: Path, expected: int) -> list[Path]:
@@ -57,6 +58,14 @@ def main() -> None:
             if manifest["source_patch"] != patches[0].name or manifest["patch_sha256"] != hashlib.sha256(patches[0].read_bytes()).hexdigest():
                 raise ValueError("ARM ATAG source patch/sha256 manifest mismatch")
             print("PATCH_HASH_PASS", patches[0].name, manifest["patch_sha256"])
+            continue
+        if folder_name == "review-storage-bigpart-20261028":
+            manifest = json.loads((folder / "manifest.json").read_text())
+            p = patches[0]
+            actual = hashlib.sha256(p.read_bytes()).hexdigest()
+            if manifest["patch"] != p.name or manifest["patch_sha256"] != actual:
+                raise ValueError("STORAGE-01 patch/sha256 manifest mismatch")
+            print("PATCH_HASH_PASS", p.name, actual)
             continue
         if folder_name != "review-wifi-four-logical-20261028":
             continue
