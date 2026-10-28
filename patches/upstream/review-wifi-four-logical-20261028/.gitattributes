@@ -1,0 +1,3 @@
+# Email-format patch files contain literal diff context; check after git am.
+# Do not strip or transform the patch stream during repo whitespace checking.
+*.patch -whitespace
