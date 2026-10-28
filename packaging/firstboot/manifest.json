@@ -5,21 +5,22 @@
   "date_utc": "2026-10-28",
   "target": "Motorola Xoom MZ600 Debian Bookworm armhf",
   "kernel_source": "507eb069df819cb5cc801ad8be096f70d9ca7609",
-  "firstboot_rootfs_status": "OVERLAY_STAGED_NO_DISPOSABLE_ROOTFS_OR_BOOT_IMAGE_ASSEMBLED",
+  "firstboot_rootfs_status": "DISPOSABLE_BOOKWORM_ARMHF_ROOT_ASSEMBLED_2G_EXT4_FILE_FSCK_PASS_NOT_PHYSICALLY_DEPLOYED",
   "private_workspace": "DESKTOP-R16QJD4 WSL /home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025",
   "offline_debs": {
-    "directory": "firstboot-network-packages-20261028",
-    "package_count": 40,
-    "downloaded_bytes": 9428076,
-    "sha256sum_manifest_sha256": "b76e2f16656d05765c9cf39c7a4b84737f33f4bc257beaee89460cd450bdc0c3",
+    "directory": "firstboot-network-packages-v2-20261028",
+    "package_count": 41,
+    "downloaded_bytes": 9491588,
+    "sha256sum_manifest_sha256": "829a1700f02879e9eab3315a7a9f0316722793e2b3f67f850c056efcd3171cb9",
     "package_signature_source": "Signed Debian Bookworm armhf archive",
-    "installed_into_target": false,
-    "nmtui_binary_verified": true
+    "installed_into_target": true,
+    "nmtui_binary_verified": true,
+    "armhf_executable_test": "nmtui --help, nmcli --version, ping -V, curl --version PASS in chroot"
   },
   "nonprivate_transport_bundle": {
-    "filename": "XoomLinux7-FirstBoot-Online-Console-20261028.tar.gz",
-    "bytes": 9428586,
-    "sha256": "33fd09b232a93c53f630e0af4b22a817f42e1a2627fe72df4a607189f141d544",
+    "filename": "XoomLinux7-FirstBoot-Online-Console-v2-20261028.tar.gz",
+    "bytes": 9491812,
+    "sha256": "224a72c2b09cf3eb9eb073f8df8d68a50a1994459d1317c44e33fa3b15cfbfb2",
     "location": "private desktop workspace outside GitHub",
     "contains_private_firmware": false,
     "contains_root_password": false,
@@ -28,7 +29,7 @@
   "rootfs_overlay": {
     "directory": "firstboot-root-overlay-20261028",
     "generated": true,
-    "installed": false,
+    "installed": true,
     "functions": [
       "xoom-wifi menu",
       "xoom-wifi status",
@@ -51,7 +52,7 @@
       "brcmfmac4329-sdio.bin",
       "brcmfmac4329-sdio.txt"
     ],
-    "staged": "PRIVATE_COPY_ONLY",
+    "staged": "PRIVATE_COPY_ONLY_INSTALLED_IN_DISPOSABLE_ROOT",
     "committed_to_git": false,
     "firmware_runtime_test": "NOT_RUN"
   },
@@ -59,24 +60,60 @@
     "choice": "NetworkManager nmtui text UI",
     "dhcp": "NetworkManager integrated DHCP",
     "legacy_proven": "wpa_supplicant@wlan0 + systemd-networkd + timesyncd",
-    "activation": "ONLY_ON_DISPOSABLE_TEST_ROOT_AFTER_DEB_INSTALL",
-    "exclusive_manager_gate": "OPEN",
-    "wifi_association_latency": "KNOWN_399_SECOND_V31_REGRESSION_OPEN"
+    "activation": "NETWORKMANAGER_EXCLUSIVE_MANAGER_ENABLED_IN_DISPOSABLE_TEST_ROOT",
+    "exclusive_manager_gate": "OFFLINE_SERVICE_ENABLEMENT_PASS; PHYSICAL_ASSOCIATION_OPEN",
+    "wifi_association_latency": "KNOWN_399_SECOND_V31_REGRESSION_OPEN",
+    "systemd_timesyncd": "INSTALLED_ENABLED_TEST_IMAGE"
   },
   "screen_console": {
     "kernel_vt_fbcon_drm": "CONFIG_ENABLED",
     "reference_getty_tty1": "ENABLED",
-    "physical_panel_fb0": "NOT_PROVEN",
+    "physical_panel_fb0": "LIVE_MZ600_READONLY_DRM_LVDS_CONNECTED_TEGRA_FB0_EXISTS",
     "touch_keyboard": "NOT_IMPLEMENTED",
-    "com9_fallback": "PRESERVE"
+    "com9_fallback": "PRESERVE",
+    "tablet_getty_tty1": "LIVE_ACTIVE_AND_TEST_IMAGE_ENABLED",
+    "touch_input_detected": "ATMEL_MAXTOUCH_EVENT2_LIVE",
+    "physical_visual_test_new_image": "NOT_RUN"
   },
   "test_root_password": {
     "requested_temporary_password": "OWNER_SUPPLIED_AT_PRIVATE_BUILD",
-    "configured_in_any_rootfs": false,
+    "configured_in_any_rootfs": true,
     "root_password_in_repository": false,
-    "sshd_root_password_auth": "DISABLED_BY_OVERLAY"
+    "sshd_root_password_auth": "DISABLED_BY_OVERLAY",
+    "configured_only_in_disposable_test_root": true,
+    "temporary_root_password_privately_verified": true
   },
   "no_hardware_changes": true,
   "no_kernel_patch_changes": true,
-  "no_upstream_submission": true
+  "no_upstream_submission": true,
+  "test_rootfs_image": {
+    "filename": "XoomLinux7-test-root-bookworm-armhf-20261028.img",
+    "private_wsl_workspace_only": true,
+    "file_bytes": 2147483648,
+    "sha256": "b7180b88dfacf29b41bdb515d4d1a5226855fb2065ca8423ea69029a1362a70d",
+    "filesystem": "ext4 label XOOMTEST",
+    "e2fsck_5_pass": "PASS",
+    "matched_kernel_source": "507eb069df819cb5cc801ad8be096f70d9ca7609",
+    "matched_module_count": 114,
+    "brcmfmac_modprobe_depends": "MATCHED brcmutil + brcmfmac PASS",
+    "private_mz600_firmware_included": true,
+    "temporary_local_root_password_set": true,
+    "remote_root_ssh_password_auth_disabled": true,
+    "bootable_removable_medium_prepared": false,
+    "boot_image_built": false,
+    "for_internal_p8": false,
+    "physically_booted": false
+  },
+  "preflash_reference_backup": {
+    "location": "Owner Surface PRIVATE backup folder; no raw backups in GitHub",
+    "verified_image_captures": 8,
+    "p7_p8_p9_boot0_boot1_head32m_head64m_tail16m": "independently rehashed PASS",
+    "p7_matches_previous_stage_d_partition_hash": true,
+    "head64_first32_matches_independent_head32": true,
+    "relocated_gpt_header_crc": "PASS",
+    "p8_captured_while_mounted_rw": true,
+    "offline_consistent_p8": "OPEN_HARD_STOP",
+    "entire_32GB_eMMC": "NOT_CAPTURED_P10_EXCLUDED",
+    "preflash_restore_gate": "BLOCKED_UNTIL_COLD_P8_AND_RESTORE_VERIFICATION"
+  }
 }

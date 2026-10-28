@@ -1,5 +1,8 @@
 # MZ600 first-boot networking, COM9 and tablet-console kit — 2026-10-28
 
+**Later same-day milestone:** [The private preflash backup and fully assembled offline test-root image now supersede the staging-only status below](MZ600_V31_PREFLASH_PRESERVATION_AND_TEST_ROOT_2026-10-28.md). This checkpoint remains an immutable record of the earlier staged artifacts; 41-package v2 download, installation, password, modules and ext4 image qualification were achieved later.
+
+
 **Project track: deployment / OS / private firmware, NOT an upstream kernel patch.**
 **OFFLINE BUNDLE PASS; INSTALLATION AND DEVICE RUN OPEN.** All actions
 performed on desktop offline build workspaces. No rootfs p8 modification,

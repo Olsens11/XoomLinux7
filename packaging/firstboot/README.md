@@ -1,7 +1,7 @@
 # XoomLinux7 first-boot connectivity and console kit — 2026-10-28
 
 **Internal OS/deployment track only. NOT a kernel upstream patch series.**
-**Offline staging PASS, image installation/physical test OPEN.**
+**OFF-DEVICE TEST IMAGE AND SIGNED OFFLINE PACKAGE INSTALL PASS. Physical boot/flash OPEN.**
 Do not modify the working MZ600 p7 boot, p8 Debian root, attached tablet
 or the Debian reference root while building this package.
 
@@ -38,18 +38,25 @@ Relative to local private workspace
 
 | Folder | Contents | Status |
 | --- | --- | --- |
-| `firstboot-network-packages-20261028/` | Official signed Debian Bookworm armhf repository index and 40 dependency-closed .deb files (~9.1MiB packages), `SHA256SUMS`, package/version/architecture inventory, APT simulation and download logs | Download and SHA verification PASS; **NOT installed** |
-| `firstboot-root-overlay-20261028/` | `xoom-wifi` frontend, `xoom-net-check`, `xoom-console-check`, sshd drop-in disabling root and password SSH logins, tty1 display keepalive settings, NetworkManager configuration | File generation PASS; **not installed** |
+| `firstboot-network-packages-v2-20261028/` | Final **41** signed Debian Bookworm armhf dependency-closed .debs including `systemd-timesyncd`, ~9.5MB, hashes and APT logs | Signature/index/hash verification PASS; ARMhf packages **installed/configured only in disposable test root** |
+| `firstboot-root-overlay-20261028/` | `xoom-wifi`, `xoom-net-check`, `xoom-console-check`, sshd restrictions, tty1 getty and NetworkManager configuration | Installed **in the new private test root only**; no files touched on the MZ600 |
 | `firstboot-host-tools-20261028/` | Self-contained Windows PowerShell USB COM9 console bridge, portable .cmd launcher, SHA256SUMS | Staged; requires host PowerShell parsing/physical COM9 test |
-| `firstboot-private-mz600-firmware-20261028/` | MZ600-only `brcmfmac4329-sdio.bin` and board-specific NVRAM `.txt` with SHA256SUMS | Staged PRIVATE; **never** commit or redistribute; other Xoom devices may require different calibration |
+| `firstboot-private-mz600-firmware-20261028/` | MZ600-only `brcmfmac4329-sdio.bin` and board-specific NVRAM `.txt` with SHA256SUMS | Staged PRIVATE and installed only into disposable test root; **never** commit or redistribute |
 
-The only existing source copy used is the *historical* reference root
-`/home/xoomdev/xoom-linux-rom/os-build/bookworm-armhf-root`; its
-`/var/lib/dpkg/status` was read to resolve dependencies, and its
-signed Debian archive keyring was used for APT verification.
-The reference root and installed tablet were not changed.
+The historic root `os-build/bookworm-armhf-root` was read and **cloned**
+into `test-debian-root-20261028/` (private workspace) before offline
+installation. The source reference and installed tablet remain unchanged.
+The private 2GiB ext4 file `XoomLinux7-test-root-bookworm-armhf-20261028.img`
+was produced using `mkfs.ext4 -d`, passed offline `e2fsck -fn`, and has
+SHA256 `b7180b88dfacf29b41bdb515d4d1a5226855fb2065ca8423ea69029a1362a70d`.
+**This is an external/test-root file and must NOT be flashed to the
+existing 1GiB BigPart p8.** The generic 41-package offline transport
+bundle is `XoomLinux7-FirstBoot-Online-Console-v2-20261028.tar.gz`,
+SHA256 `224a72c2b09cf3eb9eb073f8df8d68a50a1994459d1317c44e33fa3b15cfbfb2`.
+No private BCM4329 firmware or root password is in that public-content
+bundle; the assembled test-root image is **PRIVATE**.
 
-## Build and rootfs application (future disposable root, not executed)
+## Reproducible build procedure (completed on disposable copy; not on device)
 
 1. Use a **new, isolated copy** of the Debian Bookworm ARMhf rootfs,
    never the existing mounted internal p8, original reference root or
@@ -114,9 +121,12 @@ LVDS panel and input drivers. The existing Debian root already enables
 Ctrl+] disconnect, optional `-Probe`. The local Surface launcher remains
 untouched. Only one host process may own COM9 at once.
 
-**Hardware gates still OPEN:** DRM panel and `/dev/fb0` must be physically
-observed; a `tty1` console service does not guarantee screen pixels;
-touch events are not a physical keyboard. The first milestone targets a
+**Live hardware observation PASS:** `/dev/fb0` exists as `tegradrmfb`,
+DRM LVDS-1 is `connected`, `getty@tty1` and `serial-getty@ttyGS0` both
+report `active`, and Atmel maXTouch reports `/dev/input/event2` on the
+**running installed MZ600**. Human-visible pixels on the **new image**
+remain OPEN; a `tty1` service does not guarantee input and touch events
+are not a physical keyboard. The first milestone targets a
 *visible* terminal; tablet-only touchscreen typing requires a later
 on-screen-keyboard/terminal UI and separate input driver qualification.
 Run `xoom-console-check` over COM9 to gather safe screen diagnostics.
@@ -128,16 +138,21 @@ does not solve driver-side ~399s authentication delays.
 
 ## Review/acceptance and preservation
 
-- Root password on an actually assembled test root: **OPEN**;
-  provisioner ready but cannot run against original root.
+- Requested temporary local root password in a private **disposable**
+  test root: **SET AND VERIFIED**; never applied to original root.
 - Offline Debian package downloads and SHA256: **PASS**.
-- Rootfs overlay and host helper staged: **PASS** (not installed/tested).
+- Rootfs overlay **installed in disposable copy**; host COM9 helper source
+  parsed successfully, new helper's physical interaction still OPEN.
 - MZ600 private BCM4329 firmware staging: **PASS**, do not distribute.
-- NetworkManager/nmtui package installation and service ownership: **OPEN**.
-- On-screen framebuffer terminal, touch typing, and COM9 physical test of
-  new helper: **OPEN**.
-- Exact nine-review source, firmware, module ABI and BigPart boot:
-  retain existing guarded qualification process; no device changes.
+- NetworkManager/nmtui packages installed and ARMhf execution sanity tests
+  PASS; NetworkManager enabled, competing services disabled in disposable
+  root only. Physical WPA2/DHCP connection testing OPEN.
+- Live framebuffer, LVDS and both gettys confirmed. New-image visible
+  terminal, touchscreen typing and new COM9 launcher physical test OPEN.
+- Matched 114-module nine-review kernel installation, private firmware and
+  2GiB root ext4 file fsck PASS offline. Exact kernel BigPart and Wi-Fi
+  physical boot OPEN. Existing p7/p8 stay untouched. [Preflash backup](../../docs/checkpoints/MZ600_V31_PREFLASH_PRESERVATION_AND_TEST_ROOT_2026-10-28.md)
+  records verified live raw images and the still-required cold p8 snapshot.
 
 **Milestone closure:** Update the OS integration manifest, checkpoint,
 versioned package list, project indices and test evidence as each new
