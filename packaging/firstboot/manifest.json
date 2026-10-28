@@ -104,6 +104,23 @@
     "for_internal_p8": false,
     "physically_booted": false
   },
+  "test_rootfs_1g_variant": {
+    "filename": "XoomLinux7-test-root-1GiB-BigPart-20261028.img",
+    "source_2g_image_preserved": true,
+    "private_wsl_workspace_only": true,
+    "file_bytes": 1073741824,
+    "sha256": "9cf413dcf1305e3dbabc13dc2d478ad5d481bfb4da2260cee1de16a59f9c6d31",
+    "filesystem_label": "XOOMTEST",
+    "filesystem_blocks_4k": 262144,
+    "used_blocks_4k": 145357,
+    "free_blocks_4k": 116787,
+    "e2fsck_five_pass": "PASS",
+    "capacity_matches_existing_bigpart_p8": true,
+    "physical_device_write": false,
+    "physical_boot_test": "OPEN",
+    "cold_p8_backup_required_before_flash": true,
+    "checkpoint": "docs/checkpoints/MZ600_ONE_GIB_ROOT_AND_BIGPART_RECOVERY_PLAN_2026-10-28.md"
+  },
   "preflash_reference_backup": {
     "location": "Owner Surface PRIVATE backup folder; no raw backups in GitHub",
     "verified_image_captures": 8,
