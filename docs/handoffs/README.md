@@ -1,5 +1,7 @@
 # XoomLinux7 conversation and engineering handoffs
 
+> **LATEST BLUETOOTH LAB MILESTONE — 2026-10-28:** [BlueZ and verified private Motorola HCD on nine-review p10; HCI powered alongside Wi-Fi, classic inquiry starts, exact Surface pairing failed, safe shutdown](../checkpoints/MZ600_REVIEW9_P10_BLUEZ_BCM4329B1_SURFACE_BLUETOOTH_PAIR_ATTEMPT_2026-10-28.md). Bluetooth pairing remains OPEN; active HCI firmware setup was not re-run. Wi-Fi/COM9 remain working. No driver unbind/reboot while user away.
+
 > **LATEST PHYSICAL MILESTONE — 2026-10-28: NINE-PATCH LINUX 7 + FULL BOOKWORM P10 BOOT PASS.** [First live exact-review kernel USB COM9 login proof, all 1GiB p10 Debian filesystem hashes and TWRP fsck, temporary fastboot boot only](../checkpoints/MZ600_NINE_REVIEW_LINUX7_P10_BOOKWORM_FIRST_PHYSICAL_BOOT_PASS_2026-10-28.md). The 1GiB new Debian filesystem is installed in **p10** (remaining p10 unexpanded); p7 original V31 and p8 working fallback **untouched**, p6 TWRP BigPart retained. Actual COM9 `xoom-mz600 login:` verified; **logged-in uname, new BigPart runtime geometry, Wi-Fi/BT/modules remain OPEN**. Older notes claiming nine-review Linux not booted or p10 empty are historical. Next use owner credential for serial login and run non-destructive runtime checks.
 
 
