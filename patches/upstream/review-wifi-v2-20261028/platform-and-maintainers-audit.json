@@ -1,0 +1,148 @@
+[
+  {
+    "patch": "0001-arm-dts-tegra20-motorola-stingray-board.patch",
+    "checkpatch_code": 1,
+    "summary": "total: 353 errors, 360 warnings, 0 checks",
+    "issues": [
+      "WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible"
+    ],
+    "maintainers": [
+      "Rob Herring <robh@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)",
+      "Krzysztof Kozlowski <krzk+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)",
+      "Conor Dooley <conor+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)",
+      "Thierry Reding <thierry.reding@kernel.org> (maintainer:TEGRA ARCHITECTURE SUPPORT)",
+      "Jonathan Hunter <jonathanh@nvidia.com> (maintainer:TEGRA ARCHITECTURE SUPPORT)",
+      "Ray Jui <rjui@broadcom.com> (maintainer:BROADCOM IPROC ARM ARCHITECTURE)",
+      "Scott Branden <sbranden@broadcom.com> (maintainer:BROADCOM IPROC ARM ARCHITECTURE)",
+      "Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com> (reviewer:BROADCOM IPROC ARM ARCHITECTURE)",
+      "Kees Cook <kees@kernel.org> (maintainer:PSTORE FILESYSTEM:Keyword:\\b(pstore|ramoops))",
+      "Tony Luck <tony.luck@intel.com> (reviewer:PSTORE FILESYSTEM:Keyword:\\b(pstore|ramoops))",
+      "\"Guilherme G. Piccoli\" <gpiccoli@igalia.com> (reviewer:PSTORE FILESYSTEM:Keyword:\\b(pstore|ramoops))",
+      "\"GitAuthor: Gametrock\" <65424005+Gametrock@users.noreply.github.com> (authored:1/1=100%,added_lines:61/62=98%)",
+      "\"GitAuthor: XoomLinux7 RFC draft\" <rfc-draft@invalid.example> (authored:1/1=100%)",
+      "devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)",
+      "linux-kernel@vger.kernel.org (open list)"
+    ],
+    "maintainer_error": 0
+  },
+  {
+    "patch": "0002-arm-tegra-stingray-wlan-mac-atag.patch",
+    "checkpatch_code": 1,
+    "summary": "total: 6 errors, 16 warnings, 0 checks",
+    "issues": [
+      "WARNING: please, no spaces at the start of a line",
+      "WARNING: please, no spaces at the start of a line",
+      "WARNING: please, no spaces at the start of a line",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line",
+      "WARNING: please, no spaces at the start of a line",
+      "ERROR: code indent should use tabs where possible",
+      "WARNING: please, no spaces at the start of a line"
+    ],
+    "maintainers": [
+      "Russell King <linux@armlinux.org.uk> (maintainer:ARM PORT)",
+      "\"GitAuthor: XoomLinux7 RFC draft\" <rfc-draft@invalid.example> (authored:1/1=100%,added_lines:42/260=16%)",
+      "\"GitAuthor: Gametrock\" <65424005+Gametrock@users.noreply.github.com> (authored:1/1=100%,added_lines:218/260=84%)",
+      "linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)",
+      "linux-kernel@vger.kernel.org (open list)",
+      "Bad divisor in main::vcs_assign: 0"
+    ],
+    "maintainer_error": 0
+  },
+  {
+    "patch": "0003-block-partitions-motorola-xoom-bigpart.patch",
+    "checkpatch_code": 1,
+    "summary": "total: 3 errors, 4 warnings, 2 checks",
+    "issues": [
+      "WARNING: please write a help paragraph that fully describes the config symbol with at least 4 lines",
+      "CHECK: __setup appears un-documented -- check Documentation/admin-guide/kernel-parameters.txt",
+      "WARNING: Missing a blank line after declarations",
+      "CHECK: Please use a blank line after function/struct/union/enum declarations",
+      "WARNING: Missing a blank line after declarations",
+      "WARNING: Missing a blank line after declarations",
+      "ERROR: trailing statements should be on next line",
+      "ERROR: trailing statements should be on next line",
+      "ERROR: trailing statements should be on next line"
+    ],
+    "maintainers": [
+      "Jens Axboe <axboe@kernel.dk> (maintainer:BLOCK LAYER)",
+      "Davidlohr Bueso <dave@stgolabs.net> (maintainer:GUID PARTITION TABLE (GPT))",
+      "\"GitAuthor: Gametrock\" <65424005+Gametrock@users.noreply.github.com> (authored:1/1=100%,added_lines:282/290=97%)",
+      "\"GitAuthor: XoomLinux7 RFC draft\" <rfc-draft@invalid.example> (authored:1/1=100%)",
+      "linux-block@vger.kernel.org (open list:BLOCK LAYER)",
+      "linux-kernel@vger.kernel.org (open list)",
+      "linux-efi@vger.kernel.org (open list:GUID PARTITION TABLE (GPT))",
+      "Bad divisor in main::vcs_assign: 0"
+    ],
+    "maintainer_error": 0
+  },
+  {
+    "patch": "0001-wifi-brcmfmac-use-legacy-channel-list-on-BCM4329.patch",
+    "checkpatch_code": 0,
+    "summary": "total: 0 errors, 0 warnings, 0 checks",
+    "issues": [],
+    "maintainers": [
+      "Arend van Spriel <arend.vanspriel@broadcom.com> (maintainer:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "\"GitAuthor: XoomLinux7 RFC draft\" <rfc-draft@invalid.example> (authored:3/1=100%,removed_lines:2/2=100%)",
+      "\"GitAuthor: Gametrock\" <65424005+Gametrock@users.noreply.github.com> (authored:1/1=100%,added_lines:8501/8627=99%)",
+      "linux-wireless@vger.kernel.org (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "brcm80211@lists.linux.dev (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "brcm80211-dev-list.pdl@broadcom.com (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "linux-kernel@vger.kernel.org (open list)",
+      "Bad divisor in main::vcs_assign: 0"
+    ],
+    "maintainer_error": 0
+  },
+  {
+    "patch": "0002-wifi-brcmfmac-match-BCM4329-ESCAN-completion-to-acti.patch",
+    "checkpatch_code": 0,
+    "summary": "total: 0 errors, 0 warnings, 0 checks",
+    "issues": [],
+    "maintainers": [
+      "Arend van Spriel <arend.vanspriel@broadcom.com> (maintainer:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "\"GitAuthor: XoomLinux7 RFC draft\" <rfc-draft@invalid.example> (authored:3/1=100%,removed_lines:2/2=100%,authored:1/1=100%,added_lines:40/559=7%)",
+      "\"GitAuthor: Gametrock\" <65424005+Gametrock@users.noreply.github.com> (authored:1/1=100%,added_lines:8501/8627=99%,added_lines:502/504=100%,added_lines:519/559=93%)",
+      "linux-wireless@vger.kernel.org (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "brcm80211@lists.linux.dev (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "brcm80211-dev-list.pdl@broadcom.com (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "linux-kernel@vger.kernel.org (open list)",
+      "Bad divisor in main::vcs_assign: 0",
+      "Bad divisor in main::vcs_assign: 0",
+      "Bad divisor in main::vcs_assign: 0"
+    ],
+    "maintainer_error": 0
+  },
+  {
+    "patch": "0003-wifi-brcmfmac-restore-BCM4329-firmware-readiness-for.patch",
+    "checkpatch_code": 0,
+    "summary": "total: 0 errors, 0 warnings, 0 checks",
+    "issues": [],
+    "maintainers": [
+      "Arend van Spriel <arend.vanspriel@broadcom.com> (maintainer:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "\"GitAuthor: XoomLinux7 RFC draft\" <rfc-draft@invalid.example> (authored:3/1=100%,removed_lines:2/2=100%,authored:1/1=100%)",
+      "\"GitAuthor: Gametrock\" <65424005+Gametrock@users.noreply.github.com> (authored:1/1=100%,added_lines:8501/8627=99%,added_lines:224/225=100%)",
+      "linux-wireless@vger.kernel.org (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "brcm80211@lists.linux.dev (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "brcm80211-dev-list.pdl@broadcom.com (open list:BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS)",
+      "linux-kernel@vger.kernel.org (open list)",
+      "Bad divisor in main::vcs_assign: 0",
+      "Bad divisor in main::vcs_assign: 0"
+    ],
+    "maintainer_error": 0
+  }
+]
