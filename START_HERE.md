@@ -1,5 +1,7 @@
 # START HERE — XoomLinux7
 
+> **CURRENT STARTING POINT — 2026-10-28 INSTALLATION CHAPTER:** [Read the full MZ600 preinstallation engineering handoff first](docs/handoffs/MZ600_XOOMLINUX7_PREINSTALLATION_CHAPTER_COMPLETE_HANDOFF_2026-10-28.md). This supersedes the outdated 2026-10-25 v06.3 and uninstalled BigPart status blocks below. The experimental MZ600 **already runs persistent Stage-D/V31 Debian on internal BigPart p8**, with eight reference captures and a clean, separately built nine-patch candidate plus 1GiB test root. The first no-button `reboot(2) bootloader` attempt **returned to normal Linux instead of fastboot**. Rescue microSD is **armed with a one-shot cold p8 backup service** (not yet run); the cold backup and safe TWRP 3.1.1-0 BigPart recovery are mandatory open gates. Never flash based solely on this notice.
+
 > **Latest user decision — CLASSIC BIGPART on replacement MZ600**: enlarge traditional p8 `system` to **1GiB kernel-visible** as Debian Linux `/`, *not* use p10 as root. Data on p10 is disposable. [Active BigPart implementation plan](docs/plans/MZ600_V064_CLASSIC_BIGPART_SYSTEM_ROOT_IMPLEMENTATION_2026-10-25.md) supersedes previous p10 root proposal. Original BigPart manipulates the **kernel's in-memory GPT view**; do not blindly repartition eMMC with generic tools. Offline layout proof PASS; no actual partition write.
 
 

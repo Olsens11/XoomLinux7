@@ -1,5 +1,7 @@
 # XoomLinux7 conversation and engineering handoffs
 
+> **CURRENT COMPLETE HANDOFF — OCTOBER 28, 2026, START OF NEW LINUX INSTALLATION CHAPTER:** [MZ600 preinstallation, preserved Stage-D/V31 baseline, nine-patch review build, Debian images, backups, TWRP 3.1.1-0 and first remote fastboot test](MZ600_XOOMLINUX7_PREINSTALLATION_CHAPTER_COMPLETE_HANDOFF_2026-10-28.md). This is the entry point for the next conversation. **Observed outcome:** reboot(2) requested bootloader but returned to ordinary Linux; no fastboot, no cold p8 capture, no replacement boot or flash. A rescue-SD one-shot cold-backup service remains **armed**. The older October 25 handoff and next-step notes below are historical; safety rules remain binding.
+
 > **Verified current Oct 25 19:25 EDT:** v06.3 running USB/PONG, Bluetooth firmware/HCI and sequential Wi-Fi physically passed. **Next:** [v06.4 functional Linux implementation and acceptance plan](../plans/MZ600_V064_FUNCTIONAL_LINUX_BUILD_INSTRUCTIONS_2026-10-25.md). v06.4 is not built, network scan/keyboard pairing and terminal not yet proven. Use the continuously updated complete handoff below.
 
 
