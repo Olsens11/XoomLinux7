@@ -1,5 +1,7 @@
 > **LATER EXACT NINE-PATCH PHYSICAL AUDIT, 2026-10-28:** [Formal per-commit review, hashes, live Wi-Fi and G01–G12 gaps](../../docs/checkpoints/MZ600_REVIEW9_EXACT_PATCH_WIFI_BACKEND_FORMAL_AUDIT_2026-10-28.md) with [internal bug reports](../../docs/bugs/README.md). All four WIFI-01–04 pass `checkpatch --no-signoff` 0/0/0 and physically match loaded modules, but 5GHz PHY is absent, station telemetry unsupported and regulatory/power output requires reconciliation. No exact-source scan lifecycle acceptance, no new upstream patch fix; human DCO/posting remains on hold. Previously marked “5GHz connected” based on SSID is not evidence of RF frequency.
 
+> **DEEP PROVENANCE/SAFETY SOURCE AUDIT — 2026-10-28:** [All nine original-base vs introduced risks matrix](../../docs/checkpoints/MZ600_NINE_PATCH_UPSTREAM_PROVENANCE_AND_LATENT_ISSUES_AUDIT_2026-10-28.md). High-priority open WIFI-01 parity risk: the new `WLC_GET_VALID_CHANNELS` fallback preserves existing cfg80211 channel flags but does not query firmware `per_chan_info` as the original normal path does to apply radar/passive NO_IR; **no regulatory misbehavior proven**, but needs proof before acceptance or 5GHz. WIFI-02/03/04 scan lifecycle remains unvalidated. Human DCO intentionally withheld until real readiness. Original upstream GitHub tracker had 0 reports as of query; “unreported” is not “not pre-existing.”
+
 # XoomLinux7 — Maintainer-routed source-review inventory
 
 **Working snapshot:** 2026-10-28 UTC; branch `wip/clean-wifi-bt-usb-20261025`. **NOT SUBMITTED. NOT HUMAN SIGNED. NOT COMPLETE.**

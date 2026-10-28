@@ -1,3 +1,5 @@
+> **Provenance update, 2026-10-28:** No issue reported against [xoom-linux/linux](https://github.com/xoom-linux/linux/issues), and no proof that the observed values are caused by our nine patches. The original regulator/firmware-to-cfg80211 logic largely persists, but active firmware/NVRAM behavior is still unmeasured. This is an **unexplained runtime discrepancy**, *not* a demonstrated upstream regulatory violation or newly introduced bug. Separately investigate [our WIFI-01 legacy-channel review concern](WIFI-REVIEW-04-LEGACY-CHANNEL-REGULATORY-PARITY_2026-10-28.md). See [provenance audit](../checkpoints/MZ600_NINE_PATCH_UPSTREAM_PROVENANCE_AND_LATENT_ISSUES_AUDIT_2026-10-28.md).
+
 # WIFI-BUG-03 — BCM4329 per-PHY country and TX power values require reconciliation
 
 **State (2026-10-28):** REPORTING DISCREPANCY CONFIRMED; actual regulatory misconfiguration, wrong conducted output power, illegal emission or a patch regression **NOT PROVEN**. **Priority: high for investigation before expanded 5 GHz testing or upstream acceptance.**

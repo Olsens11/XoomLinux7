@@ -1,3 +1,5 @@
+> **Baseline provenance update, 2026-10-28:** `WLC_GET_BANDLIST` decides whether 5GHz Band 2 is allocated in the original `brcmfmac` source; it is unmodified by our nine patches. Earlier HRI39 4.218 firmware proved valid 5GHz channels on Linux, while this boot uses 4.220 firmware. **No public xoom-linux/linux issue filed** as of tracker check. Thus current 5GHz absence is a newly reproduced *integration symptom* with firmware/board/driver causality still open; it is **not yet an introduced patch regression**. See [upstream provenance audit](../checkpoints/MZ600_NINE_PATCH_UPSTREAM_PROVENANCE_AND_LATENT_ISSUES_AUDIT_2026-10-28.md).
+
 # WIFI-BUG-01 — No 5 GHz band advertised by BCM4329 PHY in exact nine-review Linux 7
 
 **State (2026-10-28):** PHYSICAL CAPABILITY GAP CONFIRMED; **source patch regression NOT demonstrated**. **Priority: medium** to complete dual-band acceptance. **Track:** WIFI-01/WIFI-05 + firmware/BCM4329 bandlist, PHY capabilities; cross-check DT/REG. **No live fix attempted.**

@@ -1,3 +1,5 @@
+> **New 2026-10-28 upstream provenance cross-check:** [Formal nine-patch original-code vs introduced-change audit](../checkpoints/MZ600_NINE_PATCH_UPSTREAM_PROVENANCE_AND_LATENT_ISSUES_AUDIT_2026-10-28.md). The public [xoom-linux/linux tracker](https://github.com/xoom-linux/linux/issues) was enabled and returned **zero issues total**, open or closed, at the time of inspection. **No reported issue is not the same as no pre-existing bug.** WIFI-BUG-02's unsupported legacy ASSOCLIST is explicitly recognized in original source; the 5GHz band construction and Bluetooth UART clock are baseline code. [WIFI-REVIEW-04](WIFI-REVIEW-04-LEGACY-CHANNEL-REGULATORY-PARITY_2026-10-28.md) is **our own introduced source review concern**, impact unproven, and must be cleared before accepting WIFI-01.
+
 # BCM4329 / Linux 7 evidence-backed issue ledger
 
 **Snapshot as of 2026-10-28.** These are **internal project bug/investigation reports**, not Linux upstream submissions or claims of causal attribution to the existing nine patches. Each issue names reproducible physical symptoms, competing explanations, an evidence source and an acceptance gate. Public logs exclude SSIDs, MAC addresses, IPs, serials, credentials and proprietary firmware. Preserve each report when later tests revise its conclusion; add dated findings, do not silently delete negative evidence.
@@ -7,6 +9,7 @@
 | [WIFI-BUG-01](WIFI-BUG-01-MISSING-5GHZ-PHY-BAND_2026-10-28.md) | Missing advertised 5GHz PHY band despite dual-band target | Confirmed limitation, patch attribution open | Medium |
 | [WIFI-BUG-02](WIFI-BUG-02-STATION-TELEMETRY_2026-10-28.md) | nl80211 station metrics absent/legacy ASSOCLIST unsupported | Confirmed reporting gap, ABI cause open | Medium-low |
 | [WIFI-BUG-03](WIFI-BUG-03-REGULATORY-TXPOWER-REPORTING_2026-10-28.md) | country 99 vs global US and 20/31 dBm display | Reporting discrepancy, RF effect unproven | High-investigate |
+| [WIFI-REVIEW-04](WIFI-REVIEW-04-LEGACY-CHANNEL-REGULATORY-PARITY_2026-10-28.md) | Our WIFI-01 legacy fallback lacks firmware per-channel passive/radar information query present in normal path | **Introduced code-path difference; actual risk unproven** | High source review |
 
 **Later corroboration:** An independent fresh Surface scan observed a genuine nearby 5 GHz BSS on channel 153 (5765 MHz) as well as related 2.4 GHz networks on channel 11. The Xoom advertises only 2.4 GHz. The user confirms SSID naming does not indicate actual radio band. See WIFI-BUG-01 for independent host evidence.
 
