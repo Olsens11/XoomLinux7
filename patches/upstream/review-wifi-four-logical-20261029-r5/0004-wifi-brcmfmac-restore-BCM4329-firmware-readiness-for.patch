@@ -1,7 +1,7 @@
 From 87f3d1c78be1a7e5e3d628adfad0f3fbdf3126f3 Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 20:46:26 -0400
-Subject: [PATCH 4/5] wifi: brcmfmac: restore BCM4329 firmware readiness for
+Subject: [PATCH 4/4] wifi: brcmfmac: restore BCM4329 firmware readiness for
  ESCAN
 
 After an ordinary ESCAN, legacy BCM4329 firmware can enter
