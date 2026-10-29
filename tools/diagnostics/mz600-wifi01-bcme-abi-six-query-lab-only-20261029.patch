@@ -1,0 +1,101 @@
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -6995,6 +6995,35 @@
+ /* Older BCM4329 firmware exposes a channel-number list, not 'chanspecs'.
+  * Keep existing cfg80211 restrictions and assume only 20 MHz support.
+  */
++
++/* MZ600_LAB_ONLY_20261029: six bounded read-only legacy ABI inputs.
++ * Instrumented builds must NEVER be submitted as production patches.
++ */
++static void brcmf_bcm4329_lab_perchan_probe(struct brcmf_if *ifp)
++{
++	static const u16 args[] = { 0x200b, 0x280b, 0x2b0b,
++				    0x1024, 0x1824, 0x1b24 };
++	u32 io_type = 0;
++	u32 result;
++	int rc;
++	int i;
++
++	rc = brcmf_fil_cmd_int_get(ifp, BRCMF_C_GET_VERSION, &io_type);
++	pr_info("MZ600_ABI_LAB get_version rc=%d io_type=%u\n", rc,
++		io_type);
++	for (i = 0; i < ARRAY_SIZE(args); i++) {
++		result = args[i];
++		rc = brcmf_fil_bsscfg_int_query(ifp, "per_chan_info",
++					       &result);
++		if (rc)
++			pr_info("MZ600_ABI_LAB query=%d arg=0x%04x rc=%d no_valid_result\n",
++				i, args[i], rc);
++		else
++			pr_info("MZ600_ABI_LAB query=%d arg=0x%04x rc=0 flags=0x%08x\n",
++				i, args[i], result);
++	}
++}
++
+ static int brcmf_bcm4329_legacy_channels(struct brcmf_cfg80211_info *cfg,
+ 					 u8 *pbuf)
+ {
+@@ -7009,6 +7038,7 @@
+ 	bool supported, per_chan_available = true;
+ 	int err, chan_err;
+ 
++	brcmf_bcm4329_lab_perchan_probe(ifp);
+ 	max_count = (BRCMF_DCMD_MEDLEN - sizeof(list->count)) /
+ 		    sizeof(list->element[0]);
+ 	memset(pbuf, 0, BRCMF_DCMD_MEDLEN);
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
+@@ -98,6 +98,9 @@
+ {
+ 	struct brcmf_pub *drvr = ifp->drvr;
+ 	s32 err, fwerr;
++	bool mz600_lab_trace = false;
++	u32 mz600_lab_arg = 0;
++	static unsigned int mz600_lab_seen;
+ 
+ 	if (drvr->bus_if->state != BRCMF_BUS_UP) {
+ 		bphy_err(drvr, "bus is down. we have nothing to do.\n");
+@@ -106,6 +109,19 @@
+ 
+ 	if (data != NULL)
+ 		len = min_t(uint, len, BRCMF_DCMD_MAXLEN);
++	/* MZ600_LAB_ONLY_20261029: observe raw firmware errno before
++	 * ordinary fwil normalization; first six per_chan_info queries only.
++	 */
++	if (!set && cmd == BRCMF_C_GET_VAR && data &&
++	    len >= sizeof("per_chan_info") + sizeof(__le32) &&
++	    !memcmp(data, "per_chan_info", sizeof("per_chan_info"))) {
++		__le32 le_arg;
++
++		memcpy(&le_arg, (u8 *)data + sizeof("per_chan_info"),
++		       sizeof(le_arg));
++		mz600_lab_arg = le32_to_cpu(le_arg);
++		mz600_lab_trace = true;
++	}
+ 	if (set)
+ 		err = brcmf_proto_set_dcmd(drvr, ifp->ifidx, cmd,
+ 					   data, len, &fwerr);
+@@ -113,6 +129,22 @@
+ 		err = brcmf_proto_query_dcmd(drvr, ifp->ifidx, cmd,
+ 					     data, len, &fwerr);
+ 
++	if (mz600_lab_trace && mz600_lab_seen++ < 6) {
++		if (err) {
++			pr_info("MZ600_ABI_FW query=0x%04x transport=%d bcme=unavailable\n",
++				mz600_lab_arg, err);
++		} else if (fwerr < 0) {
++			pr_info("MZ600_ABI_FW query=0x%04x transport=0 bcme=%d no_valid_result\n",
++				mz600_lab_arg, fwerr);
++		} else {
++			__le32 le_result;
++
++			memcpy(&le_result, data, sizeof(le_result));
++			pr_info("MZ600_ABI_FW query=0x%04x transport=0 bcme=%d response=0x%08x\n",
++				mz600_lab_arg, fwerr,
++				le32_to_cpu(le_result));
++		}
++	}
+ 	if (err) {
+ 		brcmf_dbg(FIL, "Failed: error=%d\n", err);
+ 	} else if (fwerr < 0) {
