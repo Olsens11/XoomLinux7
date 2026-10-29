@@ -119,3 +119,21 @@ wifi@1 {
 ```
 
 The root-compatible includes `motorola,stingray`, `motorola,xoom` (not MZ600-specific). Therefore the board-specific `brcm,ccode-map = "US-US-69";` **must not be baked unconditionally into a shared universal Xoom DTS**. Prefer an MZ600-US variant boot DTB or controlled overlay, preserving the generic upstream source. No source patch, runtime DT write, NVRAM update or boot image change has been applied by this milestone.
+
+
+## 2026-10-29 OEM-preservation design ruling: Motorola translated countries dynamically (SOURCE-PROVEN)
+
+Owner requirement: preserve Motorola's original hardware and regulatory intent using the smallest existing Linux-compatible mechanism, and do not invent a regulatory policy engine, synthetic firmware metadata or extra RF capabilities. Contemporary cfg80211 rules still constrain permitted use; vendor defaults alone are not legal authority. This **corrects the interpretation that US/69 should be fixed for every situation**.
+
+**Original Motorola board source evidence:** Historical [Motorola Stingray kernel/tegra 2011 board diff](https://android.googlesource.com/kernel/tegra/+/eb4e253d7d76f6093ef50597e909157c21803842%5E2..eb4e253d7d76f6093ef50597e909157c21803842/) for arch/arm/mach-tegra/board-stingray-wlan.c, at diff lines 7689–7763, contains an actual stingray_wifi_translate_custom_table[] and stingray_wifi_get_country_code(ccode) function registered through wifi_platform_data.get_country_code. This **maps different ISO country requests to different Broadcom firmware locale/revision pairs**, falling back to the default when unmatched; it is not a US-only hardware lock.
+
+Exact examples from that source: **US → firmware US, rev69**; **CA → firmware US, rev69**; **AT/DE/FR/GB and other listed European countries → firmware EU, rev5**; **KR/AU/CN and other listed entries → firmware XY, rev3**; **unmatched → firmware XY, rev4**; **IL/CH/TR/NO → matching firmware code, rev0**. Some historical mappings aggregate countries for internal firmware calibration and must **not be treated as proof of current legal equivalence**. These source lines establish platform-driver *design intent*, not byte-for-byte execution of every shipped MZ600.
+
+Separate OEM HRI39/HRI66 calibration sources contain factory-default US/69 for the US-market MZ600. **Factory default and dynamic platform translation are separate layers that may coexist**. Likewise [Broadcom bcmdhd platform support](https://android.googlesource.com/kernel/tegra.git/+/5028b8088fd5743c23f4566678e2eac867fa50f3/drivers/net/wireless/bcmdhd/dhd_linux_platdev.c) dispatches a get_country_code callback; translating country hints in the board integration is established vendor behavior.
+
+**Proposed smallest upstream-compatible implementation:** restore authentic board-calibration restrictions for the correct model/SKU, preserve dynamic legitimate country changes, and use the existing modern brcmfmac Device Tree brcm,ccode-map property (ISO2-firmware2-rev translation) with the stock regulatory notifier. No extra country subsystem, firmware rewrite, worldwide US/69 hardcode, or cloned permissive alpha2=99 regulatory policy. Source-proven mappings are **candidates to evaluate per region**, not an order to reproduce an unexamined legacy table wholesale—especially CA→US/69 and fallback XY. Respect current signed Linux regulatory rules intersected with firmware and board limitations.
+
+**Separate logical issues:** WIFI-01 channel discovery fallback (BRCMF_C_GET_VALID_CHANNELS) and board-specific country translation have different causes. Do not turn country-specific current channel lists into immutable hardware exclusions, and do not pad WIFI-01 with a second regulatory implementation.
+
+**Unresolved hardware evidence:** live generic firmware 4.220.48 previously reported global Linux US and Broadcom phy6 custom 99; active NVRAM omitted ccode/regrev and active DT omitted the country mapping. Actual firmware country/revision is still **NOT MEASURED**. On Oct29 the country read-only module built and reached Surface with hash verification, but COM9 timed out during a pre-stage read-only check. No module was uploaded into Xoom RAM, no radio service was stopped, and no reboot or persistent installation occurred. Continue only after reliable COM9 baseline and rollback gates.
+
