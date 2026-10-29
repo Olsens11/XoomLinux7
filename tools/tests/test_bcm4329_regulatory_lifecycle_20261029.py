@@ -41,6 +41,13 @@ def source_check(root: Path):
     assert "wiphy_register(wiphy);" in cfg
     assert "brcmf_setup_wiphybands(cfg);" in cfg
     assert cfg.index("wiphy_register(wiphy);") < cfg.index("brcmf_setup_wiphybands(cfg);", cfg.index("wiphy_register(wiphy);"))
+    # The PHY-specific 99 domain applies to some initiators, while USER
+    # and COUNTRY_IE can select the current cfg80211 global country rules.
+    selector = reg.split("static const struct ieee80211_regdomain *reg_get_regdomain(", 1)[1].split("static unsigned int", 1)[0]
+    assert "lr->initiator != NL80211_REGDOM_SET_BY_COUNTRY_IE" in selector
+    assert "lr->initiator != NL80211_REGDOM_SET_BY_USER" in selector
+    assert "return get_wiphy_regdom(wiphy);" in selector
+    assert "return get_cfg80211_regdom();" in selector
     assert "sband->channels[i].orig_flags =" in core
     assert "sband->channels[i].flags;" in core
     assert "u32 flags = chan->orig_flags;" in reg
