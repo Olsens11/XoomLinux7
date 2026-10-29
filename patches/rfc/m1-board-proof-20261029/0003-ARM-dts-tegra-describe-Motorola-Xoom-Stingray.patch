@@ -1,0 +1,47 @@
+From 0d4d7d3161b6ed9595f2cf28200535d59dcb3e0f Mon Sep 17 00:00:00 2001
+From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
+Date: Thu, 29 Oct 2026 13:37:16 -0400
+Subject: [PATCH 3/3] ARM: dts: tegra: describe Motorola Xoom Stingray
+
+---
+ arch/arm/boot/dts/nvidia/Makefile              |  1 +
+ .../dts/nvidia/tegra20-motorola-stingray.dts   | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts
+
+diff --git a/arch/arm/boot/dts/nvidia/Makefile b/arch/arm/boot/dts/nvidia/Makefile
+index e06048771..29886fe7f 100644
+--- a/arch/arm/boot/dts/nvidia/Makefile
++++ b/arch/arm/boot/dts/nvidia/Makefile
+@@ -29,6 +29,7 @@ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+ 	tegra20-medcom-wide.dtb \
+ 	tegra20-motorola-olympus.dtb \
+ 	tegra20-motorola-daytona.dtb \
++	tegra20-motorola-stingray.dtb \
+ 	tegra20-motorola-wingray.dtb \
+ 	tegra20-paz00.dtb \
+ 	tegra20-plutux.dtb \
+diff --git a/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts b/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts
+new file mode 100644
+index 000000000..7376c65e3
+--- /dev/null
++++ b/arch/arm/boot/dts/nvidia/tegra20-motorola-stingray.dts
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include "tegra20-motorola-xoom.dtsi"
++
++/ {
++	model = "Motorola Xoom (Stingray)";
++	compatible = "motorola,stingray", "motorola,xoom", "nvidia,tegra20";
++};
++
++&{/usb@c5000000} {
++	compatible = "nvidia,tegra20-udc";
++	dr_mode = "peripheral";
++};
++
++&{/usb-phy@c5000000} {
++	dr_mode = "peripheral";
++};
