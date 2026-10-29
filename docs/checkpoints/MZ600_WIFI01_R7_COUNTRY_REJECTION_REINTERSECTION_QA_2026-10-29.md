@@ -1,0 +1,36 @@
+# WIFI-01 r7: rejected-country firmware re-intersection — source/QA checkpoint (2026-10-29)
+
+**Status: source-only, unsigned review candidate. No live Xoom change, no production regulatory acceptance.** Issue-based amendment/rollback record: [WIFI-01 #4 r6→r7](https://github.com/Olsens11/XoomLinux7/issues/4#issuecomment-6501671996). Review source: [r7 four-member series](../../patches/upstream/review-wifi-four-logical-20261029-r7/README.md), with prior [r6 preserved](../../patches/upstream/review-wifi-four-logical-20261029-r6/README.md). The owner requires each logically scoped patch amendment to record exact behavior, evidence, tests, old/new commits and rollback **on its owning issue**, rather than only in the checkpoint.
+
+## Motivation and source equivalence
+
+Pinned Linux7 `net/wireless/reg.c` can recalculate each channel's flags from immutable `orig_flags` and current regulatory restrictions **before** calling `brcmf_cfg80211_reg_notifier()`. Original `brcmfmac` may fail ISO→firmware country translation or receive a firmware rejection of its `country` SET and return, leaving firmware at existing channel policy. r6 already re-intersected the firmware's current channel list on same-country `-EAGAIN`, but skipped these other cases. The kernel's [regulatory processing contract](https://wireless.docs.kernel.org/en/latest/en/developers/regulatory/processing_rules.html) requires board/firmware restrictions *in addition to*, never in place of, core restrictions; original Motorola May2012 firmware `WLC_GET_VALID_CHANNELS` was proven physically to return real channel inventory. This is **existing interface reuse**, not a new country-discovery API.
+
+The user-chosen philosophy is to preserve the original firmware and Linux sides and adapt only their existing compatibility boundary, using the closest proven OEM/Broadcom/upstream methods. The actual firmware `country` iovar independently read **US/US/rev0** in both generic and OEM 2012 binaries under unchanged NVRAM; only OEM exposed 5GHz. Factory `US/69` cannot be assumed necessary to expose dual band.
+
+## Exact source amendment
+
+- Pinned base `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`, project branch `wip/clean-wifi-bt-usb-20261025`.
+- r6 WIFI-01 source commit `db76db5766942799dbc96190210c6d345613a7cb`, integrated nine-member tip `5c7d32863fa31134cd7db1372f0cbca1ddee72ad`.
+- r7 WIFI-01 source commit **`03aa8212d60dc2e585a40a748749d6a324538401`**, integrated nine-member source tip **`c0fe77938192a33f186998b335892e70793ea826`**, in isolated desktop WSL `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/qa-wifi01-r7-source-20261029`.
+- Diff vs r6: only `drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c`, **22 insertions/9 deletions** in `brcmf_cfg80211_reg_notifier()`. Previously refresh on `-EAGAIN` only. Now BCM4329 calls existing private legacy-only `brcmf_bcm4329_refresh_legacy_channels()` for **any country translation failure** and after **firmware country SET rejection**. Standard non-BCM4329 firmware, successful country SET, modern `chanspecs` and the generic regulator are unchanged. Unexpected error from the channel requery is logged; **not falsely treated as unsupported or as permission**.
+- R6's atomic staged, additive-only `flags |=` legacy channel reconstruction and native `BCME_UNSUPPORTED=-23` discriminator remain intact. Unknown 5GHz metadata retains conservative `IEEE80211_CHAN_NO_IR`; no invented `RADAR` permissions. No new chronological patch. WIFI-02/03/04 have **identical stable patch IDs** to r6 (source-level proof); DT, BOOT and BigPart unchanged.
+- r7 four-member patches are published in the review directory with `[PATCH n/4]` subjects. Actual companion patch files reused unchanged from r6 (their stable patch IDs were independently verified), preserving exact history.
+
+## Source-only QA actually completed
+
+- The incremental r7 notifier change itself: `checkpatch.pl` **0 errors, 0 warnings, 0 checks** (44 lines). Complete r7 WIFI-01 patch: **0 errors / 0 warnings / 10 inherited continuation/alignment checks** (cleanup still needed); WIFI-02/03/04 each 0/0/0.
+- `git diff --check`, `git show --format= --check`, original logical nine-member source replay **PASS**; all three other Wi-Fi patches preserve exact Git stable patch IDs.
+- [Native firmware error fixture](../../tools/tests/test_bcm4329_fwerr_boundary_20261029.py) **7/7 PASS**; [regulatory lifecycle fixture](../../tools/tests/test_bcm4329_regulatory_lifecycle_20261029.py) PASS; [same-country staged model](../../tools/tests/test_bcm4329_same_country_refresh_20261029.py) **6/6 PASS**; [new r7 mapping-/SET-rejection source and model fixture](../../tools/tests/test_bcm4329_country_rejection_reintersection_20261029.py) **5/5 PASS**. Explicit fixture acknowledges **failed current-channel requery remains an OPEN safety issue**. These are source/API assertions and illustrative policy models, *not actual compiled C execution or regulatory compliance*.
+- Original ARM GNU GCC 14.3.1 BigPart-enabled configuration in new out-of-tree build `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/qa-wifi01-r7-build-20261029`: `olddefconfig`, `prepare`, `brcmfmac/` compile **PASS**. Complete full nine-member `zImage dtbs modules` **was running at first checkpoint publication**; do not claim full kernel, ABI equivalence or physical acceptance until recorded exit and independent `modprobe --dump-modversions` audit. Post a separate completed QA follow-up on GitHub issue #4 once known.
+
+## Explicit unresolved limitations
+
+1. **Non-successful firmware channel requery:** neither r7 nor the void notifier currently guarantees fail-closed handling if `WLC_GET_VALID_CHANNELS` fails after cfg80211 recalculation. An unconditional all-channel disable would disrupt already working 2.4GHz; choose a proven, tested source-backed treatment, not speculation.
+2. **Effective per-PHY regulatory rules:** default Broadcom custom alpha2 `99` has no reliable per-channel radar/passive/DFS metadata on this legacy firmware. No justification to remove the 5GHz `NO_IR` guard or claim unrestricted active scanning/association. The original `per_chan_info` six-format physical test yielded native `BCME_UNSUPPORTED`; `WLC_GET_VALID_CHANNELS` enumerates allowed channels, *not radar/passive permission flags*.
+3. **Concurrency and FW state transitions:** callback invoked after regulatory changes and firmware SET may fail asynchronously / unexpectedly; test under actual firmware only after source review and controlled owner-approved nonpermanent trial.
+4. **Upstream process:** ten checkpatch alignment checks, original separate DT review style debt, human DCO/Sign-off absent. WIFI-01 #4 stays OPEN.
+
+## Rollback
+
+For **source-only rollback**, reapply preserved [r6](../../patches/upstream/review-wifi-four-logical-20261029-r6/README.md) on a fresh pinned Linux7 checkout with original DT-01/02/03, ARM BOOT-01, WIFI-01 r6, unchanged WIFI-02/03/04 and STORAGE-01. Revalidate original nine-member r6 tip `5c7d32863fa31134cd7db1372f0cbca1ddee72ad` and [r6 ABI checkpoint](MZ600_WIFI01_R6_SAME_COUNTRY_ATOMIC_STAGE_QA_2026-10-29.md). Keep r6/r7 review files and issue comments. **No Xoom installation has occurred, so there is no on-device rollback.**
