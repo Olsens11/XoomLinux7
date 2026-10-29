@@ -16,6 +16,12 @@ Owner design rule: The clean-sheet implementation may **reuse or adapt a precise
 - The minimal Stingray wrapper changes only `model`, `compatible`, and main USB controller/PHY from Wingray OTG/host description to peripheral/gadget mode. The SDIO Wi-Fi mapping `mmc2=&sdmmc2`, regulator/pin control and other common electronics are preserved.
 - **Similar upstream convention:** NVIDIA Tegra already includes shared `tegra20-asus-transformer-common.dtsi` and `tegra20-motorola-mot.dtsi` for related variants. This is recognizable to DT maintainers, unlike a direct `.dts`-including-`.dts` shortcut which binds Stingray inheritance to Wingray's product identity.
 
+## Cellular exclusion and narrowed M1 hardware acceptance (owner decision)
+
+The owner explicitly excludes the **Verizon 3G CDMA modem** from the supported system: Verizon decommissioned CDMA January 3, 2023. This is a **service sunset**, not a claim that the radio frequencies became unused (licensed spectrum can be repurposed for LTE/5G). We therefore do **not** need modem driver initialization, modem-only USB host routing, modem network connectivity, or modem-specific power sequencing as M1 pass criteria. Maintain safe device hardware behavior and do not accidentally disable the shared BCM4329 SDIO path or the USB gadget/serial link.
+
+Focus variant verification on **USB device/gadget role**, CDMA-independent SDIO/power and GPIOs that serve Wi-Fi, correct model identity and preservation of Wingray's currently supported hardware semantics. The draft Stingray peripheral-mode USB override remains a *candidate* to verify with a guarded boot, not proof that modem-specific EHCI must be added. See [Verizon's official CDMA shutdown](https://www.verizon.com/business/support/services-and-apps/cdma-network-retire/).
+
 ## Compiled proof (offline only)
 
 - Build **untouched pinned-upstream Wingray** and the newly independently generated shared-DTSI prototype using the same ARM GNU toolchain, config and `make dtbs`: **both builds PASS**; prototype Stingray DTB also builds.
