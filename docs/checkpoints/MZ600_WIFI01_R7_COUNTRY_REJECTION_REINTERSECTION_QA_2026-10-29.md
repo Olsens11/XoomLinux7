@@ -17,6 +17,8 @@ The user-chosen philosophy is to preserve the original firmware and Linux sides 
 - R6's atomic staged, additive-only `flags |=` legacy channel reconstruction and native `BCME_UNSUPPORTED=-23` discriminator remain intact. Unknown 5GHz metadata retains conservative `IEEE80211_CHAN_NO_IR`; no invented `RADAR` permissions. No new chronological patch. WIFI-02/03/04 have **identical stable patch IDs** to r6 (source-level proof); DT, BOOT and BigPart unchanged.
 - r7 four-member patches are published in the review directory with `[PATCH n/4]` subjects. Actual companion patch files reused unchanged from r6 (their stable patch IDs were independently verified), preserving exact history.
 
+> **Completed-build addendum (2026-10-29):** Full nine-member `zImage dtbs modules` ARM cross-build **PASS exit 0** (607.18 seconds). `brcmfmac.ko` **345,060 bytes**, SHA256 `a9a8ca9b3303b747d39c519b4483d29a31d9717a48b7a5e706671108ee20d15a`; `zImage` **5,826,768 bytes**, SHA256 `812b9cbb4d8cafef86633a662994c0ecfd55430561780a96b2c555396dc2e36c`. Both Stingray and Wingray DTBs present. **Independent ABI audit PASS 259/259 matching imported CRCs**, exact original module vermagic, WCC byte-for-byte identical. Complete [issue #4 QA follow-up](https://github.com/Olsens11/XoomLinux7/issues/4#issuecomment-6501870041) is separate from the initial r6→r7 amendment ledger. These are OFFLINE results, **not physical/regulatory acceptance**.
+
 ## Source-only QA actually completed
 
 - The incremental r7 notifier change itself: `checkpatch.pl` **0 errors, 0 warnings, 0 checks** (44 lines). Complete r7 WIFI-01 patch: **0 errors / 0 warnings / 10 inherited continuation/alignment checks** (cleanup still needed); WIFI-02/03/04 each 0/0/0.
