@@ -1,7 +1,7 @@
 From 04f99a81a3c4ce27ff08e788aa06116b4c79ed2d Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 21:33:44 -0400
-Subject: [PATCH 3/5] wifi: brcmfmac: recover BCM4329 ESCAN terminals for
+Subject: [PATCH 3/4] wifi: brcmfmac: recover BCM4329 ESCAN terminals for
  active STA
 
 Some BCM4329 firmware reports a successful Event 69 terminal with a
