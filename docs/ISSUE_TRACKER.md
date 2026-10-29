@@ -8,6 +8,8 @@
 
 > **Subsequent source QA update, 2026-10-28:** [Issue #4](https://github.com/Olsens11/XoomLinux7/issues/4) now has a [versioned r2 revision of WIFI-01](../patches/upstream/review-wifi-four-logical-20261028-r2/README.md), with [source-only checkpoint](checkpoints/MZ600_WIFI01_R2_PER_CHAN_RESTRICTION_SOURCE_QA_2026-10-28.md). Strict lint and ARM brcmfmac object-prefix compile PASS; no physical proof, original nine-source installed, issue remains OPEN. Issue count and patch count remain independent. [Issue #1](https://github.com/Olsens11/XoomLinux7/issues/1) missing Band 2 remains a separate diagnostic pipeline.
 
+> **BCM4329 firmware metadata ABI investigation, 2026-10-28:** [OEM Xoom-to-modern channel metadata and regulatory contract](research/MZ600_BCM4329_LEGACY_CHANNEL_REGULATORY_CONTRACT_2026-10-28.md) and [offline fixtures](../tools/tests/test_bcm4329_channel_contract.py). Issue [#4](https://github.com/Olsens11/XoomLinux7/issues/4) still OPEN. Physical r2 modem query failed 0/35; r3 source-only conservative candidate is not finished. Prior owner-approved tests demonstrate firmware dual-band and historical OEM behavior; do not replay them. Next investigate exact vendor error, then 0x1024/0x1824/0x1b24 read-only inputs with unchanged firmware/country and complete rollback.
+
 # XoomLinux7 GitHub issue tracker — first population, 2026-10-28
 
 **[Open the live GitHub Issues board](https://github.com/Olsens11/XoomLinux7/issues)** · This file is an **as-of 2026-10-28 issue inventory**, not live telemetry. The repository's GitHub issue state is authoritative for subsequently opened/closed tickets. The user authorized populating the **personal development repository's** issue tracker, **not** submitting issues or signed patches to upstream Linux.
