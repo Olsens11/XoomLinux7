@@ -1,5 +1,8 @@
 # BCM4329 minimum-functional 2.4 GHz RFC — achievement milestones
 
+> **Seamless next-conversation handoff (2026-10-29):** [Comprehensive M0/M1 project checkpoint](../../handoffs/MZ600_BCM4329_MINIMAL_2GHZ_RFC_M1_COMPREHENSIVE_HANDOFF_2026-10-29.md). M0 complete, M1 open, M2–M7 pending; the clean source has zero new patches, the three DT proof commits remain isolated, and **all CDMA/3G/LTE modem support is excluded**.
+
+
 **Scope:** Normal Motorola Xoom MZ600 BCM4329 2.4 GHz STA operation through upstream Linux 7 `brcmfmac`/`cfg80211`; no unverified 5 GHz TX, no speculative recovery system. **Branch:** `rfc/bcm4329-minimal-2ghz-20261029`. **Status labels:** `[x]` evidence-based COMPLETE, `[ ]` still OPEN. A source/build pass cannot close a physical-behavior milestone.
 
 **Checkpoint rule:** Check an item off **only** when this branch's reproducible source, commit identity, source/build check and any required real hardware observation are linked. For an amendment, update the owning issue with exact old/new function/patch IDs, rationale, QA and rollback, then synchronize this file, `docs/ACTIVE_TEST_STATE.md`, `docs/status.md` and `runtime/PROJECT_STATE.env`. Preserve legacy r7 as READ-ONLY reference, not the parent of new implementation; no user identity/firmware or credentials committed.
