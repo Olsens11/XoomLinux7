@@ -22,7 +22,7 @@
 - [ ] **M1a** Identify exact shared Wingray/Stingray hardware, common Xoom properties and *actual* variant differences from pinned upstream, OEM history and source evidence. Keep the original Wingray functional representation intact.
   - [x] **Source equivalence:** generated 1,707-line common Xoom body from original upstream 1,711-line Wingray DTS; exact match to independently preserved research reference. [Evidence](M1_BOARD_PROOF.md).
   - [x] **Upstream style precedent:** shared `.dtsi` plus short board wrappers matches other pinned Tegra20 boards.
-  - [ ] Independently corroborate actual Stingray vs Wingray USB/power/radio differences with OEM/hardware evidence; old variant wrapper alone is not proof.
+  - [ ] Corroborate **only the board differences relevant to supported Linux functions** (BCM4329 Wi-Fi/SDIO, USB gadget/serial, boot and shared power) using OEM/hardware evidence; old variant wrapper alone is not proof. The legacy CDMA modem and its host USB route are explicitly out of scope.
 - [ ] **M1b** Build minimal, separately scoped binding/common-board/variant patches **from clean upstream**, not by cherry-picking old patch files; match upstream syntax/bindings and board-specific USB/SDIO/power behavior.
   - [x] **Disposable draft:** three separately committed **unaccepted** proof changes on local `rfc/m1-dt-study-20261029` branch: binding `0eae4a8c7`, common DTSI `2eaebe1df`, Stingray wrapper `0d4d7d316`. [Archived review patches](../../../patches/rfc/m1-board-proof-20261029/) and [issue ledger](https://github.com/Olsens11/XoomLinux7/issues/17#issuecomment-6503965844).
   - [ ] Check binding schema, exact variant hardware and reviewer-friendly patch structure before promoting any change into the untouched primary clean RFC Linux source.
@@ -34,7 +34,7 @@
   - [x] **M1 Xoom target schema:** kernel `dtbs_check` exit 0, targeted `dt-validate -l arm/tegra.yaml` on BOTH compiled Wingray/Stingray DTBs PASS without diagnostics; unrelated three-board compat warnings documented.
   - [x] **Inherited warnings assessed:** broad original/upstream vs refactored Wingray each has the same 66 diagnostic lines; no additional warnings introduced by refactor. This is NOT a whole-tree clean schema acceptance.
   - [ ] Independent variant-difference audit, other relevant binding requirements and final signed-off review still required.
-- [ ] **M1d** Controlled MZ600 boot with the new DTB, COM9/SDIO and normal system behavior, plus MZ604 Wingray regression gate when hardware is available; independent known-good recovery. **Never check complete on source-only evidence.**
+- [ ] **M1d** Controlled MZ600 boot with the new DTB, COM9 USB gadget/SDIO/Wi-Fi and normal system behavior, plus MZ604 Wingray regression when available; independent known-good recovery. **Do not require working CDMA/cellular USB host, modem drivers, or cellular service. Never check complete on source-only evidence.**
 
 **Status: IN PROGRESS — independent M1 source, DTB and targeted schema checks PASS; board-specific and physical gates remain open.** New [M1 issue #17](https://github.com/Olsens11/XoomLinux7/issues/17), [compiled proof and review record](M1_BOARD_PROOF.md), with older related [DT issue #10](https://github.com/Olsens11/XoomLinux7/issues/10). Previous r7 DT refactor is research evidence, **not** the new branch's implementation. No M1 code or physical acceptance is claimed by this initial roadmap.
 
