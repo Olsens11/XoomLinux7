@@ -65,12 +65,17 @@ def check_source(root):
     assert 'brcmf_fil_iovar_data_get_fwerr(ifp, "chanspecs"' in helper
     assert "fwerr == -BRCMF_BCM4329_FW_UNSUPPORTED" in helper
     assert "brcmf_bcm4329_legacy_channels(cfg, pbuf)" in helper
-    assert "if (err == -EAGAIN" in notifier
     assert "drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID" in notifier
     assert "brcmf_bcm4329_refresh_legacy_channels(cfg)" in notifier
-    assert notifier.index("if (err == -EAGAIN") < notifier.index(
-        'brcmf_fil_iovar_data_set(ifp, "country"'
-    )
+    # Older r6 guards only a same-country no-op; r7 expands the same
+    # existing compatibility hook to untranslatable alpha2 requests.
+    country_set = notifier.index('brcmf_fil_iovar_data_set(ifp, "country"')
+    if "if (err == -EAGAIN" in notifier:
+        assert notifier.index("if (err == -EAGAIN") < country_set
+    else:
+        assert notifier.index("brcmf_translate_country_code(") < country_set
+        assert notifier.count("brcmf_bcm4329_refresh_legacy_channels(cfg)") == 2
+        assert "Firmware rejected country setting" in notifier
     assert "brcmf_setup_wiphybands(cfg);" in notifier
     print("R6_SOURCE_CONTRACT_PASS: legacy-only matching-country refresh, atomic flag commit, no restriction clearing")
 
