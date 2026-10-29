@@ -1,0 +1,44 @@
+# MZ600 actual BCM4329 runtime firmware country: US / US / rev 0 — physical read-only PASS (2026-10-29)
+
+**Status: hardware country-iovar readback PASS; automatic original-radio restoration PASS; separately executed independent postflight PASS.** Source-only diagnostic was compiled in original exact-nine baseline, temporarily RAM-loaded in a one-use lab trial, then removed. The installed, connected Linux7 system is unchanged; no firmware write, country set, calibration write, RF scan, TX-power modification, kernel flash, boot change, or persistent module installation occurred.
+
+## What was asked and why
+
+The MZ600 OEM HRI39 and HRI66 factory calibration source files both contain `ccode=US` and `regrev=69`, but the currently running generic `brcmfmac4329-sdio.txt` was deliberately built without those entries. Linux's **global US** and Broadcom phy's **custom country 99** do not disclose firmware's actual `country` iovar revision. The proprietary Broadcom embedded firmware can use a distinct country-revision mapping. Earlier Oct29 attempt to stage a prepared read-only module timed out on COM9 **before any module upload**; the owner subsequently reported successfully reaching root at the COM9 terminal and disconnecting using Ctrl+].
+
+**Test objective:** Read actual `country_abbrev`, `ccode`, and `regrev` from the **currently installed generic firmware** without changing them; prove full driver and Wi-Fi restoration afterwards. This isolates the startup-country discrepancy before selecting an OEM-preserving interface fix.
+
+## Exact identities and known baseline
+
+- Device: original Linux7 test **Motorola Xoom MZ600**, ARMv7 Tegra20 BCM4329; Surface Book 2 exclusive COM9 USB serial 115200 root shell.
+- Kernel: `7.0.0-next-20260422+`; persistent Debian root `/dev/mmcblk0p10` **ext4**; existing installed original nine-review Wi-Fi remains connected via NetworkManager.
+- Generic firmware: Broadcom **4.220.48**, original installed path `/lib/firmware/brcm/brcmfmac4329-sdio.bin`, SHA256 `d61983946b1e733e4c75dbe6841ac0f1250ebed2e3ee9058cdfdbbba3ba37c93`; not replaced during this trial.
+- Installed sanitized calibration `brcmfmac4329-sdio.txt`: SHA256 `a8715bb1ebe3c6e69c40781d58207326b71721dea4594acb8d37e935acef76cb`; **no ccode/regrev fields**, as separately established in prior read-only audit.
+- Installed original `brcmfmac.ko`: SHA256 `5e767d47017ff9028e6c364f8325420b0fc79efd1c1e07d36595fb4fd0540d26`; WCC `brcmfmac-wcc.ko`: SHA256 `eb9aa7efc8d9e356088aa9693cf1937c8c7e1a65dcd0193618915521b7a048b9`.
+- Lab **read-only country diagnostic** overlay [single-source patch](../../tools/diagnostics/mz600-country-iovar-readonly-lab-only-20261029.patch), source-only built from exact nine-member pinned Linux7; 342864-byte `brcmfmac.ko`, SHA256 **`e542bdbd5bb25167a15138d977df2e68d93db9fb509c0f23526bfad19b368424`**, 259/259 imported core and 7/7 WCC CRC comparisons previously PASS. The overlay does one `brcmf_fil_iovar_data_get(ifp, "country", &cc, sizeof cc)` during `brcmf_cfg80211_attach()`, restricted to BCM4329; no setters.
+- Private host artefacts and raw COM9 log are on Surface in `C:\Users\olsen\xoom-linux-rom\captures\MZ600-COUNTRY-RO-20261029-D\`: `owner.py`, `country-owner-once.sh`, `country-D-private.txt`, `country-D-receipt.json`, `independent-postflight-private.txt`. **Do not publish private full console output, SSIDs, MACs, serials or private firmware.**
+
+## Exact staged, one-use test and measured response
+
+1. Three independent short COM9 commands after owner released terminal: UID `0`, expected uname `7.0.0-next-20260422+`, `/dev/mmcblk0p10 ext4` **PASS**; serial released on every command.
+2. Previous long single-line serial preflight timed out; newly chunked **short read-only** commands passed all baseline gates: exact four original SHA hashes, original connected WLAN, active NetworkManager and wpa_supplicant, inactive Bluetooth (HCI present but DOWN), no unexpected firmware/module bind mounts, new one-use marker.
+3. Desktop WSL exact target lab module staged through standard short-lived LAN 43157 transfer; Surface independently verified size 342864 and exact SHA above; only exact verified server process stopped, listener closed, desktop temporary staging folder removed.
+4. Via COM9 SHA-checked gzip/base64 receiver, staged lab module **only to** `/run/mz600-country-ro-20261029-D-core.ko`; remote SHA/size independently PASS. No installed-file change during staging.
+5. `bash -n` one-use shell validated before arming the trial. Shell preflight again verified UID, root FS, original installed four SHA hashes, connected Wi-Fi, BT idle, no overlays and staged artifact SHA. One-use marker created only after all prechecks.
+6. Guarded shell stopped NetworkManager/wpa_supplicant, brought wlan0 down, unloaded WCC/core/util, loaded RAM lab core using existing **generic firmware and NVRAM** (no firmware overlay), reloaded WCC, then read dmesg for exact `MZ600_COUNTRY_READ` marker. `wlan0` present, **one** country readback captured; no RF scan or country SET.
+7. **Measured firmware iovar: `err=0 abbrev=US ccode=US regrev=0`.** This is the first validated physical **generic firmware country-revision readback** on this installation. It is independent of `iw reg get` and does not indicate permission to transmit. The value is **US/0, not the original Motorola US/69 NVRAM default**.
+8. Automatic EXIT cleanup executed after the successful query with `initial_rc=0`: original installed firmware/NVRAM/core/WCC SHA unchanged; `modprobe brcmutil`, `modprobe brcmfmac`, `modprobe brcmfmac-wcc`, start wpa_supplicant, start NetworkManager each rc=0; `wlan0` returned `100 (connected)`; staged RAM `.ko` removed. Final `MZ600_COUNTRY_D_FINAL_ORIGINAL_RUNTIME_RESTORED_initial_rc=0` captured.
+9. A **separate postflight process** re-opened COM9 and rechecked root, p10 ext4, original connected Wi-Fi, three expected loaded module names, four original SHAs, no firmware/module overlays, removed RAM module and consumed trial marker. **Independent postflight PASS; COM9 released.**
+
+No attempt was made to call `iw reg set`, modify country/rev, bind OEM firmware, scan 5 GHz, flash, or touch the installed boot/partition images. The lab trial disconnected Wi-Fi temporarily by design and successfully restored it.
+
+## Root cause implications / what remains unproven
+
+1. **Confirmed configuration mismatch:** The current generic firmware initializes as `country_abbrev=US, ccode=US, regrev=0`; OEM MZ600 factory archives specify `US/69`. This establishes a real difference but **does not itself establish that US/0 violates current rules or prevents 5 GHz**. Firmware version/board mapping validity and RF certification still must be checked.
+2. In pinned `brcmf_translate_country_code()`, an already-matching `country_abbrev=US` returns `-EAGAIN` **before consulting DT revision**. Therefore a simple `brcm,ccode-map="US-US-69"` **alone is insufficient** to correct a wrong *initial* US revision; the original factory NVRAM defaults / supported OEM firmware need to be evaluated first. No generic country-translation code rewrite is yet justified.
+3. Verified [original Motorola 2011 Stingray country-map callback](../research/MZ600_BCM4329_REGULATORY_OEM_LINUX7_AUDIT_2026-10-25.md) is *dynamic*, not a universal hardcoded US rule. Keep the stock modern `brcm,ccode-map` + notifier for legitimate country changes where board-specific mappings are verified. No universal trivial ISO→ISO rev0 fallback (documented Broadcom upstream regression).
+4. WIFI-01 independently still needs a narrow `WLC_GET_VALID_CHANNELS` fallback, truthful native error classification, and no synthetic `per_chan_info` flags. Do not freeze a current country-limited channel list into permanent hardware restrictions. The physical OEM firmware **35-channel dual-band list** previously proven under 2012 firmware is not changed by this test.
+5. **Open minimal next gate:** exact OEM vs generic firmware/NVRAM compatibility analysis first, then a future owner-approved RAM-only test of whether the currently running firmware accepts the *original* US/69 calibration at initialization, with independently verified rollback. No regulatory writes just to reach a desired value. Only if it proves necessary should an upstream driver-level check of already-matching ISO but wrong rev be considered, and only in the proper ownership scope.
+6. A reported global Linux US with phy6 driver-custom 99 remains a separate regulatory-layer question. Validate current signed regdb acceptance and proper driver channel flags before claiming safe production 5 GHz scanning/association.
+
+**Project disposition:** Actual read-only radio identity test **PASS with independent rollback**; issue [WIFI-01 #4](https://github.com/Olsens11/XoomLinux7/issues/4) remains OPEN; original nine installed, WIFI-01 r3 unsigned/unaccepted, no new kernel patch or device tree installed; human DCO not provided.
