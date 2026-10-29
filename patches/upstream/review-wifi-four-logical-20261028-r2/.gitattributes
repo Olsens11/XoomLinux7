@@ -1,0 +1,2 @@
+# Exported format-patch mail contains context whitespace; inspect via kernel checkpatch.
+*.patch -whitespace

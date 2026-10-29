@@ -1,3 +1,5 @@
+> **Subsequent source QA update, 2026-10-28:** [Issue #4](https://github.com/Olsens11/XoomLinux7/issues/4) now has a [versioned r2 revision of WIFI-01](../patches/upstream/review-wifi-four-logical-20261028-r2/README.md), with [source-only checkpoint](checkpoints/MZ600_WIFI01_R2_PER_CHAN_RESTRICTION_SOURCE_QA_2026-10-28.md). Strict lint and ARM brcmfmac object-prefix compile PASS; no physical proof, original nine-source installed, issue remains OPEN. Issue count and patch count remain independent. [Issue #1](https://github.com/Olsens11/XoomLinux7/issues/1) missing Band 2 remains a separate diagnostic pipeline.
+
 # XoomLinux7 GitHub issue tracker — first population, 2026-10-28
 
 **[Open the live GitHub Issues board](https://github.com/Olsens11/XoomLinux7/issues)** · This file is an **as-of 2026-10-28 issue inventory**, not live telemetry. The repository's GitHub issue state is authoritative for subsequently opened/closed tickets. The user authorized populating the **personal development repository's** issue tracker, **not** submitting issues or signed patches to upstream Linux.
