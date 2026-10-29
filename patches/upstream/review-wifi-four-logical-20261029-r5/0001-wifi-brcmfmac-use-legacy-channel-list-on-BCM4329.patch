@@ -1,7 +1,7 @@
 From c2cd9da91f3af0afa7cc8b5aa543b3f3b101241b Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 20:49:33 -0400
-Subject: [PATCH 1/5] wifi: brcmfmac: use legacy channel list on BCM4329
+Subject: [PATCH 1/4] wifi: brcmfmac: use legacy channel list on BCM4329
 
 Some older BCM4329 firmware rejects the 'chanspecs' iovar with
 BCME_UNSUPPORTED, while WLC_GET_VALID_CHANNELS returns valid
