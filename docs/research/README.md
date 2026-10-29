@@ -1,3 +1,5 @@
+- **[2026-10-29 ABI follow-through and live baseline preflight](../checkpoints/MZ600_WIFI01_BCME_ABI_DIAGNOSTIC_SOURCE_AND_PREFLIGHT_2026-10-29.md)** — read-only p10/WLAN/COM9 SHA verification PASS, [bounded six-query raw-BCME source-only probe](../../tools/diagnostics/README-MZ600-WIFI01-BCME-ABI-20261029.md) cleanly applies to pinned r3 scratch source. ARM compile/physical A/B not performed.
+
 - **[2026-10-29 WIFI-01 r3 firmware-error/IOCTL ABI source audit](MZ600_WIFI01_R3_FWERR_COLLAPSE_AND_IOCTL_ABI_SOURCE_AUDIT_2026-10-29.md)** — pinned `fwil.c` collapses distinct native BCME errors to `-EBADE`; r3 mislabels that as `per_chan_info` unsupported. Existing `fwil_fwerr` source precedent and legacy WLC_GET_VERSION conversion suggest a small, read-only, error-preserving diagnostic. Source-only; no kernel/hardware tests or new patch.
 
 # Research index — evidence before implementation
