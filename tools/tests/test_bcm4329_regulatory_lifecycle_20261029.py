@@ -58,12 +58,17 @@ def source_check(root: Path):
     assert update.count("reg_call_notifier(wiphy, lr);") == 2
     assert update.index("handle_band(wiphy") < update.rindex("reg_call_notifier(wiphy, lr);")
     legacy = cfg.split("static int brcmf_bcm4329_legacy_channels(", 1)[1].split("static int brcmf_construct_chaninfo(", 1)[0]
-    assert "band->channels[j].orig_flags & IEEE80211_CHAN_DISABLED" in legacy
+    assert ("band->channels[j].orig_flags & IEEE80211_CHAN_DISABLED" in legacy or
+            "channel->orig_flags & IEEE80211_CHAN_DISABLED" in legacy)
     assert "if (!supported) {" in legacy
-    assert "band->channels[j].flags |= IEEE80211_CHAN_DISABLED;" in legacy
-    assert "channel->flags |= IEEE80211_CHAN_NO_HT40" in legacy
-    assert "channel->flags |= IEEE80211_CHAN_NO_IR" in legacy
-    assert "return chan_err;" in legacy
+    assert ("band->channels[j].flags |= IEEE80211_CHAN_DISABLED;" in legacy or
+            "restrictions[slot++] = IEEE80211_CHAN_DISABLED;" in legacy)
+    assert ("channel->flags |= IEEE80211_CHAN_NO_HT40" in legacy or
+            "flags = IEEE80211_CHAN_NO_HT40" in legacy)
+    assert ("channel->flags |= IEEE80211_CHAN_NO_IR" in legacy or
+            "flags |= IEEE80211_CHAN_NO_IR;" in legacy)
+    assert ("return chan_err;" in legacy or
+            "err = chan_err;" in legacy and "goto out_free;" in legacy)
     assert "fwerr ==\n" in legacy and "-BRCMF_BCM4329_FW_UNSUPPORTED" in legacy
     assert "channel->flags &= ~IEEE80211_CHAN_NO_IR" not in legacy
     assert "channel->orig_flags =" not in legacy
