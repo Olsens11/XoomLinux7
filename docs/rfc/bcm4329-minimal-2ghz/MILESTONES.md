@@ -30,10 +30,13 @@
   - [x] **DTB compilation:** pinned-original Wingray and independently built shared-DTSI Wingray/Stingray all compile in separate ARM out-of-tree builds.
   - [x] **Wingray preservation:** original vs draft `dtc -s` sorted DTB node/property representations exactly identical; raw bytes legitimately differ.
   - [x] **Stingray historical parity:** new compiled Stingray DTB (61,076 bytes, SHA256 `c70d22c06efa3607f132027588c6c6cd34518a4c1e1dff83c125cfa25409f5aa`) byte-identical to earlier reference build. This is **not** a current physical boot PASS.
-  - [ ] `dt_binding_check`, `dtbs_check`, explicit variant-difference audit and final signed-off review still required.
+  - [x] **M1 binding validation:** `dt-doc-validate` and targeted kernel `dt_binding_check` for `tegra.yaml` PASS, exit 0, no diagnostics. [Exact commands and environment](M1_DTSCHEMA_VALIDATION_2026-10-29.md).
+  - [x] **M1 Xoom target schema:** kernel `dtbs_check` exit 0, targeted `dt-validate -l arm/tegra.yaml` on BOTH compiled Wingray/Stingray DTBs PASS without diagnostics; unrelated three-board compat warnings documented.
+  - [x] **Inherited warnings assessed:** broad original/upstream vs refactored Wingray each has the same 66 diagnostic lines; no additional warnings introduced by refactor. This is NOT a whole-tree clean schema acceptance.
+  - [ ] Independent variant-difference audit, other relevant binding requirements and final signed-off review still required.
 - [ ] **M1d** Controlled MZ600 boot with the new DTB, COM9/SDIO and normal system behavior, plus MZ604 Wingray regression gate when hardware is available; independent known-good recovery. **Never check complete on source-only evidence.**
 
-**Status: IN PROGRESS — independent M1 source proof passed; board/schema/physical gates remain open.** New [M1 issue #17](https://github.com/Olsens11/XoomLinux7/issues/17), [compiled proof and review record](M1_BOARD_PROOF.md), with older related [DT issue #10](https://github.com/Olsens11/XoomLinux7/issues/10). Previous r7 DT refactor is research evidence, **not** the new branch's implementation. No M1 code or physical acceptance is claimed by this initial roadmap.
+**Status: IN PROGRESS — independent M1 source, DTB and targeted schema checks PASS; board-specific and physical gates remain open.** New [M1 issue #17](https://github.com/Olsens11/XoomLinux7/issues/17), [compiled proof and review record](M1_BOARD_PROOF.md), with older related [DT issue #10](https://github.com/Olsens11/XoomLinux7/issues/10). Previous r7 DT refactor is research evidence, **not** the new branch's implementation. No M1 code or physical acceptance is claimed by this initial roadmap.
 
 ## M2 — Device identity, firmware load and normal WLAN registration
 
