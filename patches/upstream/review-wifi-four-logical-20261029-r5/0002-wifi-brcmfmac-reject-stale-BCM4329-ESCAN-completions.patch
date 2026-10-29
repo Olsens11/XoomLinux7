@@ -1,7 +1,7 @@
 From 15b030e6e3f682cc18cf7f14811c3786f749cad0 Mon Sep 17 00:00:00 2001
 From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
 Date: Tue, 27 Oct 2026 21:33:43 -0400
-Subject: [PATCH 2/5] wifi: brcmfmac: reject stale BCM4329 ESCAN completions
+Subject: [PATCH 2/4] wifi: brcmfmac: reject stale BCM4329 ESCAN completions
 
 Older BCM4329 firmware can return successful ESCAN terminals after a
 later scan has started. A reused fixed sync ID cannot distinguish a
