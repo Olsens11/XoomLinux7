@@ -1,0 +1,31 @@
+# BCM4329 WIFI-01 r7: re-intersect firmware channels on rejected country updates
+
+**Review-only, source-tested, uninstalled, unsigned, NOT approved for live RF/regulatory operation.** The required exact issue-linked change/rollback record is [WIFI-01 #4 r6→r7](https://github.com/Olsens11/XoomLinux7/issues/4#issuecomment-6501671996). This new four-member Wi-Fi directory preserves the [complete r6 rollback reference](../review-wifi-four-logical-20261029-r6/README.md) without replacing or deleting it. R7 only amends the existing WIFI-01 logical issue.
+
+## Why this amendment is needed
+
+Linux Wireless [regulatory processing rules](https://wireless.docs.kernel.org/en/latest/en/developers/regulatory/processing_rules.html) require driver hardware and firmware channel constraints to intersect with the core's calculated regulatory rules. In pinned Linux 7, cfg80211 can recalculate `channel->flags` from `orig_flags` **before** `brcmf_cfg80211_reg_notifier()` runs. The existing r6 BCM4329-specific notifier refreshed on **same-country `-EAGAIN`** only; however a *non-mapped* ISO→firmware country translation or a **firmware-rejected country SET** also leaves firmware on its current country while the core may have newly recalculated channel permissions. Original Motorola 2012 BCM4329 firmware had a real working `WLC_GET_VALID_CHANNELS` list; r4/r5/r6 already established per-call raw BCME error capture and atomic, additive-only channel flag staging.
+
+## One logical scope / exact source diff
+
+Only `drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c` function `brcmf_cfg80211_reg_notifier()`, **22 inserted / 9 deleted lines** compared with r6:
+
+1. On **any translation error** (including former `-EAGAIN` and no mapping), BCM4329 re-runs its existing `brcmf_bcm4329_refresh_legacy_channels()`; non-BCM4329 behavior is unchanged.
+2. After a **rejected firmware country SET**, BCM4329 likewise attempts the same already-tested-source legacy-only query before returning. It does not issue a second country SET, change the requested country, overwrite Linux permissions or change the successful-country path.
+3. The helper checks native **`BCME_UNSUPPORTED=-23`** from `chanspecs` before invoking legacy `WLC_GET_VALID_CHANNELS`; other errors are logged rather than guessed. The previous r6 helper stages restrictions and commits them only after successful bounded firmware queries, using **bitwise OR, never clears cfg80211 restrictions**, retains original hardware-disabled channels and conservatively applies `NO_IR` on unknown-metadata 5GHz.
+4. WIFI-02/03/04 are unchanged; compared against r6 using stable `git patch-id --stable`, **all three match**. Their exact r6 review-file contents were reused here. No new fifth Wi-Fi patch and no changes to DT, ARM, BigPart or common country code outside this one notifier.
+
+Exact source history: r6 amended WIFI-01 commit `db76db5766942799dbc96190210c6d345613a7cb`, nine-member r6 tip `5c7d32863fa31134cd7db1372f0cbca1ddee72ad`; r7 WIFI-01 commit **`03aa8212d60dc2e585a40a748749d6a324538401`**, nine-member source tip **`c0fe77938192a33f186998b335892e70793ea826`**. Pinned upstream `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`. Desktop WSL source `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/qa-wifi01-r7-source-20261029`; build `qa-wifi01-r7-build-20261029`.
+
+## Tests and open gates
+
+- Exact incremental r7 notifier `checkpatch`: **0 errors, 0 warnings, 0 checks**. Full WIFI-01 email patch: 0 errors/warnings, **10 inherited alignment CHECKs**. WIFI-02/03/04 each 0/0/0; their stable patch IDs match r6.
+- Offline source/model suites: native raw firmware status **7/7 PASS**, original cfg80211 registration/regulatory lifecycle PASS, r6 same-country + staged flags **6/6 PASS**, [r7 rejected/unmapped country source/model](../../../tools/tests/test_bcm4329_country_rejection_reintersection_20261029.py) **5/5 PASS**, including explicitly modeled unresolved failed firmware requery. These are *illustrative models* and source contracts, not C execution or real on-device regulatory behavior.
+- ARM GCC 14.3.1 `olddefconfig`, `prepare` and `brcmfmac/` source-directory compile **PASS**. Complete nine-member `zImage dtbs modules` in its fresh out-of-tree directory **was running when this README was created**; complete success and ABI claims require separate verification, then a follow-up on [issue #4](https://github.com/Olsens11/XoomLinux7/issues/4).
+- **Blocking risk:** If the `chanspecs` discriminator, `GET_VALID_CHANNELS`, or optional per-channel query returns an unexpected error, the notifier is `void` and may not be able to reapply old firmware exclusions. R7 only logs the failed requery; **this is not fail-closed completeness**. Never infer authorization from it. The custom Broadcom PHY domain `99` has no reliable per-channel DFS/NO_IR metadata; unknown-metadata 5GHz retains broad `NO_IR` and is **not accepted for normal unrestricted active operation**.
+- Need additional source/vendor research, runtime-locking audit, failure-handling design, exact regulatory rules verification, alignment cleanup, physical accepted-rules/DFS tests and owner-approved limited RAM-only trial **before** upstream submission. Human DCO/Signed-off-by absent.
+- **No new tablet access** (no COM9, radio swap, kernel/boot flash, country SET, scan or firmware update). The original nine-member Linux7 on p10 with working generic Wi-Fi remains the last independently verified hardware baseline.
+
+## Rollback, unambiguous
+
+Select the unchanged [r6 patch directory](../review-wifi-four-logical-20261029-r6/README.md), not a reversed partial edit to r7. Recreate a disposable source worktree at pinned Linux 7; apply DT-01/02/03, ARM BOOT-01, r6 WIFI-01/02/03/04 and STORAGE-01 in original nine-member order. Compare with r6 nine-member tip `5c7d32863fa31134cd7db1372f0cbca1ddee72ad` and module SHA256 `2879fb1ebe269a2c4d0eba6ded32487a38be68f47edfdd401ca87776ba73806f`. Preserve both directories and the [source test/rollback issue ledger](https://github.com/Olsens11/XoomLinux7/issues/4#issuecomment-6501671996). Since r7 is **not on the tablet**, rollback is **offline source selection only**.
