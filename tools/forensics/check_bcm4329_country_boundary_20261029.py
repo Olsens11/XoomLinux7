@@ -59,7 +59,8 @@ def main():
             "fwil normalizes multiple native firmware errors to -EBADE")
     require("chan->orig_flags" in reg and "flags = chan->orig_flags" in reg,
             "cfg80211 regulatory updates use registration-time original flags")
-    require("chan->orig_flags = chan->flags" in core,
+    require("sband->channels[i].orig_flags =" in core and
+            "sband->channels[i].flags;" in core,
             "cfg80211 captures original channel flags at registration")
     print("SOURCE_CONTRACT_CHECKS_COMPLETE: no writes, no RF, no production acceptance")
 
