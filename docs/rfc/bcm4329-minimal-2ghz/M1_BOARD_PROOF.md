@@ -25,6 +25,18 @@ Owner design rule: The clean-sheet implementation may **reuse or adapt a precise
 - `git diff --check` succeeds on the small binding and Stingray changes. Copying the unchanged 1700-line upstream shared DTS body naïvely into a new file causes old whitespace to appear as newly added lint; **`git diff --cached -C --find-copies-harder --check`** passes and displays a **99%-identical copy** instead. Avoid cosmetic cleanup of 1700 unrelated lines in functional patch. Review exact extended copy-aware patch output before submission.
 - **Not yet done:** `dt_binding_check`, `dtbs_check`, compatible/schema acceptance, independent OEM-confirmed MZ600/MZ604 board differentiation, live USB/SDIO boot, MZ604 Wingray physical regression. M1 remains OPEN.
 
+## Archived review patch and exact current style/schema gates
+
+The three **unaccepted** copy-aware `git format-patch` artifacts are archived under [`patches/rfc/m1-board-proof-20261029/`](../../../patches/rfc/m1-board-proof-20261029/). They reproduce the three clean pinned-upstream-derived study commits, including extended `copy from` and `copy to` headers describing the **99% identical** common-board source. This is **a prototype**, not the canonical functional RFC series.
+
+Initial `checkpatch.pl --no-tree --no-signoff` on those archived study patches:
+- DT binding: **0 errors, 1 warning** (commit description missing).
+- Shared DTSI/Wingray extraction: **0 errors, 2 warnings** (commit description missing; verify MAINTAINERS ownership for the moved common file).
+- Stingray wrapper/Makefile: **0 errors, 2 warnings** (commit description missing; verify MAINTAINERS ownership for new DTS).
+- Git's normal plain diff treats inherited 1700-line DTS body as new and raises old upstream whitespace; copy-aware `-C --find-copies-harder --check` **PASS**, leaving original board content unchanged. Reviewer-friendly copy detection and meaningful commit descriptions remain explicit pre-promotion work.
+
+An actual `make DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/tegra.yaml dt_binding_check` was attempted against the study branch. It stopped **before any schema validation** with `Error: 'dt-doc-validate' not found!` because this build host lacks the Python `dtschema` tool. **M1 schema validation remains PENDING, not PASS or a detected schema defect.** The separate `make dtbs` DT compiles remain PASS.
+
 ## Design decision / what not to import
 
 The correct minimal new board-support shape is a standard shared Xoom `.dtsi`, tiny Wingray and Stingray variant wrappers, a single Stingray DTB Makefile entry and a matching binding. The large shared body exists because the upstream Wingray description is large; it is **not** 1700 lines of new radio logic. A familiar upstream structure and compiled Wingray preservation justify the reuse conceptually.
