@@ -1,0 +1,33 @@
+# XoomLinux7: upstream-first BCM4329 Wi-Fi RFC — Motorola Xoom MZ604 (Wingray)
+
+**Decision date:** 2026-10-29. **Selected first-development and first-RFC hardware: Motorola Xoom MZ604, Wi-Fi-only, Wingray.** The owner's other Xoom variants, including the previously developed MZ600, remain available for later regression/extension. This selection supersedes the MZ600-first *target* on this branch; it does not erase its historical experiments, source, issues or documented hardware results.
+
+## Why MZ604 is the lowest-risk first target
+
+At pinned upstream `xoom-linux/linux@2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`, the build already includes `arch/arm/boot/dts/nvidia/tegra20-motorola-wingray.dts` and its DTB Makefile entry. The existing 1711-line DT describes the Xoom/BCM4329 Wi-Fi SDIO child (`mmc@c8000200/wifi@1`, `brcm,bcm4329-fmac`), its 32-kHz power sequence, reset, supplies, clock and host wake GPIO. Upstream `brcmfmac` already recognizes BCM4329 SDIO and supports firmware loading, regular cfg80211 scan/STA/connection and regulatory handling. This is a device-tree **source baseline**, not yet proof the MZ604 boots or has functional Wi-Fi in the exact RFC build.
+
+The MZ600 is the CDMA/3G model (`stingray_cdma` in common historical names), while the MZ602 is LTE (`stingray`); neither should be conflated with the MZ604 Wingray. MZ604 eliminates a cellular-modem subsystem and the proposed Stingray variant DTS/common-Xoom refactor from the first functional submission, unless evidence independently makes a common refactor necessary. No CDMA/LTE modem driver, firmware or RF research is in scope.
+
+## First contribution philosophy
+
+1. **Start from the unchanged upstream Wingray DTS and existing brcmfmac.** Do not start from r7 or the earlier three M1 draft commits, even though those are preserved for evidence. Do not refactor 1700 lines merely to introduce common-board representation when there is only one targeted board.
+2. Make a source and historical **gap ledger**: upstream already works / demonstrably broken on exact selected firmware and MZ604 / missing physical evidence / deferred. Record exact command/ABI, upstream counterpart and closest accepted fix before any new implementation.
+3. Prefer **zero changes** for firmware loading, power sequence, USB and board description until an MZ604-specific failing requirement is demonstrated. Do not copy MZ600 vendor ATAG MAC assumptions onto MZ604. Keep genuine per-device MAC and OEM board calibration; proprietary firmware/NVRAM remain private.
+4. The principal **candidate** driver incompatibility is BCM4329 legacy firmware's lack of modern `chanspecs`; old MZ600 hardware found `BRCMF_C_GET_VALID_CHANNELS`, but that evidence **does not prove** which exact firmware ABI is present on MZ604. Measure before selecting a patch. Preserve current firmware/modern driver paths and native Broadcom error status.
+5. Target normal automatically initialized **2.4 GHz** STA, repeatable fresh scans, WPA2, DHCP/data, and reconnection across boots. Preserve real hardware/firmware/regulatory restrictions, and prohibit unqualified 5 GHz TX; `NO_IR` alone is not a universal prohibition on station TX. No speculative cache/retry worker, 5 GHz DFS, Bluetooth/FM, or storage BigPart in the first Wi-Fi RFC.
+6. One coherent logical problem per upstream patch. If firmware scan owner/event and conditional-UP fixes prove necessary, prefer the smallest conventional driver correction backed by MZ604-specific traces. Never require hypothetical fixes in advance.
+7. Do source/DTB/build/schema and bounded offline negative tests before any guarded physical experiment; do not flash, reboot, reconfigure radio, or touch another device without separately scoped explicit physical approval. Protect the MZ600 p10 Debian system, p7/p8 fallback and Recovery Toolkit device. Choose a healthy, identified MZ604 and preserve its stock/boot/recovery baseline before testing.
+8. No firmware blobs, actual MAC/SSID/credentials, or unreviewed logs in public Git. No AI-generated human DCO signoff; public upstream submission only after owner review/approval.
+
+## Source identities and preservation
+
+- **New independent MZ604 Linux source worktree**: `/home/xoomdev/xoom-linux-rom/rfc-bcm4329-upstream-first-20261029`, branch `rfc/bcm4329-upstream-first-20261029`, original pinned upstream `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`. No new Linux source patch is yet accepted.
+- **Historical earlier MZ600 clean source**: `/home/xoomdev/xoom-linux-rom/rfc-bcm4329-minimal-2ghz-20261029`; prior M1 separate study worktree: `/home/xoomdev/xoom-linux-rom/rfc-m1-dt-proof-20261029` (three unsigned unaccepted commits). Keep unchanged.
+- **Original MZ600 nine-patch r7**: `/home/xoomdev/xoom-linux-rom/clean-wifi-bt-usb-20261025/qa-wifi01-r7-source-20261029`; retain historic patch IDs, experiments, diagnostics and rollback.
+- **Project documentation** on this GitHub branch inherits older files and still contains MZ600-era checklists; they are historical **not** the new active target. **This document and the adjacent MZ604-first MILESTONES.md are authoritative for this branch**.
+
+## First-next-step contract
+
+Perform read-only comparison of the Wingray DT and baseline brcmfmac to the exact MZ604 board/stock OEM firmware layout, choose a specific healthy MZ604, and establish source/identity/checkpoint evidence. Only then decide whether any device-tree amendment is necessary. Reproduce legacy `chanspecs`/scan/power/regulatory incompatibilities on **MZ604** before claiming an MZ600-tested change is required.
+
+References: [upstream Wingray source](https://github.com/xoom-linux/linux/blob/2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3/arch/arm/boot/dts/nvidia/tegra20-motorola-wingray.dts); [earlier M1 board proof](../bcm4329-minimal-2ghz/M1_BOARD_PROOF.md); [initial 2.4 GHz scope](../../plans/MZ600_BCM4329_MINIMUM_FUNCTIONAL_2GHZ_UPSTREAM_RFC_SCOPE_2026-10-29.md); [MZ600 firmware precedent audit](../../research/MZ600_WIFI01_EXTERNAL_UPSTREAM_OEM_PRECEDENTS_2026-10-29.md).
