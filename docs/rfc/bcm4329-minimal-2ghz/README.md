@@ -9,6 +9,10 @@ Implement the *smallest complete, correct* BCM4329 Wi-Fi integration that makes 
 
 The central upstream strategy is to get a **functional, verifiable foundation into RFC review**, so maintainers can shape the initial architecture *before* we add 5 GHz, Bluetooth/FM or unusual recovery mechanisms. RFC review is **not** merge acceptance.
 
+## Explicit cellular scope exclusion
+
+The Motorola Xoom MZ600's original Verizon **3G CDMA network was retired January 3, 2023** ([Verizon official retirement notice](https://www.verizon.com/business/support/services-and-apps/cdma-network-retire/); [FCC documentation](https://docs.fcc.gov/public/attachments/DA-22-1353A1.pdf)). Its **cellular modem, modem-specific USB host route, modem drivers and cellular power sequencing are NOT requirements** for this initial upstream 2.4 GHz Wi-Fi RFC. Distinguish shutdown of the *CDMA service* from abandonment of the *radio spectrum*, which may be reused by current LTE/5G networks. Preserve normal USB gadget/COM serial and BCM4329 SDIO/Wi-Fi operation; do not strip generic hardware properties needed by supported functions merely to remove the modem. The DT must be truthful for the supported hardware configuration, not invent a cellular feature or a modem dependency.
+
 ## Source-of-truth boundaries
 
 | Purpose | Location / identity |
