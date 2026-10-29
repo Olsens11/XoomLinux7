@@ -1,3 +1,5 @@
+> **2026-10-29 PHY/regulatory follow-through:** [BCM4329 PHY firmware/regulatory boundary and live Xoom country-source audit](MZ600_BCM4329_PHY_FIRMWARE_REGULATORY_BOUNDARY_2026-10-29.md). For the current WIFI-01 project, read **pp42–46** (closed-loop TX power, IQ/LO/VCO on-chip calibration, 2.4/5 GHz RF), **pp106–115** (RF specifications, not regulatory approval), **pp47 and 62–63** (firmware architecture). The original index relevance letters were defined for the *historical SDIO F2 boot problem*, not for modern WIFI-01 PHY/regulatory questions. Current source-only country-readback diagnostic built but is **not loaded** on the Xoom.
+
 # BCM4329 datasheet — full page-level navigation index
 
 **Reference:** *BCM4329 Preliminary Data Sheet*, Broadcom 4329-DS105-R, December 3, 2010, included in Cypress document 002-14927 Rev. *F (September 19, 2016). **149 PDF pages.** Uploaded reference SHA256: `7c8ae70f36b1ce7e08d064d4965884eb9eb30e31d5df7e5434029fd3ad3bab24` (2,539,698 bytes). Printed page numbers match PDF page numbers in this edition.
