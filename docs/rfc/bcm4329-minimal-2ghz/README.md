@@ -1,3 +1,5 @@
+> **Next-conversation starting point:** [Comprehensive 2026-10-29 M0/M1 handoff](../../handoffs/MZ600_BCM4329_MINIMAL_2GHZ_RFC_M1_COMPREHENSIVE_HANDOFF_2026-10-29.md). M0 complete; M1 in progress; CDMA/3G/4G LTE out of scope. The clean RFC Linux kernel has zero new patches; current three draft board-support commits remain isolated and unaccepted.
+
 # Clean-sheet BCM4329 / Motorola Xoom Linux 7 — minimum functional 2.4 GHz RFC
 
 **2026-10-29 | Independent RFC development line | DESIGN AND BASELINE ONLY**
