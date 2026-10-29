@@ -36,6 +36,15 @@ Two **new repository-committed source-extraction runners** read the exact r7 fun
 
 The firmware enforcing its own region is a plausible **additional hardware safety backstop** supported by Broadcom maintainer statements, but has not been proved specifically for the exact Motorola OEM2012 firmware under a failed country update. The driver must not *claim* accurate firmware/regulatory synchronization simply because firmware usually enforces legality.
 
+## Additional pinned source audit: cfg lifetime, locking and WIFI-04 readiness
+
+These findings were verified **after** the 19 exact-C tests and further narrow what a genuine recovery hook can safely reuse:
+
+- In pinned `brcmfmac/core.c:brcmf_bus_started()`, `brcmf_cfg80211_attach()` allocates a new `cfg` after the bus moves to `BRCMF_BUS_UP`; in teardown `brcmf_cfg80211_detach()` frees that state. Thus a cache in `cfg` is naturally scoped to a **normal bus attach/detach lifecycle**, but an in-place firmware reset/recovery that does not recreate `cfg` has not been excluded. A generation-valid cache must never assume *all* firmware resets recreate the object.
+- In pinned r7 `cfg80211.c:brcmf_bcm4329_prepare_escan()` (WIFI-04), the readiness check **only runs synchronously at scan entry**: `BRCMF_C_GET_UP`, optionally **sets `BRCMF_C_UP=1`**, then rereads `GET_UP`. This is an active scan-preparation transition, **not a passive firmware-UP event notifier**. It cannot safely be invoked from `reg_notifier` or used as an asynchronous readiness signal without a new lock/state/power sequencing analysis.
+- In pinned `net/wireless/reg.c:update_all_wiphy_regulatory()`, `ASSERT_RTNL()` precedes the loop calling `wiphy_update_regulatory()`; `reg_call_notifier()` directly invokes the driver callback. This grounds regulatory-update serialization under **RTNL for this path**, but does **not prove** that other scan/init pathways changing or reading per-channel data take the same lock. The `cfg->usr_sync` mutex protects `brcmf_cfg80211_up/down` and has not been proven safe to nest inside the regulatory notifier.
+- Therefore **do not implement a recovery worker or use WIFI-04 scan readiness as an event** yet. First identify a truly existing firmware-ready lifecycle callback/worker compatible with RTNL and `cfg` teardown, or keep all recovery synchronous and explicitly bounded at an appropriate existing operation boundary. Neither option is yet selected or implemented.
+
 ## Candidate recovery strategies and decision
 
 1. **Unconditionally disable all channels on a query failure:** definitely conservative for subsequent host permission but can immediately disrupt an otherwise healthy 2.4GHz STA due to a transient `NOTUP`/transport error; not accepted as default.
