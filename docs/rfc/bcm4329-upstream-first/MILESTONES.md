@@ -5,7 +5,7 @@
 ## W0 — Select starting board and isolate source
 - [x] Select Motorola Xoom **MZ604 (Wingray, Wi-Fi only)** to match the existing upstream DTS and avoid a first-series MZ600/Stingray variant refactor.
 - [x] Create a new independent Linux source branch/worktree from pinned `2404d27378503b4df74ab2cb0a8b7cd6cf9d5fc3`; preserve old MZ600 branches/worktrees and installed systems.
-- [ ] Verify the new checkout is clean; record an exact baseline config, DTB and build manifest and checksums. No MZ604 boot claim.
+- [x] Verify the new Linux checkout is clean, unchanged upstream `2404d273`, with an independent ARM build; original Wingray DTBs, zImage and complete modules build PASS, and offline Android-format RAM-only boot image header/embedded DTB verified. No MZ604 boot claim. [Baseline evidence](BASELINE_BUILD_AND_USERSPACE_2026-10-29.md).
 
 ## W1 — Prove baseline upstream support, before any patch
 - [x] Source-level: upstream DTS and Makefile already contain Wingray; DTS contains BCM4329 SDIO, power, reset/clock, regulators and IRQ; `brcmfmac` already contains BCM4329 chip ID, standard STA/scan and firmware paths.
@@ -13,6 +13,7 @@
 - [ ] Verify OEM board and bootloader identity and which firmware/NVRAM/factory-MAC path MZ604 actually uses. Never publish private values.
 - [ ] Separate approved guarded boot test on a selected healthy MZ604 with verified rollback, bootloader/recovery/stock preservation and no persistent changes without explicit approval.
 - [ ] Establish minimal normal boot, SDIO, firmware and `wlan0` baseline; if boot fails, isolate the earliest causal deviation.
+- [ ] Stage **fresh Debian ARMHF network-capable root filesystem** before physical WLAN work: `NetworkManager`/`nmcli`, `wpa_supplicant`, `iw`, `ip`, `ping`, DHCP client, DNS tools, basic TLS/network diagnostics and kernel-matched `brcmfmac` modules; no recycled MZ600 identities or WPA credentials. Verify actual package and modules installation and proper root boot path. This is separate from the minimal non-storage RAM-only diagnostic image; see [baseline build record](BASELINE_BUILD_AND_USERSPACE_2026-10-29.md).
 
 ## W2 — Decide the minimum BCM4329 firmware ABI compatibility
 - [ ] Measure on **MZ604** whether `chanspecs` fails, which native BCME is returned, and whether `BRCMF_C_GET_VALID_CHANNELS` is available; distinguish old MZ600 evidence from new physical proof.
@@ -29,7 +30,7 @@
 - [ ] Add only **necessary proven** sync ID, invalid-index Event69 ownership and conditional firmware-UP fixes from preserved r7/V31 research, not the whole collection by default.
 
 ## W5 — Ordinary STA connectivity and reproducible build
-- [ ] WPA2 connection, DHCP/DNS/data and normal NetworkManager or wpa_supplicant operation; disconnect/reconnect and repeated boots.
+- [ ] WPA2 connection, DHCP/DNS/data and normal NetworkManager or wpa_supplicant operation; disconnect/reconnect and repeated boots. **Install standard networking/testing utilities offline before the first WLAN physical trial**, not after the driver starts working.
 - [ ] Full ARM zImage/DTB/modules and ABI, targeted DT schema, kernel style and static tests; exact source/build/firmware identities and physical receipts.
 - [ ] No BigPart kernel GPT changes, proprietary firmware redistribution, CDMA/LTE work, Bluetooth/FM or unsupported 5 GHz claims.
 
@@ -39,4 +40,4 @@
 - [ ] User reviews patch set and personally supplies applicable DCO; only then may it be submitted externally.
 - [ ] Maintain MZ600 and other Xoom board variants as follow-on support, not blockers for this first RFC.
 
-**Current completion:** W0 selection/source worktree created (clean verification still open); W1 source-level starting facts confirmed, all MZ604 hardware gates open. No changed radio, device firmware, partitions or physical flash. Future changes require exact issue-linked evidence and safe rollback.
+**Current completion:** W0 selected, clean pinned source verified, untouched Wingray DTB/zImage/modules built and RAM-only diagnostic image packaged offline. W1 source-level starting facts confirmed; full Debian network userland provisioning and all MZ604 physical gates remain open. No changed radio, device firmware, partitions or physical flash. Future changes require exact issue-linked evidence and safe rollback.
