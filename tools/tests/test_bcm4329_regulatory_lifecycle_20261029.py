@@ -45,7 +45,11 @@ def source_check(root: Path):
     assert "sband->channels[i].flags;" in core
     assert "u32 flags = chan->orig_flags;" in reg
     update = reg.split("static void wiphy_update_regulatory(", 1)[1].split("static void update_all_wiphy_regulatory(", 1)[0]
-    assert update.index("handle_band(wiphy") < update.index("reg_call_notifier(wiphy, lr);")
+    # Custom-REG CORE hints may notify without rebuilding channels.
+    # For an accepted country/user update, normal channel recomputation
+    # precedes the notifier at the END of the update function.
+    assert update.count("reg_call_notifier(wiphy, lr);") == 2
+    assert update.index("handle_band(wiphy") < update.rindex("reg_call_notifier(wiphy, lr);")
     legacy = cfg.split("static int brcmf_bcm4329_legacy_channels(", 1)[1].split("static int brcmf_construct_chaninfo(", 1)[0]
     assert "band->channels[j].orig_flags & IEEE80211_CHAN_DISABLED" in legacy
     assert "if (!supported) {" in legacy
