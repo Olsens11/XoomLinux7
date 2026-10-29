@@ -45,6 +45,12 @@ The clean RFC must, on actual Xoom hardware, **automatically** bring up `wlan0` 
 - Preserve legitimate country-dependent changes without freezing one country's channel inventory into `orig_flags`. Confirm that the per-PHY custom `99` domain and actual firmware country/tx power behavior are appropriately constrained; global `iw reg get` reporting US is **not** sufficient by itself.
 - Until these checks pass on the *new* build, treat the clean RFC as a work-in-progress rather than a regulator-safe usable driver.
 
+## Reuse, reimagine, and maintainer-review gate
+
+"Clean-sheet" means **reconsider each design from upstream, not discard all prior code**. Our earlier successful modules and patch snippets may be reused *selectively* if they are the most straightforward way to satisfy a named milestone acceptance test. Before keeping any one piece, verify it (1) solves an observed requirement, (2) follows a recognized upstream subsystem pattern, (3) is smaller or clearer than realistic alternatives, (4) has source- and runtime-appropriate regression evidence, and (5) can be reviewed as one logical patch with clear provenance, descriptive commit text and rollback.
+
+The first example is [M1's separately derived device-tree proof](M1_BOARD_PROOF.md). An original 1,711-line upstream Wingray DTS was decomposed into a shared 1,707-line Xoom `.dtsi` and short variants; this **matches** the earlier research design exactly, *and independently built Wingray semantics are unchanged*. It justifies the approach, not automatic promotion: vendor model differences, bindings/schema checks, style/MAINTAINERS and guarded hardware boot remain open. [Milestones and evidence-based checkboxes](MILESTONES.md) record our progress.
+
 ## Clean architecture: what new work must actually justify
 
 **A. Board representation (its own logical issues).** Support the MZ600 Stingray variant using upstream Tegra/Motorola DTS/bindings, sharing hardware correctly with Wingray; maintain real chip power/reset/SDIO behavior. Respect per-device MAC identity if the vendor ATAG is the required unique source. Do not copy 1700 lines into a new variant without checking whether shared DTSI structure is appropriate. Track binding, common board refactor, variant support and ATAG as separate logical upstream changes **only if each is actually needed**.
