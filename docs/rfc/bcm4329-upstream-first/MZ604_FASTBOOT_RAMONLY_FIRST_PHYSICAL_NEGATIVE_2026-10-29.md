@@ -38,3 +38,19 @@ fastboot: error: Command failed
 4. After any actual Linux boot, prove UART/console and kernel/DTB first, then SDIO + firmware and 2.4GHz regulatory-correct network functionality. No scan/association assertions yet.
 
 **Milestone state:** W0 and offline W1 source/build/transfer PASS, MZ604 hardware identity/unlock confirmed, first temporary boot negative, Linux runtime W1 still OPEN. Older MZ600 patches and installed systems unchanged.
+
+## Subsequent read-only stock-Android partition and recovery preflight
+
+- After the rejected `fastboot boot`, the tablet **rebooted normally into stock Android** and authorized ADB enumerated again. This is positive evidence the original boot/system partitions still function.
+- `adb shell cat /proc/partitions` and `adb shell ls -l /dev/block/platform/sdhci-tegra.3/by-name` independently identify the MZ604 factory eMMC map:
+
+| Name | Linux block node | size (KiB) |
+|---|---|---:|
+| recovery | `/dev/mmcblk0p6` | 12,288 |
+| boot | `/dev/mmcblk0p7` | 8,192 |
+| system | `/dev/mmcblk0p8` | 262,144 |
+| cache | `/dev/mmcblk0p9` | 173,056 |
+| userdata | `/dev/mmcblk0p10` | 30,663,168 |
+
+- The **12 MiB recovery** is greater than the **5,892,096-byte** diagnostic boot-image length, leaving a potential reversible **recovery-only flash** route that preserves stock `boot` and `system`. **This is a feasibility check, not proof that the image will boot or that original recovery can be restored from existing files.** The Android shell does not have unrestricted raw block access; OEM stock recovery contents were **not** backed up, and no replacement image was flashed.
+- Xoom TWRP documentation confirms the general `fastboot flash recovery` operation is supported on original Xoom hardware, but per-project safety rules require explicit, new owner approval for writing this exact MZ604 recovery partition (and a validated rollback alternative) before execution. Do not interpret the owner-approved bootloader unlock as automatic authorization to flash recovery/boot.
