@@ -1,0 +1,460 @@
+From db76db5766942799dbc96190210c6d345613a7cb Mon Sep 17 00:00:00 2001
+From: XoomLinux7 RFC draft <rfc-draft@invalid.example>
+Date: Tue, 27 Oct 2026 20:49:33 -0400
+Subject: [PATCH 1/4] wifi: brcmfmac: use legacy channel list on BCM4329
+
+Some older BCM4329 firmware rejects the 'chanspecs' iovar with
+BCME_UNSUPPORTED, while WLC_GET_VALID_CHANNELS returns valid
+firmware channel numbers. Without a fallback, the advertised wiphy
+channels are incomplete and ordinary 2.4/5 GHz scans fail.
+
+On precisely that firmware error and chipset, consume the bounded
+legacy channel list. Disable channels not reported by firmware and
+constrain bandwidth to 20 MHz. For allowed 20 MHz channels, query
+the optional firmware per_chan_info restrictions, as the normal
+chanspec path does, and add radar/passive flags when supported.
+Never enable a channel or clear cfg80211 restrictions. Do not alter
+the normal chanspec path or any other Broadcom device.
+
+A BCM4329 V31 laboratory build with related legacy fallback completed
+normal scans, WPA2 and internet access on a Motorola Xoom MZ600.
+This cleaned source variant requires its own physical validation.
+
+Assisted-by: ChatGPT:GPT-6 [Desktop Commander]
+On firmware without per_chan_info, retain fail-closed NO_IR on
+5 GHz channels and avoid repeating unsupported IOCTLs. This is
+not a country override or permission to transmit.
+---
+ .../broadcom/brcm80211/brcmfmac/cfg80211.c    | 199 +++++++++++++++++-
+ .../broadcom/brcm80211/brcmfmac/fwil.c        |  65 ++++--
+ .../broadcom/brcm80211/brcmfmac/fwil.h        |   4 +
+ 3 files changed, 248 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 0b55d4458..c1af6299f 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -6992,6 +6992,175 @@ static void brcmf_update_bw40_channel_flag(struct ieee80211_channel *channel,
+ 	}
+ }
+ 
++/* Broadcom's BCME_UNSUPPORTED is 23. Linux fwil collapses vendor errors
++ * to -EBADE, so the fallback must inspect the actual firmware status.
++ */
++#define BRCMF_BCM4329_FW_UNSUPPORTED	23
++
++/* Older BCM4329 firmware exposes a channel-number list, not 'chanspecs'.
++ * Keep existing cfg80211 restrictions and assume only 20 MHz support.
++ */
++static int brcmf_bcm4329_legacy_channels(struct brcmf_cfg80211_info *cfg,
++					 u8 *pbuf)
++{
++	struct brcmf_pub *drvr = cfg->pub;
++	struct brcmf_if *ifp = brcmf_get_ifp(drvr, 0);
++	struct wiphy *wiphy = cfg_to_wiphy(cfg);
++	struct brcmf_chanspec_list *list = (void *)pbuf;
++	struct ieee80211_supported_band *band;
++	struct ieee80211_channel *channel;
++	struct brcmu_chan ch = {};
++	u32 count, max_count, chan, chaninfo, flags, i, j, k;
++	u32 *restrictions;
++	size_t n_channels = 0, slot = 0;
++	bool supported, per_chan_available = true;
++	s32 fwerr;
++	int err, chan_err;
++
++	max_count = (BRCMF_DCMD_MEDLEN - sizeof(list->count)) /
++		    sizeof(list->element[0]);
++	memset(pbuf, 0, BRCMF_DCMD_MEDLEN);
++	list->count = cpu_to_le32(max_count);
++	err = brcmf_fil_cmd_data_get(ifp, BRCMF_C_GET_VALID_CHANNELS,
++				     pbuf, BRCMF_DCMD_MEDLEN);
++	if (err)
++		return err;
++
++	count = le32_to_cpu(list->count);
++	if (!count || count > max_count)
++		return -EINVAL;
++	for (i = 0; i < count; i++) {
++		chan = le32_to_cpu(list->element[i]);
++		if (!((chan >= 1 && chan <= 14) ||
++		      (chan >= 30 && chan <= 196)))
++			return -EINVAL;
++	}
++
++	for (i = 0; i < NUM_NL80211_BANDS; i++) {
++		band = wiphy->bands[i];
++		if (band && (i == NL80211_BAND_2GHZ ||
++			     i == NL80211_BAND_5GHZ))
++			n_channels += band->n_channels;
++	}
++	if (!n_channels)
++		return -EINVAL;
++
++	/* Stage all restrictions before changing a live cfg80211 channel:
++	 * optional firmware-query failure must not leave a partial table.
++	 */
++	restrictions = kcalloc(n_channels, sizeof(*restrictions), GFP_KERNEL);
++	if (!restrictions)
++		return -ENOMEM;
++
++	for (i = 0; i < NUM_NL80211_BANDS; i++) {
++		band = wiphy->bands[i];
++		if (!band || (i != NL80211_BAND_2GHZ &&
++			      i != NL80211_BAND_5GHZ))
++			continue;
++		for (j = 0; j < band->n_channels; j++) {
++			channel = &band->channels[j];
++			supported = false;
++			for (k = 0; k < count; k++) {
++				if (channel->hw_value ==
++				    le32_to_cpu(list->element[k])) {
++					supported = true;
++					break;
++				}
++			}
++			if (!supported) {
++				restrictions[slot++] = IEEE80211_CHAN_DISABLED;
++				continue;
++			}
++			if (channel->orig_flags & IEEE80211_CHAN_DISABLED) {
++				slot++;
++				continue;
++			}
++
++			flags = IEEE80211_CHAN_NO_HT40 |
++				IEEE80211_CHAN_NO_80MHZ |
++				IEEE80211_CHAN_NO_160MHZ;
++			if (per_chan_available) {
++				ch.chnum = channel->hw_value;
++				ch.band = (band->band == NL80211_BAND_2GHZ) ?
++					BRCMU_CHAN_BAND_2G : BRCMU_CHAN_BAND_5G;
++				ch.bw = BRCMU_CHAN_BW_20;
++				ch.sb = BRCMU_CHAN_SB_NONE;
++				cfg->d11inf.encchspec(&ch);
++				chaninfo = cpu_to_le32(ch.chspec);
++				fwerr = 0;
++				chan_err = brcmf_fil_bsscfg_data_get_fwerr(ifp,
++					"per_chan_info", &chaninfo,
++					sizeof(chaninfo), &fwerr);
++				if (!chan_err) {
++					chaninfo = le32_to_cpu(chaninfo);
++					if (chaninfo & WL_CHAN_RADAR)
++						flags |= IEEE80211_CHAN_RADAR |
++							 IEEE80211_CHAN_NO_IR;
++					if (chaninfo & WL_CHAN_PASSIVE)
++						flags |= IEEE80211_CHAN_NO_IR;
++				} else if (fwerr ==
++					   -BRCMF_BCM4329_FW_UNSUPPORTED) {
++					per_chan_available = false;
++				} else {
++					err = chan_err;
++					goto out_free;
++				}
++			} else {
++				chan_err = -EOPNOTSUPP;
++			}
++
++			/* No trusted per-channel passive/DFS metadata. Keep
++			 * the legacy firmware's uncertain 5 GHz channels NO_IR,
++			 * in addition to (never instead of) cfg80211 limits.
++			 */
++			if (chan_err && band->band == NL80211_BAND_5GHZ)
++				flags |= IEEE80211_CHAN_NO_IR;
++			restrictions[slot++] = flags;
++		}
++	}
++
++	/* Commit only after every firmware query has succeeded or has
++	 * returned the proven native BCME_UNSUPPORTED result. Never
++	 * clear a restriction supplied by cfg80211.
++	 */
++	slot = 0;
++	for (i = 0; i < NUM_NL80211_BANDS; i++) {
++		band = wiphy->bands[i];
++		if (!band || (i != NL80211_BAND_2GHZ &&
++			      i != NL80211_BAND_5GHZ))
++			continue;
++		for (j = 0; j < band->n_channels; j++)
++			band->channels[j].flags |= restrictions[slot++];
++	}
++	err = 0;
++
++out_free:
++	kfree(restrictions);
++	return err;
++}
++
++/* Reapply only the firmware's legacy restrictions following a regulatory
++ * no-op. A BCM4329 with modern "chanspecs" must retain its normal path.
++ */
++static int brcmf_bcm4329_refresh_legacy_channels(struct brcmf_cfg80211_info *cfg)
++{
++	struct brcmf_if *ifp = brcmf_get_ifp(cfg->pub, 0);
++	u8 *pbuf;
++	s32 fwerr = 0;
++	int err;
++
++	pbuf = kzalloc(BRCMF_DCMD_MEDLEN, GFP_KERNEL);
++	if (!pbuf)
++		return -ENOMEM;
++
++	err = brcmf_fil_iovar_data_get_fwerr(ifp, "chanspecs", pbuf,
++					      BRCMF_DCMD_MEDLEN, &fwerr);
++	if (err && fwerr == -BRCMF_BCM4329_FW_UNSUPPORTED)
++		err = brcmf_bcm4329_legacy_channels(cfg, pbuf);
++	kfree(pbuf);
++	return err;
++}
++
+ static int brcmf_construct_chaninfo(struct brcmf_cfg80211_info *cfg,
+ 				    u32 bw_cap[])
+ {
+@@ -7007,6 +7176,7 @@ static int brcmf_construct_chaninfo(struct brcmf_cfg80211_info *cfg,
+ 	u32 i, j;
+ 	u32 total;
+ 	u32 chaninfo;
++	s32 fwerr = 0;
+ 
+ 	pbuf = kzalloc(BRCMF_DCMD_MEDLEN, GFP_KERNEL);
+ 
+@@ -7015,10 +7185,19 @@ static int brcmf_construct_chaninfo(struct brcmf_cfg80211_info *cfg,
+ 
+ 	list = (struct brcmf_chanspec_list *)pbuf;
+ 
+-	err = brcmf_fil_iovar_data_get(ifp, "chanspecs", pbuf,
+-				       BRCMF_DCMD_MEDLEN);
++	if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID)
++		err = brcmf_fil_iovar_data_get_fwerr(ifp, "chanspecs",
++						pbuf, BRCMF_DCMD_MEDLEN,
++						&fwerr);
++	else
++		err = brcmf_fil_iovar_data_get(ifp, "chanspecs", pbuf,
++						BRCMF_DCMD_MEDLEN);
+ 	if (err) {
+-		bphy_err(drvr, "get chanspecs error (%d)\n", err);
++		if (drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID &&
++		    fwerr == -BRCMF_BCM4329_FW_UNSUPPORTED)
++			err = brcmf_bcm4329_legacy_channels(cfg, pbuf);
++		else
++			bphy_err(drvr, "get chanspecs error (%d)\n", err);
+ 		goto fail_pbuf;
+ 	}
+ 
+@@ -8269,8 +8448,20 @@ static void brcmf_cfg80211_reg_notifier(struct wiphy *wiphy,
+ 	}
+ 
+ 	err = brcmf_translate_country_code(ifp->drvr, req->alpha2, &ccreq);
+-	if (err)
++	if (err) {
++		/* cfg80211 may have just rebuilt flags from orig_flags.
++		 * Even when the firmware country is already correct, its
++		 * legacy channel restrictions must still be reapplied.
++		 */
++		if (err == -EAGAIN &&
++		    drvr->bus_if->chip == BRCM_CC_4329_CHIP_ID) {
++			err = brcmf_bcm4329_refresh_legacy_channels(cfg);
++			if (err)
++				bphy_err(drvr, "BCM4329 regulatory channel refresh failed (%d)\n",
++					 err);
++		}
+ 		return;
++	}
+ 
+ 	err = brcmf_fil_iovar_data_set(ifp, "country", &ccreq, sizeof(ccreq));
+ 	if (err) {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
+index 6385a7db7..9f8040b48 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
+@@ -94,10 +94,14 @@ static const char *brcmf_fil_get_errstr(u32 err)
+ #endif /* DEBUG */
+ 
+ static s32
+-brcmf_fil_cmd_data(struct brcmf_if *ifp, u32 cmd, void *data, u32 len, bool set)
++brcmf_fil_cmd_data(struct brcmf_if *ifp, u32 cmd, void *data, u32 len,
++		   bool set, s32 *fwerr_out)
+ {
+ 	struct brcmf_pub *drvr = ifp->drvr;
+-	s32 err, fwerr;
++	s32 err, fwerr = 0;
++
++	if (fwerr_out)
++		*fwerr_out = 0;
+ 
+ 	if (drvr->bus_if->state != BRCMF_BUS_UP) {
+ 		bphy_err(drvr, "bus is down. we have nothing to do.\n");
+@@ -113,6 +117,9 @@ brcmf_fil_cmd_data(struct brcmf_if *ifp, u32 cmd, void *data, u32 len, bool set)
+ 		err = brcmf_proto_query_dcmd(drvr, ifp->ifidx, cmd,
+ 					     data, len, &fwerr);
+ 
++	if (!err && fwerr_out)
++		*fwerr_out = fwerr;
++
+ 	if (err) {
+ 		brcmf_dbg(FIL, "Failed: error=%d\n", err);
+ 	} else if (fwerr < 0) {
+@@ -137,7 +144,7 @@ brcmf_fil_cmd_data_set(struct brcmf_if *ifp, u32 cmd, void *data, u32 len)
+ 	brcmf_dbg_hex_dump(BRCMF_FIL_ON(), data,
+ 			   min_t(uint, len, MAX_HEX_DUMP_LEN), "data\n");
+ 
+-	err = brcmf_fil_cmd_data(ifp, cmd, data, len, true);
++	err = brcmf_fil_cmd_data(ifp, cmd, data, len, true, NULL);
+ 	mutex_unlock(&ifp->drvr->proto_block);
+ 
+ 	return err;
+@@ -150,7 +157,7 @@ brcmf_fil_cmd_data_get(struct brcmf_if *ifp, u32 cmd, void *data, u32 len)
+ 	s32 err;
+ 
+ 	mutex_lock(&ifp->drvr->proto_block);
+-	err = brcmf_fil_cmd_data(ifp, cmd, data, len, false);
++	err = brcmf_fil_cmd_data(ifp, cmd, data, len, false, NULL);
+ 
+ 	brcmf_dbg(FIL, "ifidx=%d, cmd=%d, len=%d, err=%d\n", ifp->ifidx, cmd,
+ 		  len, err);
+@@ -202,7 +209,7 @@ brcmf_fil_iovar_data_set(struct brcmf_if *ifp, const char *name, const void *dat
+ 				    sizeof(drvr->proto_buf));
+ 	if (buflen) {
+ 		err = brcmf_fil_cmd_data(ifp, BRCMF_C_SET_VAR, drvr->proto_buf,
+-					 buflen, true);
++					 buflen, true, NULL);
+ 	} else {
+ 		err = -EPERM;
+ 		bphy_err(drvr, "Creating iovar failed\n");
+@@ -213,9 +220,9 @@ brcmf_fil_iovar_data_set(struct brcmf_if *ifp, const char *name, const void *dat
+ }
+ BRCMF_EXPORT_SYMBOL_GPL(brcmf_fil_iovar_data_set);
+ 
+-s32
+-brcmf_fil_iovar_data_get(struct brcmf_if *ifp, const char *name, void *data,
+-			 u32 len)
++static s32
++brcmf_fil_iovar_data_get_common(struct brcmf_if *ifp, const char *name,
++				 void *data, u32 len, s32 *fwerr_out)
+ {
+ 	struct brcmf_pub *drvr = ifp->drvr;
+ 	s32 err;
+@@ -227,7 +234,7 @@ brcmf_fil_iovar_data_get(struct brcmf_if *ifp, const char *name, void *data,
+ 				    sizeof(drvr->proto_buf));
+ 	if (buflen) {
+ 		err = brcmf_fil_cmd_data(ifp, BRCMF_C_GET_VAR, drvr->proto_buf,
+-					 buflen, false);
++					 buflen, false, fwerr_out);
+ 		if (err == 0)
+ 			memcpy(data, drvr->proto_buf, len);
+ 	} else {
+@@ -243,8 +250,21 @@ brcmf_fil_iovar_data_get(struct brcmf_if *ifp, const char *name, void *data,
+ 	mutex_unlock(&drvr->proto_block);
+ 	return err;
+ }
++
++s32 brcmf_fil_iovar_data_get(struct brcmf_if *ifp, const char *name,
++			     void *data, u32 len)
++{
++	return brcmf_fil_iovar_data_get_common(ifp, name, data, len, NULL);
++}
+ BRCMF_EXPORT_SYMBOL_GPL(brcmf_fil_iovar_data_get);
+ 
++/* Preserve the original firmware error without changing ifp->fwil_fwerr. */
++s32 brcmf_fil_iovar_data_get_fwerr(struct brcmf_if *ifp, const char *name,
++				  void *data, u32 len, s32 *fwerr)
++{
++	return brcmf_fil_iovar_data_get_common(ifp, name, data, len, fwerr);
++}
++
+ static u32
+ brcmf_create_bsscfg(s32 bsscfgidx, const char *name, char *data, u32 datalen,
+ 		    char *buf, u32 buflen)
+@@ -309,7 +329,7 @@ brcmf_fil_bsscfg_data_set(struct brcmf_if *ifp, const char *name,
+ 				     drvr->proto_buf, sizeof(drvr->proto_buf));
+ 	if (buflen) {
+ 		err = brcmf_fil_cmd_data(ifp, BRCMF_C_SET_VAR, drvr->proto_buf,
+-					 buflen, true);
++					 buflen, true, NULL);
+ 	} else {
+ 		err = -EPERM;
+ 		bphy_err(drvr, "Creating bsscfg failed\n");
+@@ -320,9 +340,9 @@ brcmf_fil_bsscfg_data_set(struct brcmf_if *ifp, const char *name,
+ }
+ BRCMF_EXPORT_SYMBOL_GPL(brcmf_fil_bsscfg_data_set);
+ 
+-s32
+-brcmf_fil_bsscfg_data_get(struct brcmf_if *ifp, const char *name,
+-			  void *data, u32 len)
++static s32
++brcmf_fil_bsscfg_data_get_common(struct brcmf_if *ifp, const char *name,
++				  void *data, u32 len, s32 *fwerr_out)
+ {
+ 	struct brcmf_pub *drvr = ifp->drvr;
+ 	s32 err;
+@@ -334,7 +354,7 @@ brcmf_fil_bsscfg_data_get(struct brcmf_if *ifp, const char *name,
+ 				     drvr->proto_buf, sizeof(drvr->proto_buf));
+ 	if (buflen) {
+ 		err = brcmf_fil_cmd_data(ifp, BRCMF_C_GET_VAR, drvr->proto_buf,
+-					 buflen, false);
++					 buflen, false, fwerr_out);
+ 		if (err == 0)
+ 			memcpy(data, drvr->proto_buf, len);
+ 	} else {
+@@ -349,8 +369,21 @@ brcmf_fil_bsscfg_data_get(struct brcmf_if *ifp, const char *name,
+ 	mutex_unlock(&drvr->proto_block);
+ 	return err;
+ }
++
++s32 brcmf_fil_bsscfg_data_get(struct brcmf_if *ifp, const char *name,
++			      void *data, u32 len)
++{
++	return brcmf_fil_bsscfg_data_get_common(ifp, name, data, len, NULL);
++}
+ BRCMF_EXPORT_SYMBOL_GPL(brcmf_fil_bsscfg_data_get);
+ 
++/* Per-call native firmware error report; never toggle the shared ifp flag. */
++s32 brcmf_fil_bsscfg_data_get_fwerr(struct brcmf_if *ifp, const char *name,
++				   void *data, u32 len, s32 *fwerr)
++{
++	return brcmf_fil_bsscfg_data_get_common(ifp, name, data, len, fwerr);
++}
++
+ static u32 brcmf_create_xtlv(const char *name, u16 id, char *data, u32 len,
+ 			     char *buf, u32 buflen)
+ {
+@@ -390,7 +423,7 @@ s32 brcmf_fil_xtlv_data_set(struct brcmf_if *ifp, const char *name, u16 id,
+ 				   drvr->proto_buf, sizeof(drvr->proto_buf));
+ 	if (buflen) {
+ 		err = brcmf_fil_cmd_data(ifp, BRCMF_C_SET_VAR, drvr->proto_buf,
+-					 buflen, true);
++					 buflen, true, NULL);
+ 	} else {
+ 		err = -EPERM;
+ 		bphy_err(drvr, "Creating xtlv failed\n");
+@@ -414,7 +447,7 @@ s32 brcmf_fil_xtlv_data_get(struct brcmf_if *ifp, const char *name, u16 id,
+ 				   drvr->proto_buf, sizeof(drvr->proto_buf));
+ 	if (buflen) {
+ 		err = brcmf_fil_cmd_data(ifp, BRCMF_C_GET_VAR, drvr->proto_buf,
+-					 buflen, false);
++					 buflen, false, NULL);
+ 		if (err == 0)
+ 			memcpy(data, drvr->proto_buf, len);
+ 	} else {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
+index ab3d6cfcb..d79b12603 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.h
+@@ -119,6 +119,8 @@ s32 brcmf_fil_iovar_data_set(struct brcmf_if *ifp, const char *name,
+ 			     const void *data, u32 len);
+ s32 brcmf_fil_iovar_data_get(struct brcmf_if *ifp, const char *name, void *data,
+ 			     u32 len);
++s32 brcmf_fil_iovar_data_get_fwerr(struct brcmf_if *ifp, const char *name,
++				  void *data, u32 len, s32 *fwerr);
+ static inline
+ s32 brcmf_fil_iovar_int_set(struct brcmf_if *ifp, const char *name, u32 data)
+ {
+@@ -150,6 +152,8 @@ s32 brcmf_fil_bsscfg_data_set(struct brcmf_if *ifp, const char *name,
+ 			      void *data, u32 len);
+ s32 brcmf_fil_bsscfg_data_get(struct brcmf_if *ifp, const char *name,
+ 			      void *data, u32 len);
++s32 brcmf_fil_bsscfg_data_get_fwerr(struct brcmf_if *ifp, const char *name,
++				   void *data, u32 len, s32 *fwerr);
+ static inline
+ s32 brcmf_fil_bsscfg_int_set(struct brcmf_if *ifp, const char *name, u32 data)
+ {
