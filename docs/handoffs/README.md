@@ -1,3 +1,5 @@
+> **LATEST COMPREHENSIVE HANDOFF, OCT 29 2026 — [RESUME HERE](MZ600_XOOMLINUX7_COMPREHENSIVE_CURRENT_TRANSITION_2026-10-29.md).** Includes full prior Linux7/TWRP/BigPart/WLAN/BT history, 16 GitHub issues and nine logical patch boundaries, r2 physical May2012 OEM channel metadata 35/35 failure, unaccepted r3 source candidate, external Broadcom compatibility research task, standard remote hardware procedures, and safeguards. Prior handoffs below remain dated engineering evidence, **not newer current-state instructions**. This is a document/navigation-only handoff; no tablet action.
+
 # XoomLinux7 conversation and engineering handoffs
 
 > **CONTINUATION SNAPSHOT AS OF 2026-10-28:** [Current actual p10 nine-review Linux state and evidence matrix](../ACTIVE_TEST_STATE.md), [new Recovery-vs-Linux Bluetooth A/B physical checkpoint](../checkpoints/MZ600_REVIEW9_P10_RECOVERY_SURFACE_OEM_BLUETOOTH_FIRMWARE_AB_2026-10-28.md). Earlier preinstallation and first BlueZ handoffs below remain historical. Live Wi-Fi/COM9 proven, generic HCD restored, Bluetooth powered off after OEM clock timeout; no pairing. No reboot/flash until owner physically available.
