@@ -1,3 +1,5 @@
+> **2026-10-30 I0 READY ARTIFACT STATUS:** [Detailed Surface V2 files and supervised TWRP installation sequence](I0_TWRP_DEPLOYMENT_READY_2026-10-30.md) now exists, all SHA checked (no device write). Owner physically enters TWRP; agent verifies live backup, installs ONLY new Debian autologin root, proves COM10/sudo/normal reboot, then separately qualifies recovery reboot and optional p8 selector. Avoid unnecessary p7/p8 writes. [Original offline evidence checkpoint](../../checkpoints/MZ604_I0_SURFACE_V2_DEPLOYMENT_OFFLINE_READY_2026-10-30.md).
+
 > **2026-10-30 OWNER ACCESS REFINEMENT:** [Development-stage auth policy](../../process/DEVELOPMENT_AUTHENTICATION_POLICY_2026-10-30.md) now directs passwordless local COM10 access/sudo where possible; where a project login password cannot be avoided use `1234`. This is approved policy, **not yet a live device configuration**. Preserve no-bootloader-writes and physical-reset-accepted scope below.
 
 # MZ604 practical remote test infrastructure — approved strategy (2026-10-30)

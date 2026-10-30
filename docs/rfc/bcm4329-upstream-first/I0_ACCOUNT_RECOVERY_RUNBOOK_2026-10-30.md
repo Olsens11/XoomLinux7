@@ -1,3 +1,5 @@
+> **2026-10-30 PREPARED PACKAGE UPDATE:** The exact deployable Debian development-access image is now [staged and SHA verified on the Surface](I0_TWRP_DEPLOYMENT_READY_2026-10-30.md). Use that **new** exact first-action procedure, not generic ad hoc chroot/manual shadow edits. Owner will enter TWRP physically; then agent handles identity, backup and verified replacement while keeping prior root and p7/p8/p6. Physical install NOT RUN yet.
+
 # I0 — supervised MZ604 Debian account restoration (prepared, not executed)
 
 **Original offline preflight as of 2026-10-30 12:05 EDT; authentication convention amended 12:13 EDT. This is an OFFLINE-ONLY plan, not a physical result.** Do not reboot into recovery while the owner is absent; MZ604 is currently at Linux Debian COM10 login but both accounts have locked password hashes. The owner accepts occasional physical restart, not bootloader risk. **No EBB/BCT/p1/GPT or p6 TWRP writes.**
