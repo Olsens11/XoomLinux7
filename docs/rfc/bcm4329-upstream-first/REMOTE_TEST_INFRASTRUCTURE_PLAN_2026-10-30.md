@@ -31,6 +31,10 @@ Read-only private backup locations/SHA and no-repartition contract: see [physica
 
 **I5: finish infrastructure and STOP.** Demonstrate at least 2 repeatable select→stage→boot→test→return cycles for default/rescue/alternate root, same-kernel case as supported, and verified recovery selection where available. A kernel crash requiring physical reset is allowed; document limitation. Then freeze infrastructure except for blocking defects and resume W1-W6.
 
+## I0 access-recovery readiness
+
+Offline 2026-10-30 12:05 EDT staged-root read-only proof **PASS**: image SHA matched, root/xoom locked, xoom not in sudo group. See [supervised account recovery runbook](I0_ACCOUNT_RECOVERY_RUNBOOK_2026-10-30.md). Live account provisioning and authenticated COM10 remain OPEN; **no device operation occurred**.
+
 ## Current immediate execution sequence
 
 1. **Today, read-only:** verify host COM10, candidate/backup SHA, stage initramfs and kernel config, account locks and TWRP recovery path; no reboot while owner is away.

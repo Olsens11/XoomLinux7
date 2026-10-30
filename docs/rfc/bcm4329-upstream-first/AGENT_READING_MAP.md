@@ -1,3 +1,5 @@
+> **2026-10-30 12:05 EDT I0 first-step result:** Read the [offline account preflight and owner-supervised recovery runbook](I0_ACCOUNT_RECOVERY_RUNBOOK_2026-10-30.md) before attempting any login fix. Original staged image SHA is verified, xoom not in sudo group, and real TWRP entry is untested in this session; this is NOT authority to reboot unattended.
+
 # Mandatory reading map for every new XoomLinux7 agent (2026-10-30)
 
 > **Read this entire map and its required sources BEFORE source changes or device actions.** Do not rely only on the newest handoff, summary, remembered conversation, or a single "current" banner. The **original recorded physical evidence** outranks interpretations. Every historic claim is true/believed **only as of its timestamp**, and later evidence may supersede it. Do not silently rewrite older records. This map applies to MZ604-first RFC; MZ600 records are historically vital but not the selected first board.
