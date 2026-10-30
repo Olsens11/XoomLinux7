@@ -1,3 +1,5 @@
+> **NEW MANDATORY 2026-10-30 LAB AUTH RULE:** Read [owner-approved development password policy](../../process/DEVELOPMENT_AUTHENTICATION_POLICY_2026-10-30.md) before any login/recovery work. Passwordless local COM10 + sudo is preferred; if password necessary use `1234`, not a new private password. The MZ604 remains unprovisioned; do not assume this policy is already installed. Read all chronological logs before acting.
+
 > **2026-10-30 12:05 EDT I0 first-step result:** Read the [offline account preflight and owner-supervised recovery runbook](I0_ACCOUNT_RECOVERY_RUNBOOK_2026-10-30.md) before attempting any login fix. Original staged image SHA is verified, xoom not in sudo group, and real TWRP entry is untested in this session; this is NOT authority to reboot unattended.
 
 # Mandatory reading map for every new XoomLinux7 agent (2026-10-30)

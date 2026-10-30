@@ -1,3 +1,5 @@
+> **2026-10-30 OWNER ACCESS REFINEMENT:** [Development-stage auth policy](../../process/DEVELOPMENT_AUTHENTICATION_POLICY_2026-10-30.md) now directs passwordless local COM10 access/sudo where possible; where a project login password cannot be avoided use `1234`. This is approved policy, **not yet a live device configuration**. Preserve no-bootloader-writes and physical-reset-accepted scope below.
+
 # MZ604 practical remote test infrastructure — approved strategy (2026-10-30)
 
 > **READ BEFORE ANY DEVICE BOOT, FLASH OR KERNEL EXPERIMENT.** This is INTERNAL DEVELOPMENT INFRASTRUCTURE, **not an upstream BCM4329 patch**, and it must not expand indefinitely. Follow [the current MZ604 RFC](README.md), [milestones](MILESTONES.md), [future-agent reading map](AGENT_READING_MAP.md), [project log](../../project-log/README.md), [project rules](../../process/DEVELOPMENT_WORKFLOW.md), and the October 30 [physical checkpoint](../../checkpoints/MZ604_PERSISTENT_LINUX_COM10_PHYSICAL_2026-10-30.md). All states below are **as of 2026-10-30**, not permanent.
@@ -19,7 +21,7 @@ Read-only private backup locations/SHA and no-repartition contract: see [physica
 
 ## Proposed implementation and acceptance gates (not yet PASS)
 
-**I0: Restore authorized access.** First read-only audit current serial host, TWRP return mechanism and exact installed rootfs identity. When physically supervised, enter TWRP without changing p6; back up live `/etc/shadow`/passwd/sudoers and validate the target loop image. Provision only a user-chosen private `xoom` password, verify sudo using documented mechanisms (do not expose secrets in Git/logs); preserve root access policy. Boot known-good p7, independently authenticate over COM10 and record commands/outputs. A login prompt alone is NOT I0 PASS.
+**I0: Restore authorized access.** First read-only audit current serial host, TWRP return mechanism and exact installed rootfs identity. When physically supervised, enter TWRP without changing p6; back up live `/etc/shadow`/passwd/sudoers and validate the target loop image. Use the [owner's passwordless-first development convention](../../process/DEVELOPMENT_AUTHENTICATION_POLICY_2026-10-30.md): `xoom` auto-login on COM10 with passwordless sudo; fallback project login password `1234` only if required. Keep root locked and host/network service credentials separate. Boot known-good p7, independently authenticate over COM10 and record commands/outputs. A login prompt alone is NOT I0 PASS.
 
 **I1: Normal reboot and recovery.** From authenticated Linux verify normal controlled reboot returns COM10 + privileged login. Study Tegra/Android bootloader recovery semantics from actual OEM/Linux sources; attempt Linux→TWRP recovery **only with owner physically available**. Verify TWRP ADB and return to unchanged normal Linux. Never claim fastboot/recovery selection until a **specific physical test** passes; never test by modifying EBB/BCT/p1.
 
@@ -38,7 +40,7 @@ Offline 2026-10-30 12:05 EDT staged-root read-only proof **PASS**: image SHA mat
 ## Current immediate execution sequence
 
 1. **Today, read-only:** verify host COM10, candidate/backup SHA, stage initramfs and kernel config, account locks and TWRP recovery path; no reboot while owner is away.
-2. Prepare an owner-reviewed TWRP account-provisioning procedure **offline only** (no password committed, never overwrite a rootfs without current backup/identity). Do not execute before safe physical access.
+2. Prepare/review TWRP [I0 account-provisioning procedure](I0_ACCOUNT_RECOVERY_RUNBOOK_2026-10-30.md) **offline only** (USB autologin + sudo NOPASSWD, fallback `1234` where necessary; never overwrite a rootfs without current backup/identity). Do not execute before safe physical access.
 3. On physically supervised session: restore privileged serial login, test normal reboot, then test recovery reboot as separate gated experiments.
 4. Implement minimal root selector in an isolated offline fixture, run fail-closed/path traversal/missing-image tests, then deploy only after approved backup.
 5. Test optional kexec only if the above is stable. Collect true Wingray upstream BCM4329 baseline, not MZ600 inferred results.
