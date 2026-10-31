@@ -1,3 +1,5 @@
+> **2026-10-31 owner 2.4 GHz clarification:** `SURFboard-0521-5G` is an actual **2.4 GHz** access point; earlier MZ600 measurement was **2462 MHz (channel 11)** despite the SSID. This is a proposed 2.4 GHz test target, NOT an MZ604 scan success. First upstream RFC explicitly **defers 5 GHz DFS/per-channel radar, passive metadata and connection qualification**; continue observing all applicable 2.4 GHz board/firmware/operating-country and Linux regulatory rules. Do NOT copy lab v05 blanket NO_IR on all bands, require `count_5g > 0`, or relax existing restrictions. Firmware legacy ioctl 217 still must be physically verified on **this MZ604** before changing code.
+
 # Proposed next MZ604 W1 measurement — native chanspecs status and legacy channel enumeration
 **PLANNED / NOT PHYSICALLY RUN as of 2026-10-31 04:55 EDT.** Previous physical trace: chanspecs normalized -52 prevents cfg80211 bands and interface creation. Native firmware error and legacy valid-channel ioctl have not been measured on this MZ604.
 
