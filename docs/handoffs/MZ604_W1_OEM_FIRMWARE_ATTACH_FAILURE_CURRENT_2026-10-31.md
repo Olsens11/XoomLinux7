@@ -1,4 +1,4 @@
-> **SUPERSEDED CURRENT STATE AS OF 2026-10-31 04:55 EDT: subsequent lab trace physically isolated modern chanspecs -52 -> cfg80211 bands failure. Original module restored; no wlan0. Read new MZ604 chanspecs checkpoint/new full handoff. Earlier unknown-attach statement below was correct at its date.** Links: [checkpoint](checkpoints/MZ604_W1_TRACED_CHANSPECS_ATTACH_FAIL_PHYSICAL_2026-10-31.md), [handoff](handoffs/MZ604_W1_CHANSPECS_FAILURE_NEXT_MINIMAL_PATCH_HANDOFF_2026-10-31.md). Earlier entries below are date-scoped.
+> **SUPERSEDED CURRENT STATE AS OF 2026-10-31 04:55 EDT: subsequent lab trace physically isolated modern chanspecs -52 -> cfg80211 bands failure. Original module restored; no wlan0. Read new MZ604 chanspecs checkpoint/new full handoff. Earlier unknown-attach statement below was correct at its date.** Links: [checkpoint](../checkpoints/MZ604_W1_TRACED_CHANSPECS_ATTACH_FAIL_PHYSICAL_2026-10-31.md), [handoff](MZ604_W1_CHANSPECS_FAILURE_NEXT_MINIMAL_PATCH_HANDOFF_2026-10-31.md). Earlier entries below are date-scoped.
 
 # MZ604 W1 current continuation handoff — original firmware boots; attach failure remains (2026-10-31)
 
