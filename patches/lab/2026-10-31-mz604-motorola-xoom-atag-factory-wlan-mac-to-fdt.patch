@@ -1,0 +1,64 @@
+[Reading 60 lines from start (total: 60 lines, 0 remaining)]
+
+diff --git a/arch/arm/boot/compressed/atags_to_fdt.c b/arch/arm/boot/compressed/atags_to_fdt.c
+index 627752f18..af4c0b280 100644
+--- a/arch/arm/boot/compressed/atags_to_fdt.c
++++ b/arch/arm/boot/compressed/atags_to_fdt.c
+@@ -12,6 +12,46 @@
+ 
+ #define NR_BANKS 16
+ 
++/*
++ * Motorola Xoom bootloader supplies factory WLAN address in the vendor
++ * Stingray ATAG on Stingray/Wingray variants. Deliver it to the upstream
++ * SDIO WLAN node, with no board-shared or generated fallback.
++ */
++#define ATAG_STINGRAY_MAC 0x57464d41
++#define MOTOROLA_XOOM_WIFI_PATH "/mmc@c8000200/wifi@1"
++
++static void xoom_wifi_mac_atag_to_fdt(void *fdt, const struct tag *atag)
++{
++	const unsigned char *mac = (const unsigned char *)&atag->u;
++	unsigned char any = 0;
++	int wifi, i;
++
++	/* Header of two words plus two payload words hold six address bytes. */
++	if (atag->hdr.size < 4)
++		return;
++
++	/* Reject tags on non-Xoom Tegra boards. */
++	if (fdt_node_check_compatible(fdt, 0, "motorola,xoom"))
++		return;
++
++	for (i = 0; i < 6; i++)
++		any |= mac[i];
++
++	if (!any || (mac[0] & 1))
++		return;
++	/* Broadcom placeholder observed with the generic firmware. */
++	if (mac[0] == 0x00 && mac[1] == 0x90 && mac[2] == 0x4c &&
++		((mac[3] == 0x12 && mac[4] == 0x34 && mac[5] == 0x56) ||
++		 (mac[3] == 0x00 && mac[4] == 0x00 && mac[5] == 0x00)))
++		return;
++
++	wifi = fdt_path_offset(fdt, MOTOROLA_XOOM_WIFI_PATH);
++	if (wifi < 0)
++		return;
++
++	fdt_setprop(fdt, wifi, "local-mac-address", mac, 6);
++}
++
+ static int node_offset(void *fdt, const char *node_path)
+ {
+ 	int offset = fdt_path_offset(fdt, node_path);
+@@ -201,6 +241,8 @@ int atags_to_fdt(void *atag_list, void *fdt, int total_space)
+ 					initrd_start);
+ 			setprop_cell(fdt, "/chosen", "linux,initrd-end",
+ 					initrd_start + initrd_size);
++		} else if (atag->hdr.tag == ATAG_STINGRAY_MAC) {
++			xoom_wifi_mac_atag_to_fdt(fdt, atag);
+ 		} else if (atag->hdr.tag == ATAG_SERIAL) {
+ 			char serno[16+2];
+ 			hex_str(serno, atag->u.serialnr.high);
+
+[executed on device: DESKTOP-R16QJD4 (2fc5f6ea-20da-436f-8ad8-c5cd59f44870)]
